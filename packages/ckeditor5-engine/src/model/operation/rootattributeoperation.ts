@@ -14,6 +14,8 @@ import type RootElement from '../rootelement';
 
 import { CKEditorError } from '@ckeditor/ckeditor5-utils';
 
+const metaDataKeyPrefix = '$data:';
+
 /**
  * Operation to change root element's attribute. Using this class you can add, remove or change value of the attribute.
  *
@@ -27,17 +29,13 @@ import { CKEditorError } from '@ckeditor/ckeditor5-utils';
 export default class RootAttributeOperation extends Operation {
 	/**
 	 * Root element to change.
-	 *
-	 * @readonly
 	 */
-	public root: RootElement;
+	public readonly root: RootElement;
 
 	/**
 	 * Key of an attribute to change or remove.
-	 *
-	 * @readonly
 	 */
-	public key: string;
+	public readonly key: string;
 
 	/**
 	 * Old value of the attribute with given key or `null` if adding a new attribute.
@@ -52,6 +50,13 @@ export default class RootAttributeOperation extends Operation {
 	 * @readonly
 	 */
 	public newValue: unknown;
+
+	/**
+	 * @internal
+	 */
+	public _metaDataKey: string | null;
+
+	private readonly _isMetaData: boolean;
 
 	/**
 	 * Creates an operation that changes, removes or adds attributes on root element.
@@ -77,18 +82,21 @@ export default class RootAttributeOperation extends Operation {
 		this.key = key;
 		this.oldValue = oldValue;
 		this.newValue = newValue;
+
+		this._isMetaData = key.startsWith( metaDataKeyPrefix );
+		this._metaDataKey = this._isMetaData ? key.substring( metaDataKeyPrefix.length ) : null;
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	public get type(): 'addRootAttribute' | 'removeRootAttribute' | 'changeRootAttribute' {
+	public get type(): RootAttributeOperationType {
 		if ( this.oldValue === null ) {
-			return 'addRootAttribute';
+			return this._isMetaData ? 'setRootMetaData' : 'addRootAttribute';
 		} else if ( this.newValue === null ) {
-			return 'removeRootAttribute';
+			return this._isMetaData ? 'removeRootMetaData' : 'removeRootAttribute';
 		} else {
-			return 'changeRootAttribute';
+			return this._isMetaData ? 'setRootMetaData' : 'changeRootAttribute';
 		}
 	}
 
@@ -217,3 +225,6 @@ export default class RootAttributeOperation extends Operation {
 	// @if CK_DEBUG_ENGINE //		` -> ${ JSON.stringify( this.newValue ) }, ${ this.root.rootName }`;
 	// @if CK_DEBUG_ENGINE // }
 }
+
+type RootAttributeOperationType = 'addRootAttribute' | 'removeRootAttribute' | 'changeRootAttribute' |
+	'setRootMetaData' | 'removeRootMetaData';

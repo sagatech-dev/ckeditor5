@@ -23,6 +23,7 @@ import type Operation from './operation/operation';
 import type RenameOperation from './operation/renameoperation';
 import type SplitOperation from './operation/splitoperation';
 import type RootOperation from './operation/rootoperation';
+import type RootAttributeOperation from './operation/rootattributeoperation';
 
 /**
  * Calculates the difference between two model states.
@@ -65,11 +66,11 @@ export default class Differ {
 	private readonly _changedMarkers: Map<string, { newMarkerData: MarkerData; oldMarkerData: MarkerData }> = new Map();
 
 	/**
-	 * A map that stores all roots that have been added or detached.
+	 * A map that stores all roots that have been changed.
 	 *
-	 * The keys are the names of the roots while value represents whether the root was added (`true`) or removed (`false`).
+	 * The keys are the names of the roots while value represents the changes.
 	 */
-	private readonly _changedRoots: Map<string, boolean> = new Map();
+	private readonly _changedRoots: Map<string, DiffItemRoot> = new Map();
 
 	/**
 	 * Stores the number of changes that were processed. Used to order the changes chronologically. It is important
@@ -133,7 +134,8 @@ export default class Differ {
 			RenameOperation |
 			SplitOperation |
 			MergeOperation |
-			RootOperation
+			RootOperation |
+			RootAttributeOperation
 		);
 
 		switch ( operation.type ) {
@@ -246,9 +248,24 @@ export default class Differ {
 			}
 			case 'removeRoot':
 			case 'addRoot': {
-				this._bufferRootChange( operation.rootName, operation.isAdd );
+				this._bufferRootAttach( operation.rootName, operation.isAdd );
 
 				break;
+			}
+			case 'addRootAttribute':
+			case 'removeRootAttribute':
+			case 'changeRootAttribute': {
+				const rootName = operation.root.rootName;
+
+				this._bufferRootChange( rootName, 'attribute', operation.key, operation.oldValue, operation.newValue );
+
+				break;
+			}
+			case 'setRootMetaData':
+			case 'removeRootMetaData': {
+				const rootName = operation.root.rootName;
+
+				this._bufferRootChange( rootName, 'metaData', operation._metaDataKey!, operation.oldValue, operation.newValue );
 			}
 		}
 
@@ -589,19 +606,51 @@ export default class Differ {
 	}
 
 	/**
-	 * Buffers the root change.
 	 *
-	 * @param rootName Changed root name.
-	 * @param isAttached Whether the root got added (`true`) or detached (`false`).
+	 * @param rootName
+	 * @param isAttached
+	 * @private
 	 */
-	private _bufferRootChange( rootName: string, isAttached: boolean ): void {
+	private _bufferRootAttached( rootName: string, isAttached: boolean ): void {
 		if ( this._changedRoots.has( rootName ) ) {
-			// Root `isAttached` can only toggle between `true` and `false`, it cannot be differently, otherwise the operation would
+			const diffItem = this._changedRoots.get( rootName )!;
+
+			// Root `isAttached` can only toggle between `true` and `false`, it cannot be any other way, otherwise the operation would
 			// be invalid and the error would be thrown. So, if there is already a record about the root, if another operation regarding
 			// this root comes, it is enough to delete the previous record, as the operation must toggle the state back.
-			this._changedRoots.delete( rootName );
+			delete diffItem.isAttached;
+
+			if ( this._isEmptyDiffItemRoot( diffItem ) ) {
+				this._changedRoots.delete( rootName );
+			}
 		} else {
-			this._changedRoots.set( rootName, isAttached );
+			this._changedRoots.set( rootName, { rootName, isAttached } );
+		}
+	}
+
+	/**
+	 *
+	 * @param rootName
+	 * @param type
+	 * @param key
+	 * @param oldValue
+	 * @param newValue
+	 * @private
+	 */
+	private _bufferRootChange( rootName: string, type: 'attribute' | 'metaData', key: string, oldValue: unknown, newValue: unknown ): void {
+		if ( this._changedRoots.has( rootName ) ) {
+			const diffItem = this._changedRoots.get( rootName )!;
+
+			// Root `isAttached` can only toggle between `true` and `false`, it cannot be any other way, otherwise the operation would
+			// be invalid and the error would be thrown. So, if there is already a record about the root, if another operation regarding
+			// this root comes, it is enough to delete the previous record, as the operation must toggle the state back.
+			delete diffItem.isAttached;
+
+			if ( this._isEmptyDiffItemRoot( diffItem ) ) {
+				this._changedRoots.delete( rootName );
+			}
+		} else {
+			this._changedRoots.set( rootName, { rootName, isAttached } );
 		}
 	}
 
@@ -1337,6 +1386,13 @@ export interface DiffItemAttribute {
 	 * The range where the change happened.
 	 */
 	range: Range;
+}
+
+interface DiffItemRoot {
+	rootName: string;
+	isAttached?: boolean;
+	attributes?: Map<string, { oldValue: unknown, newValue: unknown }>;
+	metaData?: Map<string, { oldValue: unknown, newValue: unknown }>;
 }
 
 interface DiffItemInternal {

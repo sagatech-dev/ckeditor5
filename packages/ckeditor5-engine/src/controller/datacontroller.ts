@@ -322,7 +322,7 @@ export default class DataController extends EmitterMixin() {
 	 * pairs to initialize data on multiple roots at once.
 	 * @returns Promise that is resolved after the data is set on the editor.
 	 */
-	public init( data: string | Record<string, string> ): Promise<void> {
+	public init( data: string | Record<string, string>, metaData: Record<string, Record<string, unknown>> = {} ): Promise<void> {
 		if ( this.model.document.version ) {
 			/**
 			 * Cannot set initial data to a non-empty {@link module:engine/model/document~Document}.
@@ -365,6 +365,14 @@ export default class DataController extends EmitterMixin() {
 				const modelRoot = this.model.document.getRoot( rootName )!;
 
 				writer.insert( this.parse( initialData[ rootName ], modelRoot ), modelRoot, 0 );
+			}
+
+			for ( const [ rootName, rootMetaData ] of Object.entries( metaData ) ) {
+				const modelRoot = this.model.document.getRoot( rootName )!;
+
+				for ( const key of Object.keys( rootMetaData ) ) {
+					writer.setMetaData( key, rootMetaData[ key ], modelRoot );
+				}
 			}
 		} );
 

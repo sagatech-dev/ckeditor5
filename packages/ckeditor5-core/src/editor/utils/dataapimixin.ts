@@ -23,6 +23,26 @@ export default function DataApiMixin<Base extends Constructor<Editor>>( base: Ba
 		public getData( options?: Record<string, unknown> ): string {
 			return this.data.get( options );
 		}
+
+		public getMetaData(): Record<string, Record<string, unknown>> {
+			const metaData: Record<string, Record<string, unknown>> = {};
+			const document = this.model.document;
+
+			for ( const rootName of document.getRootNames() ) {
+				const root = document.getRoot( rootName )!;
+				metaData[ rootName ] = {};
+
+				for ( const [ attrKey, value ] of root.getAttributes() ) {
+					if ( attrKey.startsWith( '$data:' ) ) {
+						const key = attrKey.substring( 6 );
+
+						metaData[ rootName ][ key ] = value;
+					}
+				}
+			}
+
+			return metaData;
+		}
 	}
 
 	return Mixin as any;

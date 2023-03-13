@@ -113,6 +113,8 @@ export interface EditorConfig {
 	 */
 	initialData?: string | Record<string, string>;
 
+	metaData?: Record<string, string>;
+
 	/**
 	 * The language of the editor UI and its content.
 	 *

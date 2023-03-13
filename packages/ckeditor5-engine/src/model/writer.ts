@@ -630,7 +630,7 @@ export default class Writer {
 	 * writer.move( sourceRange, image, 'after' );
 	 * ```
 	 *
-	 * These parameters works the same way as {@link #createPositionAt `writer.createPositionAt()`}.
+	 * These parameters work the same way as {@link #createPositionAt `writer.createPositionAt()`}.
 	 *
 	 * Note that items can be moved only within the same tree. It means that you can move items within the same root
 	 * (element or document fragment) or between {@link module:engine/model/document~Document#roots documents roots},
@@ -1399,6 +1399,14 @@ export default class Writer {
 		this.model.applyOperation( operation );
 	}
 
+	public setMetaData( key: string, value: unknown, root: RootElement ): void {
+		setMetaDataOnRoot( this, key, value, root );
+	}
+
+	public removeMetaData( key: string, root: RootElement ): void {
+		setMetaDataOnRoot( this, key, null, root );
+	}
+
 	/**
 	 * Sets the document's selection (ranges and direction) to the specified location based on the given
 	 * {@link module:engine/model/selection~Selectable selectable} or creates an empty selection if no arguments were passed.
@@ -1825,6 +1833,22 @@ function setAttributeOnItem( writer: Writer, key: string, value: unknown, item: 
 		writer.batch.addOperation( operation );
 		model.applyOperation( operation );
 	}
+}
+
+function setMetaDataOnRoot( writer: Writer, key: string, value: unknown, root: RootElement ) {
+	if ( !root.is( 'rootElement' ) ) {
+		/**
+		 * Metadata can be set only on root elements.
+		 *
+		 * @error writer-metadata-not-root
+		 */
+		throw new CKEditorError( 'writer-metadata-no-root', writer );
+	}
+
+	// TODO disallow setting root attributes starting with $.
+	const attrKey = '$data:' + key;
+
+	setAttributeOnItem( writer, attrKey, value, root );
 }
 
 /**
