@@ -75,7 +75,8 @@
     "directory": "packages/ckeditor5-build-decoupled-document"
   },
   "scripts": {
-    "build": "webpack --mode production",
+    "build": "rm -rf build && webpack --mode production",
+    "build-dev": "rm -rf build && webpack --mode development",
     "postbuild": "tsc -p ./tsconfig.types.json",
     "preversion": "npm run build"
   }
