@@ -16,12 +16,11 @@ import { Image, ImageCaption, ImageResize, ImageStyle, ImageToolbar, ImageUpload
 import { Indent } from '@ckeditor/ckeditor5-indent';
 import { Link } from '@ckeditor/ckeditor5-link';
 import { List, ListProperties } from '@ckeditor/ckeditor5-list';
-import { MediaEmbed } from '@ckeditor/ckeditor5-media-embed';
 import { Table, TableToolbar } from '@ckeditor/ckeditor5-table';
 import { CloudServices } from '@ckeditor/ckeditor5-cloud-services';
 import CustomFontSizeUI from '../custom-plugins/custom-font-ui/src/CustomFontSizeUI';
 export default class DecoupledEditor extends DecoupledEditorBase {
-    static builtinPlugins: (typeof Essentials | typeof Alignment | typeof FontBackgroundColor | typeof FontColor | typeof FontFamily | typeof FontSize | typeof Heading | typeof Autoformat | typeof Bold | typeof Italic | typeof Strikethrough | typeof Underline | typeof BlockQuote | typeof CloudServices | typeof Image | typeof ImageCaption | typeof ImageResize | typeof ImageStyle | typeof ImageToolbar | typeof ImageUpload | typeof CKBox | typeof CKFinder | typeof Indent | typeof Link | typeof List | typeof ListProperties | typeof MediaEmbed | typeof Table | typeof TableToolbar | typeof PictureEditing | typeof CustomFontSizeUI)[];
+    static builtinPlugins: (typeof Essentials | typeof Alignment | typeof FontBackgroundColor | typeof FontColor | typeof FontFamily | typeof FontSize | typeof Heading | typeof Autoformat | typeof Bold | typeof Italic | typeof Strikethrough | typeof Underline | typeof BlockQuote | typeof CloudServices | typeof Image | typeof ImageCaption | typeof ImageResize | typeof ImageStyle | typeof ImageToolbar | typeof ImageUpload | typeof CKBox | typeof CKFinder | typeof Indent | typeof Link | typeof List | typeof ListProperties | typeof Table | typeof TableToolbar | typeof PictureEditing | typeof CustomFontSizeUI)[];
     static defaultConfig: {
         toolbar: {
             items: string[];

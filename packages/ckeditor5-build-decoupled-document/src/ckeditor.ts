@@ -29,7 +29,6 @@ import {
 import { Indent, IndentBlock } from '@ckeditor/ckeditor5-indent';
 import { Link } from '@ckeditor/ckeditor5-link';
 import { List, ListProperties } from '@ckeditor/ckeditor5-list';
-import { MediaEmbed } from '@ckeditor/ckeditor5-media-embed';
 import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
 import { PasteFromOffice } from '@ckeditor/ckeditor5-paste-from-office';
 import { Table, TableToolbar } from '@ckeditor/ckeditor5-table';
@@ -71,13 +70,14 @@ export default class DecoupledEditor extends DecoupledEditorBase {
 		Link,
 		List,
 		ListProperties,
-		MediaEmbed,
 		Paragraph,
 		PasteFromOffice,
 		PictureEditing,
 		Table,
 		TableToolbar,
 		TextTransformation,
+
+		// Custom
 		CustomFontSizeUI,
 		CustomFontFamilyUI
 	];
@@ -108,11 +108,10 @@ export default class DecoupledEditor extends DecoupledEditorBase {
 				'outdent',
 				'indent',
 				'|',
+				'insertTable',
 				'link',
 				'blockquote',
-				'uploadImage',
-				'insertTable',
-				'mediaEmbed'
+				'uploadImage'
 			]
 		},
 		fontSize: {
