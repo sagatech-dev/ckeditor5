@@ -25,10 +25,13 @@ export default class DecoupledEditor extends DecoupledEditorBase {
         toolbar: {
             items: string[];
         };
+        fontFamily: {
+            options: string[];
+        };
         fontSize: {
             options: {
                 model: number;
-                title: number;
+                title: string;
                 view: {
                     name: string;
                     styles: {

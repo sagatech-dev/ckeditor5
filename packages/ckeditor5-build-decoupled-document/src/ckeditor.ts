@@ -39,6 +39,8 @@ import { CloudServices } from '@ckeditor/ckeditor5-cloud-services';
 import CustomFontSizeUI from '../custom-plugins/custom-font-ui/src/CustomFontSizeUI';
 import CustomFontFamilyUI from '../custom-plugins/custom-font-ui/src/CustomFontFamilyUI';
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 export default class DecoupledEditor extends DecoupledEditorBase {
 	public static override builtinPlugins = [
 		Essentials,
@@ -116,11 +118,23 @@ export default class DecoupledEditor extends DecoupledEditorBase {
 				'uploadImage'
 			]
 		},
+		fontFamily: {
+			options: [
+				'Arial',
+				'Courier New',
+				'Georgia',
+				'Lucida Sans Unicode',
+				'Tahoma',
+				'Times New Roman',
+				'Trebuchet MS',
+				'Verdana'
+			]
+		},
 		fontSize: {
 			options: [
-				8, 9, 10, 11, 12, 13, 14, 15, 16, 18, 20, 22, 24, 26, 28, 36, 48
+				'8', '9', '10', '11', '12', '13', '14', '15', '16', '18', '20', '22', '24', '26', '28', '36', '48'
 			].map( val => ( {
-				model: val,
+				model: parseInt( val ),
 				title: val,
 				view: {
 					name: 'span',
