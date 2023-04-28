@@ -15,14 +15,20 @@
 </div>
 
 <script src="../build/ckeditor.js"></script>
+<script src="../../../node_modules/@ckeditor/ckeditor5-inspector/build/inspector.js"></script>
+<script src="variables.js"></script>
+
 <script>
-	DecoupledEditor.create(document.querySelector('.document-editor__editable')).then(editor => {
-		const toolbarContainer = document.querySelector('.document-editor__toolbar')
-		toolbarContainer.appendChild(editor.ui.view.toolbar.element)
-		window.editor = editor
-	}).catch(err => {
-		console.error(err)
-	})
+	DecoupledEditor.create( document.querySelector( '.document-editor__editable' ), {
+		variables: variables
+	} ).then( editor => {
+		const toolbarContainer = document.querySelector( '.document-editor__toolbar' );
+		toolbarContainer.appendChild( editor.ui.view.toolbar.element );
+		CKEditorInspector.attach( editor );
+		window.editor = editor;
+	} ).catch( err => {
+		console.error( err );
+	} );
 </script>
 
 </body>

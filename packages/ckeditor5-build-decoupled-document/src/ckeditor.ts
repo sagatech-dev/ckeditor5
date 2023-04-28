@@ -38,6 +38,7 @@ import { CloudServices } from '@ckeditor/ckeditor5-cloud-services';
 // Custom plugins
 import CustomFontSizeUI from '../custom-plugins/custom-font-ui/src/CustomFontSizeUI';
 import CustomFontFamilyUI from '../custom-plugins/custom-font-ui/src/CustomFontFamilyUI';
+import Placeholder from '../custom-plugins/placeholder/src/Placeholder';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -58,7 +59,6 @@ export default class DecoupledEditor extends DecoupledEditorBase {
 		BlockQuote,
 		CKBox,
 		CKFinder,
-		CloudServices,
 		EasyImage,
 		Heading,
 		Image,
@@ -80,10 +80,12 @@ export default class DecoupledEditor extends DecoupledEditorBase {
 		TableProperties,
 		TableCellProperties,
 		TextTransformation,
+		CloudServices,
 
 		// Custom
 		CustomFontSizeUI,
-		CustomFontFamilyUI
+		CustomFontFamilyUI,
+		Placeholder
 	];
 
 	public static override defaultConfig = {
@@ -115,7 +117,8 @@ export default class DecoupledEditor extends DecoupledEditorBase {
 				'insertTable',
 				'link',
 				'blockquote',
-				'uploadImage'
+				'uploadImage',
+				'placeholder'
 			]
 		},
 		fontFamily: {
