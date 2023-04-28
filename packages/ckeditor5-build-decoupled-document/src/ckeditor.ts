@@ -34,6 +34,7 @@ import { PasteFromOffice } from '@ckeditor/ckeditor5-paste-from-office';
 import { Table, TableToolbar, TableProperties, TableCellProperties } from '@ckeditor/ckeditor5-table';
 import { TextTransformation } from '@ckeditor/ckeditor5-typing';
 import { CloudServices } from '@ckeditor/ckeditor5-cloud-services';
+import { Autosave } from '@ckeditor/ckeditor5-autosave';
 
 // Custom plugins
 import CustomFontSizeUI from '../custom-plugins/custom-font-ui/src/CustomFontSizeUI';
@@ -81,6 +82,7 @@ export default class DecoupledEditor extends DecoupledEditorBase {
 		TableCellProperties,
 		TextTransformation,
 		CloudServices,
+		Autosave,
 
 		// Custom
 		CustomFontSizeUI,
