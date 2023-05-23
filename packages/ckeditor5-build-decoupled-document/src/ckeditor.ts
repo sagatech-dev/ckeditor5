@@ -108,7 +108,7 @@ export default class DecoupledEditor extends DecoupledEditorBase {
 				'underline',
 				'strikethrough',
 				'|',
-				'alignment',
+				'alignment:left', 'alignment:center', 'alignment:right', 'alignment:justify',
 				'|',
 				'numberedList',
 				'bulletedList',
