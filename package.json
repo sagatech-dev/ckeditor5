@@ -81,7 +81,8 @@
     "@ckeditor/ckeditor5-utils": "^38.0.1",
     "@ckeditor/ckeditor5-watchdog": "^38.0.1",
     "@ckeditor/ckeditor5-widget": "^38.0.1",
-    "@ckeditor/ckeditor5-word-count": "^38.0.1"
+    "@ckeditor/ckeditor5-word-count": "^38.0.1",
+    "husky": "^8.0.2"
   },
   "devDependencies": {
     "@ckeditor/ckeditor5-comments": ">=28.0.0",
@@ -119,7 +120,6 @@
     "eslint-config-ckeditor5": "^4.2.1",
     "glob": "^7.1.6",
     "http-server": "^14.1.1",
-    "husky": "^8.0.2",
     "is-relative-url": "^3.0.0",
     "lint-staged": "^12.0.0",
     "minimatch": "^5.1.0",
