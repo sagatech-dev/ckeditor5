@@ -6,6 +6,4 @@ export default class Placeholder extends Plugin {
 	static get requires() {
 		return [ PlaceholderEditing, PlaceholderUI ];
 	}
-
-
 }

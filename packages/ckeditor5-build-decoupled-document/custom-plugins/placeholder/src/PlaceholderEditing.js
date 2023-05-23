@@ -153,7 +153,7 @@ export default class PlaceholderEditing extends Plugin {
 					value: viewElement.getAttribute( 'data-value' ),
 					isFixed: viewElement.getAttribute( 'data-is-fixed' ),
 					isSolved: viewElement.getAttribute( 'data-is-solved' ),
-					options: viewElement.getAttribute( 'data-options' ),
+					options: viewElement.getAttribute( 'data-options' )
 				};
 
 				// Converte a variavel fixa caso exista attributos
@@ -231,8 +231,7 @@ export default class PlaceholderEditing extends Plugin {
 				'data-value': modelElement.getAttribute( 'value' ),
 				'data-is-fixed': modelElement.getAttribute( 'isFixed' ),
 				'data-is-solved': modelElement.getAttribute( 'isSolved' ),
-				'data-options': modelElement.getAttribute( 'options' ),
-				// 'style': modelElement.getAttribute( 'style' )
+				'data-options': modelElement.getAttribute( 'options' )
 			};
 			const placeholderView = viewWriter.createContainerElement( 'span', placeholder );
 			setContent( viewWriter, placeholder, placeholderView );
@@ -240,7 +239,9 @@ export default class PlaceholderEditing extends Plugin {
 		}
 
 		function setContent( viewWriter, placeholder, placeholderView ) {
-			const innerText = viewWriter.createText( placeholder[ 'data-is-solved' ] ? placeholder[ 'data-value' ] : placeholder[ 'data-name' ] );
+			const innerText = viewWriter.createText( placeholder[ 'data-is-solved' ] ?
+				placeholder[ 'data-value' ] :
+				placeholder[ 'data-name' ] );
 			viewWriter.insert( viewWriter.createPositionAt( placeholderView, 0 ), innerText );
 		}
 	}
