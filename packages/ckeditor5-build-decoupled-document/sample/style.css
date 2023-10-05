@@ -173,6 +173,10 @@ body {
 	background: green;
 }
 
+.ck.ck-balloon-panel.ck-powered-by-balloon .ck.ck-powered-by {
+    display: none;
+}
+
 @keyframes autosave-status-spinner {
 	to {
 		transform: rotate(360deg);

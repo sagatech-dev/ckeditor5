@@ -1,6 +1,7 @@
 ---
 category: features-image-upload
 menu-title: Simple upload adapter
+meta-title: Simple upload adapter | CKEditor 5 Documentation
 order: 60
 ---
 
@@ -11,7 +12,7 @@ The simple upload adapter lets you upload images to your server using the [`XMLH
 ## Installation
 
 <info-box info>
-	This feature is not available in any of the {@link installation/getting-started/predefined-builds predefined builds}. See the [installation](#installation) section to learn how to enable it in your editor.
+	This feature is not available in any of the {@link installation/getting-started/predefined-builds predefined builds}.
 </info-box>
 
 First, install the [`@ckeditor/ckeditor5-upload`](https://www.npmjs.com/package/@ckeditor/ckeditor5-upload) package:
@@ -72,14 +73,14 @@ ClassicEditor
 
 ### Configuring allowed file types
 
-The allowed file types that can be uploaded should actually be configured in two places:
+The allowed file types that can be uploaded should be configured in two places:
 
-* On the client side, in CKEditor 5, restricting image upload through the CKEditor 5 UI and commands.
+* On the client side, in CKEditor&nbsp;5, restricting image upload through the CKEditor&nbsp;5 UI and commands.
 * On the server side, in your server-side application configuration.
 
 #### Client-side configuration
 
-Use the {@link module:image/imageconfig~ImageUploadConfig#types `image.upload.types`} configuration option to define the allowed image MIME types that can be uploaded to CKEditor 5.
+Use the {@link module:image/imageconfig~ImageUploadConfig#types `image.upload.types`} configuration option to define the allowed image MIME types that can be uploaded to CKEditor&nbsp;5.
 
 By default, users are allowed to upload `jpeg`, `png`, `gif`, `bmp`, `webp`, and `tiff` files, but you can customize this behavior to accept, for example, SVG files.
 
@@ -155,9 +156,9 @@ This upload adapter will notify users about the [file upload progress](https://d
 
 ## What's next?
 
-Check out the comprehensive {@link features/image-upload Image upload overview} to learn more about different ways of uploading images in CKEditor 5.
+Check out the comprehensive {@link features/image-upload Image upload overview} to learn more about different ways of uploading images in CKEditor&nbsp;5.
 
-See the {@link features/images-overview Image feature guide} to find out more about handling images in CKEditor 5 WYSIWYG editor.
+See the {@link features/images-overview Image feature guide} to find out more about handling images in CKEditor&nbsp;5 WYSIWYG editor.
 
 ## Contribute
 

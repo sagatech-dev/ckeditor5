@@ -3,6 +3,7 @@ category: examples-framework
 order: 80
 classes: main__content--no-toc
 toc: false
+meta-title: Chat with mentions | CKEditor 5 Documentation
 ---
 
 # Chat with mentions
@@ -11,9 +12,9 @@ The {@link features/mentions mention} feature allows developing rich–text appl
 
 {@snippet examples/chat-with-mentions}
 
-Learn how to {@link features/mentions#configuration configure mention feeds} in the dedicated guide and check out the [full source code](#final-solution) of this example if you want to implement your own chat using CKEditor 5 WYSIWYG editor.
+Learn how to {@link features/mentions#configuration configure mention feeds} in the dedicated guide and check out the full source code of this example below if you want to implement your own chat using CKEditor&nbsp;5 WYSIWYG editor.
 
-## Final solution
+## Editor example configuration
 
 The following code will let you run the editor inside a chat application like in the example above. See the {@link installation/plugins/installing-plugins installing plugins guide} to learn more.
 

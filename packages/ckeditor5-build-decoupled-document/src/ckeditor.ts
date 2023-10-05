@@ -4,7 +4,7 @@
  */
 
 // The editor creator to use.
-import DecoupledEditorBase from '@ckeditor/ckeditor5-editor-decoupled/src/decouplededitor';
+import { DecoupledEditor as DecoupledEditorBase } from '@ckeditor/ckeditor5-editor-decoupled';
 
 import { Essentials } from '@ckeditor/ckeditor5-essentials';
 import { Alignment } from '@ckeditor/ckeditor5-alignment';
@@ -174,6 +174,12 @@ export default class DecoupledEditor extends DecoupledEditorBase {
 				styles: true,
 				startIndex: true,
 				reversed: true
+			}
+		},
+		ui: {
+			poweredBy: {
+				position: 'inside',
+				side: 'right'
 			}
 		},
 		// This value must be kept in sync with the language defined in webpack.config.js.
