@@ -12,7 +12,7 @@ const fs = require( 'fs' );
 const { execSync } = require( 'child_process' );
 
 // CKEditor 5.
-const dir = './git';
+const dir = './.git';
 if ( !fs.existsSync( dir ) ) {
 	fs.mkdirSync( dir );
 }
