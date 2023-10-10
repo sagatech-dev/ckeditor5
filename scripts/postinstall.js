@@ -12,6 +12,10 @@ const fs = require( 'fs' );
 const { execSync } = require( 'child_process' );
 
 // CKEditor 5.
+const dir = './git';
+if ( !fs.existsSync( dir ) ) {
+	fs.mkdirSync( dir );
+}
 require( 'husky' ).install();
 
 // External repositories.
