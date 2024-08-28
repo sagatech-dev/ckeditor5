@@ -77,7 +77,8 @@
     "@ckeditor/ckeditor5-utils": "43.0.0",
     "@ckeditor/ckeditor5-watchdog": "43.0.0",
     "@ckeditor/ckeditor5-widget": "43.0.0",
-    "@ckeditor/ckeditor5-word-count": "43.0.0"
+    "@ckeditor/ckeditor5-word-count": "43.0.0",
+    "husky": "^8.0.3"
   },
   "devDependencies": {
     "@babel/parser": "^7.23.3",
@@ -135,7 +136,6 @@
     "estree-walker": "^3.0.3",
     "fs-extra": "^11.1.1",
     "glob": "^10.2.5",
-    "husky": "^8.0.3",
     "http-server": "^14.1.1",
     "ini": "^4.1.1",
     "is-relative-url": "^3.0.0",
