@@ -1,5 +1,5 @@
 /**
- * @license Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
+ * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -20,7 +20,7 @@ const ROOT_DIRECTORY = path.join( __dirname, '..', '..' );
 const DESTINATION_DIRECTORY = path.join( __dirname, '..', '..', 'build', 'content-styles' );
 const OUTPUT_FILE_PATH = path.join( DESTINATION_DIRECTORY, 'content-styles.css' );
 
-const DOCUMENTATION_URL = 'https://ckeditor.com/docs/ckeditor5/latest/installation/advanced/content-styles.html';
+const DOCUMENTATION_URL = 'https://ckeditor.com/docs/ckeditor5/latest/installation/legacy/advanced/content-styles.html';
 
 const VARIABLE_DEFINITION_REGEXP = /(--[\w-]+):\s+(.*);/g;
 const VARIABLE_USAGE_REGEXP = /var\((--[\w-]+)\)/g;
@@ -187,7 +187,10 @@ function getWebpackConfig() {
 		},
 		resolve: {
 			modules: getModuleResolvePaths(),
-			extensions: [ '.ts', '.js', '.json' ]
+			extensions: [ '.ts', '.js', '.json' ],
+			extensionAlias: {
+				'.js': [ '.js', '.ts' ]
+			}
 		},
 		resolveLoader: {
 			modules: getModuleResolvePaths()

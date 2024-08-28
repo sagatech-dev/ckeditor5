@@ -1,4 +1,4 @@
-# Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
+# Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
 #
 #                                     !!! IMPORTANT !!!
 #
@@ -44,6 +44,10 @@ msgstr "Acest URL media nu este suportat."
 msgctxt "Toolbar button tooltip for the Media Embed feature."
 msgid "Insert media"
 msgstr "Inserează media"
+
+msgctxt "Label describing type of the inserted content (e.g. 'insert media')."
+msgid "Media"
+msgstr "Multimedia"
 
 msgctxt "The label used by assistive technologies describing an image toolbar attached to an image widget."
 msgid "Media toolbar"

@@ -1,5 +1,5 @@
 /**
- * @license Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
+ * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -9,12 +9,10 @@
 
 import {
 	Editor,
-	Context,
-	DataApiMixin,
 	secureSourceElement,
 	type EditorConfig,
 	type EditorReadyEvent
-} from 'ckeditor5/src/core';
+} from 'ckeditor5/src/core.js';
 
 import {
 	CKEditorError,
@@ -23,12 +21,10 @@ import {
 	logWarning,
 	type CollectionAddEvent,
 	type DecoratedMethodEvent
-} from 'ckeditor5/src/utils';
+} from 'ckeditor5/src/utils.js';
 
-import { ContextWatchdog, EditorWatchdog } from 'ckeditor5/src/watchdog';
-
-import MultiRootEditorUI from './multirooteditorui';
-import MultiRootEditorUIView from './multirooteditoruiview';
+import MultiRootEditorUI from './multirooteditorui.js';
+import MultiRootEditorUIView from './multirooteditoruiview.js';
 
 import { isElement as _isElement } from 'lodash-es';
 import {
@@ -36,10 +32,10 @@ import {
 	type ViewRootEditableElement,
 	type Writer,
 	type ModelCanEditAtEvent
-} from 'ckeditor5/src/engine';
+} from 'ckeditor5/src/engine.js';
 
 /**
- * The {@glink installation/getting-started/predefined-builds#multi-root-editor multi-root editor} implementation.
+ * The multi-root editor implementation.
  *
  * The multi-root editor provides multiple inline editable elements and a toolbar. All editable areas are controlled by one editor
  * instance, which means that they share common configuration, document ID, or undo stack.
@@ -51,24 +47,8 @@ import {
  * {@link module:editor-multi-root/multirooteditor~MultiRootEditor.create `MultiRootEditor.create()`} method.
  *
  * Note that you will need to attach the editor toolbar to your web page manually, in a desired place, after the editor is initialized.
- *
- * # Multi-root editor and multi-root editor build
- *
- * The multi-root editor can be used directly from source (if you installed the
- * [`@ckeditor/ckeditor5-editor-multi-root`](https://www.npmjs.com/package/@ckeditor/ckeditor5-editor-multi-root) package)
- * but it is also available in the
- * {@glink installation/getting-started/predefined-builds#multi-root-editor multi-root editor build}.
- *
- * {@glink installation/getting-started/predefined-builds Builds} are ready-to-use editors with plugins bundled in.
- *
- * When using the editor from source you need to take care of loading all plugins by yourself
- * (through the {@link module:core/editor/editorconfig~EditorConfig#plugins `config.plugins`} option).
- * Using the editor from source gives much better flexibility and allows for easier customization.
- *
- * Read more about initializing the editor from source or as a build in
- * {@link module:editor-multi-root/multirooteditor~MultiRootEditor.create `MultiRootEditor.create()`}.
  */
-export default class MultiRootEditor extends DataApiMixin( Editor ) {
+export default class MultiRootEditor extends Editor {
 	/**
 	 * @inheritDoc
 	 */
@@ -188,7 +168,7 @@ export default class MultiRootEditor extends DataApiMixin( Editor ) {
 				}
 
 				for ( const key of Object.keys( attributes ) ) {
-					this._registeredRootsAttributesKeys.add( key );
+					this.registerRootAttribute( key );
 				}
 			}
 
@@ -386,9 +366,10 @@ export default class MultiRootEditor extends DataApiMixin( Editor ) {
 	 * editor.addRoot( 'myRoot', { attributes: { isCollapsed: true, index: 4 } } );
 	 * ```
 	 *
-	 * See also {@link module:core/editor/editorconfig~EditorConfig#rootsAttributes `rootsAttributes` configuration option}.
+	 * Note that attributes added together with a root are automatically registered.
 	 *
-	 * Note that attributes keys of attributes added in `attributes` option are also included in {@link #getRootsAttributes} return value.
+	 * See also {@link ~MultiRootEditor#registerRootAttribute `MultiRootEditor#registerRootAttribute()`} and
+	 * {@link module:core/editor/editorconfig~EditorConfig#rootsAttributes `config.rootsAttributes` configuration option}.
 	 *
 	 * By setting `isUndoable` flag to `true`, you can allow for detaching the root using the undo feature.
 	 *
@@ -414,26 +395,23 @@ export default class MultiRootEditor extends DataApiMixin( Editor ) {
 		rootName: string,
 		{ data = '', attributes = {}, elementName = '$root', isUndoable = false }: AddRootOptions = {}
 	): void {
-		const dataController = this.data;
-		const registeredKeys = this._registeredRootsAttributesKeys;
+		const _addRoot = ( writer: Writer ) => {
+			const root = writer.addRoot( rootName, elementName );
+
+			if ( data ) {
+				writer.insert( this.data.parse( data, root ), root, 0 );
+			}
+
+			for ( const key of Object.keys( attributes ) ) {
+				this.registerRootAttribute( key );
+				writer.setAttribute( key, attributes[ key ], root );
+			}
+		};
 
 		if ( isUndoable ) {
 			this.model.change( _addRoot );
 		} else {
 			this.model.enqueueChange( { isUndoable: false }, _addRoot );
-		}
-
-		function _addRoot( writer: Writer ) {
-			const root = writer.addRoot( rootName, elementName );
-
-			if ( data ) {
-				writer.insert( dataController.parse( data, root ), root, 0 );
-			}
-
-			for ( const key of Object.keys( attributes ) ) {
-				registeredKeys.add( key );
-				writer.setAttribute( key, attributes[ key ], root );
-			}
 		}
 	}
 
@@ -550,6 +528,11 @@ export default class MultiRootEditor extends DataApiMixin( Editor ) {
 	 *
 	 * This method is {@link module:utils/observablemixin~Observable#decorate decorated}.
 	 *
+	 * Note that attributes loaded together with a root are automatically registered.
+	 *
+	 * See also {@link ~MultiRootEditor#registerRootAttribute `MultiRootEditor#registerRootAttribute()`} and
+	 * {@link module:core/editor/editorconfig~EditorConfig#rootsAttributes `config.rootsAttributes` configuration option}.
+	 *
 	 * When this method is used in real-time collaboration environment, its effects become asynchronous as the editor will first synchronize
 	 * with the remote editing session, before the root is added to the editor.
 	 *
@@ -572,7 +555,7 @@ export default class MultiRootEditor extends DataApiMixin( Editor ) {
 			}
 
 			for ( const key of Object.keys( attributes ) ) {
-				this._registeredRootsAttributesKeys.add( key );
+				this.registerRootAttribute( key );
 
 				writer.setAttribute( key, attributes[ key ], root );
 			}
@@ -606,8 +589,8 @@ export default class MultiRootEditor extends DataApiMixin( Editor ) {
 	/**
 	 * Returns attributes for all attached roots.
 	 *
-	 * Note: only attributes specified in {@link module:core/editor/editorconfig~EditorConfig#rootsAttributes `rootsAttributes`}
-	 * configuration option will be returned.
+	 * Note: all and only {@link ~MultiRootEditor#registerRootAttribute registered} roots attributes will be returned.
+	 * If a registered root attribute is not set for a given root, `null` will be returned.
 	 *
 	 * @returns Object with roots attributes. Keys are roots names, while values are attributes set on given root.
 	 */
@@ -624,10 +607,8 @@ export default class MultiRootEditor extends DataApiMixin( Editor ) {
 	/**
 	 * Returns attributes for the specified root.
 	 *
-	 * Note: only attributes specified in {@link module:core/editor/editorconfig~EditorConfig#rootsAttributes `rootsAttributes`}
-	 * configuration option will be returned.
-	 *
-	 * @param rootName
+	 * Note: all and only {@link ~MultiRootEditor#registerRootAttribute registered} roots attributes will be returned.
+	 * If a registered root attribute is not set for a given root, `null` will be returned.
 	 */
 	public getRootAttributes( rootName: string ): RootAttributes {
 		const rootAttributes: RootAttributes = {};
@@ -638,6 +619,25 @@ export default class MultiRootEditor extends DataApiMixin( Editor ) {
 		}
 
 		return rootAttributes;
+	}
+
+	/**
+	 * Registers given string as a root attribute key. Registered root attributes are added to
+	 * {@link module:engine/model/schema~Schema schema}, and also returned by
+	 * {@link ~MultiRootEditor#getRootAttributes `getRootAttributes()`} and
+	 * {@link ~MultiRootEditor#getRootsAttributes `getRootsAttributes()`}.
+	 *
+	 * Note: attributes passed in {@link module:core/editor/editorconfig~EditorConfig#rootsAttributes `config.rootsAttributes`} are
+	 * automatically registered as the editor is initialized. However, registering the same attribute twice does not have any negative
+	 * impact, so it is recommended to use this method in any feature that uses roots attributes.
+	 */
+	public registerRootAttribute( key: string ): void {
+		if ( this._registeredRootsAttributesKeys.has( key ) ) {
+			return;
+		}
+
+		this._registeredRootsAttributesKeys.add( key );
+		this.editing.model.schema.extend( '$root', { allowAttributes: key } );
 	}
 
 	/**
@@ -837,18 +837,6 @@ export default class MultiRootEditor extends DataApiMixin( Editor ) {
 	 * See the {@link module:core/editor/editorconfig~EditorConfig editor configuration documentation} to learn more about
 	 * customizing plugins, toolbar and more.
 	 *
-	 * # Using the editor from source
-	 *
-	 * The code samples listed in the previous sections of this documentation assume that you are using an
-	 * {@glink installation/getting-started/predefined-builds editor build}
-	 * (for example – `@ckeditor/ckeditor5-build-multi-root`).
-	 *
-	 * If you want to use the multi-root editor from source (`@ckeditor/ckeditor5-editor-multi-root-editor/src/multirooteditor`),
-	 * you need to define the list of
-	 * {@link module:core/editor/editorconfig~EditorConfig#plugins plugins to be initialized} and
-	 * {@link module:core/editor/editorconfig~EditorConfig#toolbar toolbar items}. Read more about using the editor from
-	 * source in the {@glink installation/advanced/alternative-setups/integrating-from-source-webpack dedicated guide}.
-	 *
 	 * @param sourceElementsOrData The DOM elements that will be the source for the created editor
 	 * or the editor's initial data. The editor will initialize multiple roots with names according to the keys in the passed object.
 	 *
@@ -894,27 +882,6 @@ export default class MultiRootEditor extends DataApiMixin( Editor ) {
 			);
 		} );
 	}
-
-	/**
-	 * The {@link module:core/context~Context} class.
-	 *
-	 * Exposed as static editor field for easier access in editor builds.
-	 */
-	public static Context = Context;
-
-	/**
-	 * The {@link module:watchdog/editorwatchdog~EditorWatchdog} class.
-	 *
-	 * Exposed as static editor field for easier access in editor builds.
-	 */
-	public static EditorWatchdog = EditorWatchdog;
-
-	/**
-	 * The {@link module:watchdog/contextwatchdog~ContextWatchdog} class.
-	 *
-	 * Exposed as static editor field for easier access in editor builds.
-	 */
-	public static ContextWatchdog = ContextWatchdog;
 
 	/**
 	 * @internal

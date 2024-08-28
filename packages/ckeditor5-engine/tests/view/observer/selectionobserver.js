@@ -1,23 +1,24 @@
 /**
- * @license Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
+ * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
 /* globals setTimeout, document, console, Event */
 
-import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils';
+import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
 
-import ViewRange from '../../../src/view/range';
-import DocumentSelection from '../../../src/view/documentselection';
-import ViewSelection from '../../../src/view/selection';
-import View from '../../../src/view/view';
-import SelectionObserver from '../../../src/view/observer/selectionobserver';
-import FocusObserver from '../../../src/view/observer/focusobserver';
-import MutationObserver from '../../../src/view/observer/mutationobserver';
-import createViewRoot from '../_utils/createroot';
-import { parse } from '../../../src/dev-utils/view';
-import { StylesProcessor } from '../../../src/view/stylesmap';
-import env from '@ckeditor/ckeditor5-utils/src/env';
+import ViewRange from '../../../src/view/range.js';
+import DocumentSelection from '../../../src/view/documentselection.js';
+import ViewSelection from '../../../src/view/selection.js';
+import View from '../../../src/view/view.js';
+import SelectionObserver from '../../../src/view/observer/selectionobserver.js';
+import FocusObserver from '../../../src/view/observer/focusobserver.js';
+import MutationObserver from '../../../src/view/observer/mutationobserver.js';
+import createViewRoot from '../_utils/createroot.js';
+import { parse } from '../../../src/dev-utils/view.js';
+import { StylesProcessor } from '../../../src/view/stylesmap.js';
+import env from '@ckeditor/ckeditor5-utils/src/env.js';
+import { priorities } from '@ckeditor/ckeditor5-utils';
 
 describe( 'SelectionObserver', () => {
 	let view, viewDocument, viewRoot, selectionObserver, domRoot, domMain, domDocument;
@@ -190,6 +191,48 @@ describe( 'SelectionObserver', () => {
 		} );
 
 		changeDomSelection();
+	} );
+
+	it( 'should fire selectionChange synchronously on composition start event (at lowest priority)', () => {
+		let eventCount = 0;
+		let priorityCheck = 0;
+
+		viewDocument.on( 'selectionChange', ( evt, data ) => {
+			expect( data ).to.have.property( 'domSelection' ).that.equals( domDocument.getSelection() );
+
+			expect( data ).to.have.property( 'oldSelection' ).that.is.instanceof( DocumentSelection );
+			expect( data.oldSelection.rangeCount ).to.equal( 0 );
+
+			expect( data ).to.have.property( 'newSelection' ).that.is.instanceof( ViewSelection );
+			expect( data.newSelection.rangeCount ).to.equal( 1 );
+
+			const newViewRange = data.newSelection.getFirstRange();
+			const viewFoo = viewDocument.getRoot().getChild( 1 ).getChild( 0 );
+
+			expect( newViewRange.start.parent ).to.equal( viewFoo );
+			expect( newViewRange.start.offset ).to.equal( 2 );
+			expect( newViewRange.end.parent ).to.equal( viewFoo );
+			expect( newViewRange.end.offset ).to.equal( 2 );
+
+			expect( priorityCheck ).to.equal( 1 );
+
+			eventCount++;
+		} );
+
+		viewDocument.on( 'compositionstart', () => {
+			priorityCheck++;
+		}, { priority: priorities.lowest + 1 } );
+
+		viewDocument.on( 'compositionstart', () => {
+			priorityCheck++;
+		}, { priority: priorities.lowest - 1 } );
+
+		changeDomSelection();
+
+		viewDocument.fire( 'compositionstart' );
+
+		expect( eventCount ).to.equal( 1 );
+		expect( priorityCheck ).to.equal( 2 );
 	} );
 
 	it( 'should not fire selectionChange for ignored target', done => {

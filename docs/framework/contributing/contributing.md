@@ -26,11 +26,11 @@ To learn how to set up the project and run tests see the {@link framework/contri
 
 Read more in the {@link framework/contributing/code-style code style} guide, where you can also check the {@link framework/contributing/code-style#naming naming} and {@link framework/contributing/code-style#file-names file name} guidelines.
 
-Every package repository installs Git hooks that automatically lint and check the code for code style on commit. However, not every code style issue can be discovered this way, so please do not rely on tools too much :).
+Every package repository installs Git hooks that automatically lint and check the code for code style on commit. However, not every code style issue can be discovered this way, so please do not rely on tools too much.
 
 ### Tests
 
-We maintain a **100% code coverage** (including code branches) and pull requests with missing tests will not be accepted. However, keep in mind that 100% is not everything &mdash; every *change* must be tested. This means that if you are fixing a bug and your patch did not change the code coverage, the change itself needs a test anyway.
+We maintain a **100% code coverage** (including code branches) and pull requests with missing tests will not be accepted. However, keep in mind that 100% is not everything &ndash; every *change* must be tested. This means that if you are fixing a bug and your patch did not change the code coverage, the change itself needs a test anyway.
 
 Besides automated tests, you may be asked to create a manual test for the issue. Such manual tests let us quickly validate that the issue was really fixed and are later used during the testing phase (before a release) to make sure no regressions were created.
 
@@ -87,7 +87,7 @@ Assuming that you would like to propose some changes, these are the steps you sh
 
 Some additional things you should keep in mind:
 
-* Your pull request should be minimal &mdash; i.e. change only things described in the ticket. Do not squeeze unrelated changes into your pull request.
+* Your pull request should be minimal. It should change only things described in the ticket. Do not squeeze unrelated changes into your pull request.
 * When making a pull request on GitHub, make sure to specify which ticket(s) your pull request resolves. It is also recommended to provide more information, like how to test the patch, issues that you encountered, decisions you had to make, known problems, etc.
 * Make sure you signed the [Contributor License Agreement (CLA)](#contributor-license-agreement-cla) and that tests pass. Test your changes!
 
@@ -101,10 +101,10 @@ Here as well, having a CLA in place is a requirement to become an official trans
 
 ## Reporting issues and requesting features
 
-Read the {@link support/reporting-issues reporting issues} guide to learn more.
+Read the {@link support/index#reporting-issues reporting issues} guide to learn more.
 
 ## Contributor License Agreement (CLA)
 
-To accept contributions sent to us in the form of code, documentation, or translations, a Contributor License Agreement (CLA) must be in place in order to clarify the intellectual property license granted with them. This license is for your protection as a contributor as well as the protection of us and our users; it does not change your rights to use your own contributions for any other purpose.
+To accept contributions sent to us in the form of code, documentation, or translations, a Contributor License Agreement (CLA) must be in place to clarify the intellectual property license granted with them. This license is for your protection as a contributor as well as the protection of us and our users; it does not change your rights to use your own contributions for any other purpose.
 
-To sign the CLA and to get more information, please follow this link: [https://cla.ckeditor.com/](https://cla.ckeditor.com/).
+To sign the CLA and to get more information, follow this link: [https://cla.ckeditor.com/](https://cla.ckeditor.com/).

@@ -1,5 +1,5 @@
 /**
- * @license Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
+ * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -7,26 +7,26 @@
  * @module ui/dropdown/utils
  */
 
-import DropdownPanelView from './dropdownpanelview';
-import DropdownView from './dropdownview';
-import DropdownButtonView from './button/dropdownbuttonview';
-import ToolbarView from '../toolbar/toolbarview';
-import ListView from '../list/listview';
-import ListItemView from '../list/listitemview';
-import ListSeparatorView from '../list/listseparatorview';
-import ButtonView from '../button/buttonview';
-import SplitButtonView from './button/splitbuttonview';
-import SwitchButtonView from '../button/switchbuttonview';
-import ViewCollection from '../viewcollection';
+import DropdownPanelView from './dropdownpanelview.js';
+import DropdownView from './dropdownview.js';
+import DropdownButtonView from './button/dropdownbuttonview.js';
+import ToolbarView from '../toolbar/toolbarview.js';
+import ListView from '../list/listview.js';
+import ListItemView from '../list/listitemview.js';
+import ListSeparatorView from '../list/listseparatorview.js';
+import SplitButtonView from './button/splitbuttonview.js';
+import SwitchButtonView from '../button/switchbuttonview.js';
+import ViewCollection from '../viewcollection.js';
 
-import clickOutsideHandler from '../bindings/clickoutsidehandler';
+import clickOutsideHandler from '../bindings/clickoutsidehandler.js';
 
-import type { default as View, UIViewRenderEvent } from '../view';
-import type { ButtonExecuteEvent } from '../button/button';
-import type Model from '../model';
-import type DropdownButton from './button/dropdownbutton';
-import type { FocusableView } from '../focuscycler';
-import type { FalsyValue } from '../template';
+import type { default as View, UIViewRenderEvent } from '../view.js';
+import type { ButtonExecuteEvent } from '../button/button.js';
+import type Model from '../model.js';
+import type DropdownButton from './button/dropdownbutton.js';
+import type ButtonView from '../button/buttonview.js';
+import type { FocusableView } from '../focuscycler.js';
+import type { FalsyValue } from '../template.js';
 
 import {
 	global,
@@ -39,7 +39,9 @@ import {
 
 import '../../theme/components/dropdown/toolbardropdown.css';
 import '../../theme/components/dropdown/listdropdown.css';
-import ListItemGroupView from '../list/listitemgroupview';
+
+import ListItemGroupView from '../list/listitemgroupview.js';
+import ListItemButtonView from '../button/listitembuttonview.js';
 
 /**
  * A helper for creating dropdowns. It creates an instance of a {@link module:ui/dropdown/dropdownview~DropdownView dropdown},
@@ -105,15 +107,16 @@ import ListItemGroupView from '../list/listitemgroupview';
  * {@link module:ui/dropdown/utils~addToolbarToDropdown} utils.
  *
  * @param locale The locale instance.
- * @param ButtonClass The dropdown button view class. Needs to implement the
+ * @param ButtonClassOrInstance The dropdown button view class. Needs to implement the
  * {@link module:ui/dropdown/button/dropdownbutton~DropdownButton} interface.
  * @returns The dropdown view instance.
  */
 export function createDropdown(
 	locale: Locale | undefined,
-	ButtonClass: new ( locale?: Locale ) => DropdownButton & FocusableView = DropdownButtonView
+	ButtonClassOrInstance:
+		( new ( locale?: Locale ) => DropdownButton & FocusableView ) | DropdownButton & FocusableView = DropdownButtonView
 ): DropdownView {
-	const buttonView = new ButtonClass( locale );
+	const buttonView = typeof ButtonClassOrInstance == 'function' ? new ButtonClassOrInstance( locale ) : ButtonClassOrInstance;
 
 	const panelView = new DropdownPanelView( locale );
 	const dropdownView = new DropdownView( locale, buttonView, panelView );
@@ -261,7 +264,7 @@ function addToolbarToOpenDropdown(
  * Adds an instance of {@link module:ui/list/listview~ListView} to a dropdown.
  *
  * ```ts
- * const items = new Collection();
+ * const items = new Collection<ListDropdownItemDefinition>();
  *
  * items.add( {
  * 	type: 'button',
@@ -540,6 +543,27 @@ function bindViewCollectionItemsToDefinitions(
 	definitions: Collection<ListDropdownItemDefinition>,
 	locale: Locale
 ) {
+	// List item checkboxes have a reserved space for the check icon, so we need to know if there are any checkboxes in the list
+	// to adjust the layout accordingly. It'd look weird if the items on the list were not aligned horizontally.
+	//
+	// Possible theoretical performance problem if many items are added one by one, as this will be called for each item.
+	listItems.on( 'change', () => {
+		// Filter-map. Check all items, leave only these that have buttons and return the buttons.
+		const listItemButtons = [ ...listItems ].reduce<Array<ListItemButtonView>>( ( acc, item ) => {
+			if ( item instanceof ListItemView && item.children.first instanceof ListItemButtonView ) {
+				acc.push( item.children.first );
+			}
+
+			return acc;
+		}, [] );
+
+		const hasAnyCheckboxOnList = listItemButtons.some( button => button.isToggleable );
+
+		listItemButtons.forEach( item => {
+			item.hasCheckSpace = hasAnyCheckboxOnList;
+		} );
+	} );
+
 	listItems.bindTo( definitions ).using( def => {
 		if ( def.type === 'separator' ) {
 			return new ListSeparatorView( locale );
@@ -554,11 +578,16 @@ function bindViewCollectionItemsToDefinitions(
 
 			return groupView;
 		} else if ( def.type === 'button' || def.type === 'switchbutton' ) {
+			const isToggleable = def.model.role === 'menuitemcheckbox' || def.model.role === 'menuitemradio';
 			const listItemView = new ListItemView( locale );
-			let buttonView;
+
+			let buttonView: ButtonView;
 
 			if ( def.type === 'button' ) {
-				buttonView = new ButtonView( locale );
+				buttonView = new ListItemButtonView( locale );
+				buttonView.set( {
+					isToggleable
+				} );
 			} else {
 				buttonView = new SwitchButtonView( locale );
 			}

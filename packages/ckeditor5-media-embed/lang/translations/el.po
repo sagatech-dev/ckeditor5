@@ -1,4 +1,4 @@
-# Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
+# Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
 #
 #                                     !!! IMPORTANT !!!
 #
@@ -44,6 +44,10 @@ msgstr "Αυτή η διεύθυνση πολυμέσου δεν υποστηρ�
 msgctxt "Toolbar button tooltip for the Media Embed feature."
 msgid "Insert media"
 msgstr "Εισαγωγή πολυμέσου"
+
+msgctxt "Label describing type of the inserted content (e.g. 'insert media')."
+msgid "Media"
+msgstr "Πολυμέσα"
 
 msgctxt "The label used by assistive technologies describing an image toolbar attached to an image widget."
 msgid "Media toolbar"

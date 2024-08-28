@@ -241,7 +241,7 @@ msgstr "Alinear a la izquierda"
 	If you develop your own plugin outside the CKEditor&nbsp;5 ecosystem and localize it by creating *PO files*, you should override both the `sourceFilesPattern` and the `packageNamePattern` options to allow the CKEditor&nbsp;5 webpack plugin to analyze the code and find *messages* with corresponding translations. You should also mention these webpack plugin changes in your package README to make other users build the localized CKEditor&nbsp;5 editor with your plugin correctly. This obstacle may be simplified in the future when the localization feature gets more popular.
 </info-box>
 
-To build and configure a localized editor, follow the steps from the {@link features/ui-language Setting the UI language guide}.
+To build and configure a localized editor, follow the steps from the {@link getting-started/setup/ui-language Setting the UI language guide}.
 
 ## Re-using translations from other packages
 
@@ -271,4 +271,4 @@ public getDefaultCommands() {
 ## Known limitations
 
 - Currently it is impossible to change the chosen editor's language at runtime without destroying the editor.
-- Currently it is impossible to add more than one language to the bundle using the the CKEditor&nbsp;5 webpack plugin. In case where multiple *translation assets* should be added to the application, they should be added using the `<script>` tags or imports to the generated *translation assets*.
+- Currently it is impossible to add more than one language to the bundle using the CKEditor&nbsp;5 webpack plugin. In case where multiple *translation assets* should be added to the application, they should be added using the `<script>` tags or imports to the generated *translation assets*.

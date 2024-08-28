@@ -14,20 +14,18 @@ The [Easy Image](https://ckeditor.com/ckeditor-cloud-services/easy-image/) is an
 	This is a premium feature and you need a license for it on top of your CKEditor&nbsp;5 commercial license. [Contact us](https://ckeditor.com/contact/?sales=true#contact-form) to receive an offer tailored to your needs.
 
 	You can also sign up for the [CKEditor Premium Features 30-day free trial](https://orders.ckeditor.com/trial/premium-features) to test the feature.
-
-	This feature is enabled by default in all [predefined builds](https://ckeditor.com/docs/ckeditor5/latest/installation/getting-started/predefined-builds.html) for convenience, but the editor will still work properly without activating it.
 </info-box>
 
 ## Demo
 
-The demo below uses the {@link installation/getting-started/predefined-builds#classic-editor Classic editor}. It is configured to use the Easy Image service provided by CKEditor Cloud Services.
+The demo below uses the classic editor type. It is configured to use the Easy Image service provided by CKEditor Cloud Services.
 
 {@snippet build-classic-source}
 
 {@snippet features/easy-image}
 
 <info-box info>
-	This demo only presents a limited set of features. Visit the {@link examples/builds/full-featured-editor feature-rich editor example} to see more in action.
+	This demo presents a limited set of features. Visit the {@link examples/builds/full-featured-editor feature-rich editor example} to see more in action.
 </info-box>
 
 ## Additional feature information
@@ -42,22 +40,22 @@ All that with virtually zero server setup.
 
 ## Configuration
 
-To make enabling image upload in CKEditor&nbsp;5 a breeze, by default all builds include the {@link module:easy-image/easyimage~EasyImage `EasyImage` plugin}. It integrates with the Easy Image service provided by [CKEditor Cloud Services](https://ckeditor.com/ckeditor-cloud-services/). Enabling it is straightforward and the results are immediate:
+To make enabling image upload in CKEditor&nbsp;5 a breeze, the {@link module:easy-image/easyimage~EasyImage `EasyImage` plugin} integrates with the Easy Image service provided by [CKEditor Cloud Services](https://ckeditor.com/ckeditor-cloud-services/). Enabling it is straightforward and the results are immediate:
 
-1. Follow the [Easy Image &mdash; Quick start guide](https://ckeditor.com/docs/cs/latest/guides/easy-image/quick-start.html) to set up an account.
+1. Follow the [Easy Image &ndash; Quick start guide](https://ckeditor.com/docs/cs/latest/guides/easy-image/quick-start.html) to set up an account.
 2. Configure CKEditor&nbsp;5 (see {@link module:cloud-services/cloudservicesconfig~CloudServicesConfig `CloudServicesConfig`}):
 
-	```js
-	ClassicEditor
-		.create( document.querySelector( '#editor' ), {
-			cloudServices: {
-				tokenUrl: 'https://example.com/cs-token-endpoint',
-				uploadUrl: 'https://your-organization-id.cke-cs.com/easyimage/upload/'
-			}
-		} )
-		.then( /* ... */ )
-		.catch( /* ... */ );
-	```
+```js
+ClassicEditor
+	.create( document.querySelector( '#editor' ), {
+		cloudServices: {
+			tokenUrl: 'https://example.com/cs-token-endpoint',
+			uploadUrl: 'https://your-organization-id.cke-cs.com/easyimage/upload/'
+		}
+	} )
+	.then( /* ... */ )
+	.catch( /* ... */ );
+```
 
 This is all. At this point, image upload will be automatically enabled in your application.
 
@@ -92,7 +90,7 @@ Responsive images have two main advantages over the "traditional" image delivery
 
 * **They save the data transfer**. There are countless device and screen size combinations that can be used to display images in your application (smartphones, tablets, laptops, etc.). You do not need to serve the same full–scale images to all of them, though.
 
-	Using Easy Image guarantees only the particular size variant corresponding to the user's screen size is served, minimizing the amount of data transferred to the client. For large images, this can save up to 90% of the transferred data &mdash; [see it yourself!](https://ckeditor.com/ckeditor-cloud-services/easy-image/)
+	Using Easy Image guarantees only the particular size variant corresponding to the user's screen size is served, minimizing the amount of data transferred to the client. For large images, this can save up to 90% of the transferred data &ndash; [see it yourself!](https://ckeditor.com/ckeditor-cloud-services/easy-image/)
 * **They load faster**. Because only the image matching the size of the screen is transferred, in most cases it can be loaded and displayed much faster than a "regular" full–scale image. The faster it loads, the sooner the users can see it, which greatly improves the user experience of your application. You no longer need to wait ages for high–resolution photos to load on a tiny smartphone screen.
 
 ### Responsive images in the markup
@@ -123,20 +121,21 @@ The variety of the image sizes in the `srcset` attribute allows the web browser 
 ## Installation
 
 <info-box info>
-	This feature is enabled by default in all predefined builds. The installation instructions are for developers interested in building their own, custom WYSIWYG editor.
+	⚠️ **New import paths**
+
+	Starting with {@link updating/update-to-42 version 42.0.0}, we changed the format of import paths. This guide uses the new, shorter format. Refer to the {@link getting-started/legacy-getting-started/legacy-imports Packages in the legacy setup} guide if you use an older version of CKEditor&nbsp;5.
 </info-box>
 
-To add this feature to your editor, install the [`@ckeditor/ckeditor5-easy-image`](https://www.npmjs.com/package/@ckeditor/ckeditor5-easy-image) package:
+This package is part of our open-source aggregate package.
 
 ```bash
-npm install --save @ckeditor/ckeditor5-easy-image
+npm install ckeditor5
 ```
 
 Then add {@link module:easy-image/easyimage~EasyImage} to your plugin list and [configure](#configuration) the feature. For instance:
 
 ```js
-import { EasyImage } from '@ckeditor/ckeditor5-easy-image';
-import { Image } from '@ckeditor/ckeditor5-image';
+import { EasyImage, Image } from 'ckeditor5';
 
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
@@ -157,7 +156,7 @@ ClassicEditor
 	Please note that most integrations will also require the {@link module:image/image~Image} plugin to be loaded in the editor to make this feature work properly (or one of {@link module:image/imageblock~ImageBlock} or {@link module:image/imageinline~ImageInline}). Check out the comprehensive {@link features/images-installation guide to images} in CKEditor&nbsp;5 to learn more.
 </info-box>
 
-## What's next?
+## What's next
 
 Check out the comprehensive {@link features/image-upload Image upload overview} to learn more about different ways of uploading images in CKEditor&nbsp;5.
 

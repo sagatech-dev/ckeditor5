@@ -1,4 +1,4 @@
-# Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
+# Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
 #
 #                                     !!! IMPORTANT !!!
 #
@@ -20,6 +20,10 @@ msgstr ""
 msgctxt "Name of the special characters plugins, visible in a dropdown and as a button tooltip."
 msgid "Special characters"
 msgstr "أحرف خاصة"
+
+msgctxt "A label for a special character dropdown with symbol categories."
+msgid "Category"
+msgstr "الفئة"
 
 msgctxt "A category name is displayed in a special characters dropdown representing all available symbols."
 msgid "All"
@@ -1074,7 +1078,3 @@ msgstr "علامة الفقرة"
 msgctxt "A label for the \"reversed paragraph sign\" symbol."
 msgid "Reversed paragraph sign"
 msgstr "علامة الفقرة مقلوبة"
-
-msgctxt "A label for a tooltip showing when the user hovers over the plugin icon."
-msgid "Character categories"
-msgstr "فئات الأحرف"

@@ -13,7 +13,7 @@ modified_at: 2023-08-16
 
 For the purposes of this tutorial, we have created a repository with the minimal setup required to use the editor. To follow along:
 
-1. Clone [this repository](https://github.com/ckeditor/tutorial-setup).
+1. Clone [this repository](https://github.com/ckeditor/ckeditor5-tutorials-examples/tree/main/crash-course).
 2. Run the `npm install` command to install the dependencies.
 3. Run the `npm run dev` command to start the project.
 4. Open the URL displayed in your terminal.
@@ -29,8 +29,11 @@ The test environment you set up displays the "Hello world!" on the page. Let's l
 Open the `src/main.js` file and add the following code:
 
 ```js
-// Import the editor
-import { ClassicEditor } from '@ckeditor/ckeditor5-editor-classic';
+// Import the editor.
+import { ClassicEditor } from 'ckeditor5';
+
+// Import the styles.
+import 'ckeditor5/ckeditor5.css';
 
 // Get the HTML element with the ID of 'app'.
 const element = document.querySelector( '#app' );
@@ -41,16 +44,15 @@ const editor = await ClassicEditor.create( element );
 
 As you can see, the {@link module:core/editor/editor~Editor.create `create()`} method creates a new editor instance. It replaces the DOM element passed as the first argument with the editor UI, and sets the initial state of the editor to the content of that DOM element.
 
-However, you may have noticed that the "Hello world!" text does not appear in the editor, and you can't write anything into it. This may seem strange at first, but it is by design. Let's fix this with the right configuration.
+However, you may have noticed that the "Hello world!" text does not appear in the editor, and you cannot write anything in it. This may seem strange at first, but it is by design. Let's fix this with the right configuration.
 
 ## Configuration
 
-The editor itself does not do much - it's just an empty shell at this stage. What gives the editor almost all of its functionality are the plugins. We will talk more about plugins in the next chapter, but for now let's just install two plugins that provide the bare minimum needed to type in the editor.
+The editor itself does not do much - it is just an empty shell at this stage. What gives the editor almost all of its functionality are the plugins. We will talk more about plugins in the next chapter, but for now, let's just install two plugins that provide the bare minimum needed to type in the editor.
 
 ```js
-// Add these two imports.
-import { Essentials } from '@ckeditor/ckeditor5-essentials';
-import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
+// Import plugins.
+import { Essentials, Paragraph } from 'ckeditor5';
 
 // Update the call to the `create()` method.
 const editor = await ClassicEditor.create( element, {
@@ -86,7 +88,7 @@ const editor = await ClassicEditor.create( element, {
 
 After refreshing the page, the editor should have two buttons at the top. If you type something into the editor and click the "back arrow" button, your changes should be removed. Clicking the "forward arrow" button should restore those changes.
 
-The configuration object we just updated controls the features, appearance, and behavior of the editor. If you want to change any aspect of the editor, it's most likely through this object.
+The configuration object we have just updated controls the features, appearance, and behavior of the editor. If you want to change any aspect of the editor, it is most likely through this object.
 
 ## Editor methods
 
@@ -99,8 +101,8 @@ window.editor = editor;
 
 Four common methods we will test are:
 
-* {@link module:core/editor/utils/dataapimixin~DataApi#getData `getData()`}
-* {@link module:core/editor/utils/dataapimixin~DataApi#setData `setData()`}
+* {@link module:core/editor/editor~Editor#getData `getData()`}
+* {@link module:core/editor/editor~Editor#setData `setData()`}
 * {@link module:core/editor/editor~Editor#execute `execute()`}
 * {@link module:core/editor/editor~Editor#destroy `destroy()`}
 
@@ -140,7 +142,7 @@ editor.execute( 'redo' );
 
 ### `destroy()`
 
-Last but not least is the `destroy()` method. It removes the editor and cleans up after it, including removing it from the DOM, removing all event listeners, etc.
+The `destroy()` method removes the editor and cleans up after it. This includes removing it from the DOM, removing all event listeners, etc.
 
 Run the following command from a console:
 
@@ -148,7 +150,7 @@ Run the following command from a console:
 editor.destroy();
 ```
 
-The editor and it's contents should disappear. Note that **this method returns a promise, so you need to `await` it** if you want to execute more logic after the editor is destroyed.
+The editor and its contents should disappear. **This method returns a promise, so you need to `await` it** if you want to execute more logic after the editor is destroyed.
 
 ## What's next
 

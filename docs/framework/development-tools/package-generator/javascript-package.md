@@ -3,7 +3,7 @@ menu-title: JavaScript package
 meta-title: Package generator JavaScript package content | CKEditor 5 Framework Documentation
 category: package-generator
 order: 42
-modified_at: 2022-08-16
+modified_at: 2024-06-27
 ---
 
 # JavaScript package content
@@ -18,12 +18,14 @@ An overview of the project's directory structure:
 ├─ lang
 │  └─ contexts.json        # Entries used for creating translations.
 ├─ sample
-│  ├─ dll.html             # The editor initialized using the DLL builds.
+│  ├─ (*) dll.html         # The editor initialized using the DLL builds.
 │  ├─ index.html           # The sample file.
 │  └─ ckeditor.js          # The editor initialization script.
+├─ scripts
+│  └─ build-dist.mjs       # Script creates `npm` and browser builds for your plugin.
 ├─ src
 │  ├─ pluginname.js        # The plugin with example functionality.
-│  ├─ index.js             # The modules exported by the package when using the DLL builds.
+│  ├─ index.js             # The modules exported by the package.
 │  └─ **/*.js              # All JavaScript source files should be saved here.
 ├─ tests
 │  ├─ pluginname.js
@@ -36,7 +38,7 @@ An overview of the project's directory structure:
 │  └─ **/*.css             # All CSS files should be saved here.
 │
 ├─ .editorconfig           # See link below for details.
-├─ .eslintrc.js            # ESLint configuration file.
+├─ .eslintrc.cjs           # ESLint configuration file.
 ├─ .gitattributes          # See link below for details.
 ├─ .gitignore              # See link below for details.
 ├─ .stylelintrc            # Stylelint configuration file.
@@ -45,6 +47,10 @@ An overview of the project's directory structure:
 ├─ package.json            # See link below for details.
 └─ README.md               # Description of your project and usage instructions.
 ```
+
+<info-box warning>
+	(*) This file is not available if the plugin was generated with the `current` value of the `--installation-methods` flag.
+</info-box>
 
 Guides for developing some of the files:
 
@@ -56,17 +62,17 @@ Guides for developing some of the files:
 
 ## Npm scripts
 
-Npm scripts are a convenient way to provide commands in a project. They are defined in the `package.json` file and shared with other people contributing to the project. It ensures that the developers use the same commands with the same options (flags).
+The npm scripts are a convenient way to provide commands in a project. They are defined in the `package.json` file and shared with other people contributing to the project. It ensures that the developers use the same commands with the same options (flags).
 
-All the scripts can be executed by running `npm run <script>`. Pre and post commands with matching names will be run for those as well.
+You can execute all the scripts by running `npm run <script>`. Pre-commands and post-commands with matching names will be run for those as well.
 
 The following scripts are available in the package.
 
 ### `start`
 
-Starts a HTTP server with the live-reload mechanism that allows previewing and testing plugins available in the package.
+Starts an HTTP server with the live-reload mechanism that allows previewing and testing of plugins available in the package.
 
-When the server has been started, the default browser will open the developer sample. This can be disabled by passing the `--no-open` option to that command.
+When the server has been started, the default browser will open the developer sample. You can turn this off by passing the `--no-open` option to that command.
 
 You can also define the language that will translate the created editor by specifying the `--language [LANG]` option. It defaults to `'en'`.
 
@@ -87,10 +93,10 @@ npm run start -- --language=de
 
 Allows executing unit tests for the package, specified in the `tests/` directory. The command accepts the following modifiers:
 
-* `--coverage` &ndash; to create the code coverage report.
-* `--watch` &ndash; to observe the source files (the command does not end after executing tests).
-* `--source-map` &ndash; to generate source maps of the sources.
-* `--verbose` &ndash; to print additional webpack logs.
+* `--coverage` &ndash; Creates the code coverage report.
+* `--watch` &ndash; Observes the source files (the command does not end after executing tests).
+* `--source-map` &ndash; Generates source maps of the sources.
+* `--verbose` &ndash; Prints additional webpack logs.
 
 Examples:
 
@@ -115,7 +121,7 @@ npm run lint
 
 ### `stylelint`
 
-Similar to the `lint` task, stylelint analyzes the CSS code (`*.css` files in the `theme/` directory) in the package.
+Similar to the `lint` task, `stylelint` analyzes the CSS code (`*.css` files in the `theme/` directory) in the package.
 
 Examples:
 
@@ -124,9 +130,24 @@ Examples:
 npm run stylelint
 ```
 
-### `dll:build`
+### `build:dist`
 
-Creates a DLL-compatible package build which can be loaded into an editor using {@link installation/advanced/dll-builds DLL builds}.
+Creates npm and browser builds of your plugin. These builds can be added to the editor by following the {@link getting-started/setup/configuration Configuring CKEditor 5 features} guide.
+
+Examples:
+
+```bash
+# Builds the `npm` and browser files thats are ready to publish.
+npm run build:dist
+```
+
+### `dll:build` (*)
+
+<info-box warning>
+	This script is not available if the plugin was generated with the `current` value of the `--installation-methods` flag.
+</info-box>
+
+Creates a DLL-compatible package build which can be loaded into an editor using {@link getting-started/advanced/dll-builds DLL builds}.
 
 Examples:
 
@@ -138,9 +159,13 @@ npm run dll:build
 npm run dll:build -- --watch
 ```
 
-### `dll:serve`
+### `dll:serve` (*)
 
-Creates a simple HTTP server (without the live-reload mechanism) that allows verifying whether the DLL build of the package is compatible with the CKEditor&nbsp;5 {@link installation/advanced/dll-builds DLL builds}.
+<info-box warning>
+	This script is not available if the plugin was generated with the `current` value of the `--installation-methods` flag.
+</info-box>
+
+Creates a simple HTTP server (without the live-reload mechanism) that allows verifying whether the DLL build of the package is compatible with the CKEditor&nbsp;5 {@link getting-started/advanced/dll-builds DLL builds}.
 
 Examples:
 
@@ -155,13 +180,13 @@ npm run dll:serve
 
 ### `translations:collect`
 
-Collects translation messages (arguments of the `t()` function) and context files, then validates whether the provided values do not interfere with the values specified in the `@ckeditor/ckeditor5-core` package.
+Collects translation messages (arguments of the `t()` function) and context files. Then validates whether the provided values do not interfere with the values specified in the `@ckeditor/ckeditor5-core` package.
 
 The task may end with an error if one of the following conditions is met:
 
-* Found the `Unused context` error &ndash; entries specified in the `lang/contexts.json` file are not used in source files. They should be removed.
-* Found the `Context is duplicated for the id` error &ndash; some of the entries are duplicated. Consider removing them from the `lang/contexts.json` file, or rewrite them.
-* Found the `Context for the message id is missing` error &ndash; entries specified in the source files are not described in the `lang/contexts.json` file. They should be added.
+* The `Unused context` error is found &ndash; Entries specified in the `lang/contexts.json` file are not used in source files. They should be removed.
+* The `Context is duplicated for the id` error is found &ndash; Some of the entries are duplicated. Consider removing them from the `lang/contexts.json` file, or rewrite them.
+* The `Context for the message id is missing` error is found &ndash; Entries specified in the source files are not described in the `lang/contexts.json` file. They should be added.
 
 Examples:
 
@@ -171,12 +196,18 @@ npm run translations:collect
 
 ### `translations:download`
 
-Download translations from the Transifex server. Depending on users' activity in the project, it creates translations files used for building the editor.
+Downloads translations from the Transifex server. Depending on users' activity in the project, it creates translation files used for building the editor.
 
 <info-box info>
-The task requires passing an organization and project names. Usually, it matches the following format: `https://www.transifex.com/[ORGANIZATION]/[PROJECT]`.
+	The task requires passing an organization and project names. Usually, it matches the following format: `https://www.transifex.com/[ORGANIZATION]/[PROJECT]`.
 
-To avoid passing these options every time the command calls for it, you can store it in `package.json`, next to the `ckeditor5-package-tools translations:download` command.
+	To avoid passing these options every time the command calls for it, you can store it in `package.json`, next to the `ckeditor5-package-tools translations:download` command.
+
+```json
+"scripts": {
+  "translations:download": "ckeditor5-package-tools translations:upload --organization=[ORGANIZATION] --project=[PROJECT]"
+},
+```
 </info-box>
 
 Examples:
@@ -190,9 +221,15 @@ npm run translations:download -- --organization [ORGANIZATION] --project [PROJEC
 Uploads translation messages onto the Transifex server. It allows for the creation of translations into other languages by users using the Transifex platform.
 
 <info-box info>
-The task requires passing an organization and project names. Usually, it matches the following format: `https://www.transifex.com/[ORGANIZATION]/[PROJECT]`.
+	The task requires passing an organization and project names. Usually, it matches the following format: `https://www.transifex.com/[ORGANIZATION]/[PROJECT]`.
 
-To avoid passing these options every time the command calls for it, you can store it in `package.json`, next to the `ckeditor5-package-tools translations:upload` command.
+	To avoid passing these options every time the command calls for it, you can store it in `package.json`, next to the `ckeditor5-package-tools translations:upload` command.
+
+```json
+"scripts": {
+  "translations:upload": "ckeditor5-package-tools translations:upload --organization=[ORGANIZATION] --project=[PROJECT]"
+},
+```
 </info-box>
 
 Examples:
@@ -203,35 +240,38 @@ npm run translations:upload -- --organization [ORGANIZATION] --project [PROJECT]
 
 ### `prepare`
 
-Npm supports some special [life cycle scripts](https://docs.npmjs.com/cli/v7/using-npm/scripts#life-cycle-scripts) that allow automatically performing operations in certain situations:
+Npm supports some special [life cycle scripts](https://docs.npmjs.com/cli/v7/using-npm/scripts#life-cycle-scripts). They allow automatically performing operations in certain situations:
 
-- `prepare`: Triggers during package creation and before publishing.
+* `prepare` &ndash; Triggers during package creation and before publishing.
 
-That script simply creates a DLL-compatible package build after creation and before publishing the package.
+This script creates npm and browser builds of your plugin.
+<info-box warning>
+	If during the package creation the `--installation-methods` flag value was set to `current` the script creates npm and browser build only without CKEditor&nbsp;5's legacy installation methods.
+</info-box>
 
-## How to change ESLint configuration?
+## How to change ESLint configuration
 
-To change the ESLint configuration, edit the [.eslintrc.js](https://github.com/ckeditor/ckeditor5-package-generator/blob/master/.eslintrc.js) file. It is also a good idea to check out the [ESLint docs](https://eslint.org/docs/rules/).
+To change the ESLint configuration, edit the [.eslintrc.js](https://github.com/ckeditor/ckeditor5-package-generator/blob/master/.eslintrc.js) file. It is also a good idea to check out the [ESLint documentation](https://eslint.org/docs/rules/).
 
-### Why are the predefined ESLint rules recommended?
+### Why are the predefined ESLint rules recommended
 
-To make CKEditor&nbsp;5 plugins compatible with each other, we needed to introduce certain limitations when importing files from packages. To learn more, visit the {@link installation/advanced/dll-builds DLL guide} and {@link framework/contributing/code-style#dll-builds-ckeditor5-rulesckeditor-imports see a detailed explanation} about the limitations.
+To make CKEditor&nbsp;5 plugins compatible with each other, we needed to introduce certain limitations when importing files from packages. To learn more, visit the {@link getting-started/advanced/dll-builds DLL guide} and {@link framework/contributing/code-style#dll-builds-ckeditor5-rulesckeditor-imports see a detailed explanation} about the limitations.
 
 ## Translations
 
-Packages created by this tool, just like the entirety of the CKEditor&nbsp;5 ecosystem, include full support for localization. If you wish to include translations for your package, visit the {@link framework/deep-dive/localization dedicated translation guide} and learn more.
+Packages created by this tool, just like the entirety of the CKEditor&nbsp;5 ecosystem, include full support for localization. If you wish to include translations for your package, visit the {@link framework/deep-dive/localization dedicated translation guide} to learn more.
 
 The package generator provides several tools for handling translations in the created package. We recommend the following flow when dealing with translations:
 
-1. Call `npm run translations:download` &ndash; download the latest version of translations.
+1. Call `npm run translations:download` &ndash; Download the latest version of translations.
     * If there are changes in the `lang/translations/*` files, commit them as they represent new or updated translation files.
-1. Call `npm run translations:collect` &ndash; verify whether contexts are up-to-date.
-1. Call `npm run translations:upload` &ndash; upload new translations.
-1. Call `npm run translations:download` &ndash; if new contexts were uploaded, it updates the `en.po` file in the package. Do not forget to commit the change.
+2. Call `npm run translations:collect` &ndash; Verify whether contexts are up-to-date.
+3. Call `npm run translations:upload` &ndash; Upload new translations.
+4. Call `npm run translations:download` &ndash; If new contexts were uploaded, it updates the `en.po` file in the package. Do not forget to commit the change.
 
 ## Reporting issues
 
-If you found a problem with CKEditor&nbsp;5 or the package generator, please, report an issue:
+If you found a problem with CKEditor&nbsp;5 or the package generator, report an issue:
 
 * [CKEditor&nbsp;5](https://github.com/ckeditor/ckeditor5/issues/new/choose)
 * [The package generator](https://github.com/ckeditor/ckeditor5-package-generator/issues/new)

@@ -1,4 +1,4 @@
-# Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
+# Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
 #
 #                                     !!! IMPORTANT !!!
 #
@@ -20,6 +20,10 @@ msgstr ""
 msgctxt "Name of the special characters plugins, visible in a dropdown and as a button tooltip."
 msgid "Special characters"
 msgstr "Caracteres especiais"
+
+msgctxt "A label for a special character dropdown with symbol categories."
+msgid "Category"
+msgstr "Categoria"
 
 msgctxt "A category name is displayed in a special characters dropdown representing all available symbols."
 msgid "All"
@@ -927,7 +931,7 @@ msgstr "Diferencial parcial"
 
 msgctxt "A label for the \"for all\" symbol."
 msgid "For all"
-msgstr "Para todos"
+msgstr "Para todo"
 
 msgctxt "A label for the \"there exists\" symbol."
 msgid "There exists"
@@ -1072,7 +1076,3 @@ msgstr "Símbolo de parágrafo"
 msgctxt "A label for the \"reversed paragraph sign\" symbol."
 msgid "Reversed paragraph sign"
 msgstr "Símbolo de parágrafo invertido"
-
-msgctxt "A label for a tooltip showing when the user hovers over the plugin icon."
-msgid "Character categories"
-msgstr "Categoria de caracteres"

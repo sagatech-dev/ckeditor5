@@ -1,6 +1,6 @@
 {
   "name": "@ckeditor/ckeditor5-alignment",
-  "version": "40.0.0",
+  "version": "43.0.0",
   "description": "Text alignment feature for CKEditor 5.",
   "keywords": [
     "ckeditor",
@@ -10,24 +10,27 @@
     "ckeditor5-plugin",
     "ckeditor5-dll"
   ],
+  "type": "module",
   "main": "src/index.ts",
   "dependencies": {
-    "ckeditor5": "40.0.0"
+    "@ckeditor/ckeditor5-core": "43.0.0",
+    "@ckeditor/ckeditor5-ui": "43.0.0",
+    "@ckeditor/ckeditor5-utils": "43.0.0",
+    "ckeditor5": "43.0.0"
   },
   "devDependencies": {
-    "@ckeditor/ckeditor5-block-quote": "40.0.0",
-    "@ckeditor/ckeditor5-core": "40.0.0",
-    "@ckeditor/ckeditor5-dev-utils": "^39.0.0",
-    "@ckeditor/ckeditor5-editor-classic": "40.0.0",
-    "@ckeditor/ckeditor5-engine": "40.0.0",
-    "@ckeditor/ckeditor5-enter": "40.0.0",
-    "@ckeditor/ckeditor5-heading": "40.0.0",
-    "@ckeditor/ckeditor5-image": "40.0.0",
-    "@ckeditor/ckeditor5-list": "40.0.0",
-    "@ckeditor/ckeditor5-paragraph": "40.0.0",
-    "@ckeditor/ckeditor5-theme-lark": "40.0.0",
-    "@ckeditor/ckeditor5-typing": "40.0.0",
-    "typescript": "^4.8.4",
+    "@ckeditor/ckeditor5-block-quote": "43.0.0",
+    "@ckeditor/ckeditor5-dev-utils": "^42.0.0",
+    "@ckeditor/ckeditor5-editor-classic": "43.0.0",
+    "@ckeditor/ckeditor5-engine": "43.0.0",
+    "@ckeditor/ckeditor5-enter": "43.0.0",
+    "@ckeditor/ckeditor5-heading": "43.0.0",
+    "@ckeditor/ckeditor5-image": "43.0.0",
+    "@ckeditor/ckeditor5-list": "43.0.0",
+    "@ckeditor/ckeditor5-paragraph": "43.0.0",
+    "@ckeditor/ckeditor5-theme-lark": "43.0.0",
+    "@ckeditor/ckeditor5-typing": "43.0.0",
+    "typescript": "5.0.4",
     "webpack": "^5.58.1",
     "webpack-cli": "^4.9.0"
   },
@@ -41,6 +44,7 @@
     "directory": "packages/ckeditor5-alignment"
   },
   "files": [
+    "dist",
     "lang",
     "src/**/*.js",
     "src/**/*.d.ts",
@@ -51,6 +55,7 @@
   ],
   "scripts": {
     "dll:build": "webpack",
-    "build": "tsc -p ./tsconfig.json"
+    "build": "tsc -p ./tsconfig.json",
+    "build:dist": "node ../../scripts/build-package.mjs"
   }
 }

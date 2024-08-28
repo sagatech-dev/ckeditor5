@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * @license Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
+ * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -15,7 +15,7 @@ const { provideToken } = require( '@ckeditor/ckeditor5-dev-release-tools/lib/uti
 const { Listr } = require( 'listr2' );
 const validateDependenciesVersions = require( './utils/validatedependenciesversions' );
 const parseArguments = require( './utils/parsearguments' );
-const { CKEDITOR5_ROOT_PATH, RELEASE_DIRECTORY } = require( './utils/constants' );
+const { CKEDITOR5_ROOT_PATH, RELEASE_NPM_DIRECTORY } = require( './utils/constants' );
 const getListrOptions = require( './utils/getlistroptions' );
 
 const cliArguments = parseArguments( process.argv.slice( 2 ) );
@@ -30,7 +30,7 @@ const tasks = new Listr( [
 		title: 'Validating CKEditor 5 packages.',
 		task: () => {
 			return validateDependenciesVersions( {
-				packagesDirectory: RELEASE_DIRECTORY,
+				packagesDirectory: RELEASE_NPM_DIRECTORY,
 				version: latestVersion
 			} );
 		}
@@ -39,7 +39,7 @@ const tasks = new Listr( [
 		title: 'Publishing packages.',
 		task: async ( _, task ) => {
 			return releaseTools.publishPackages( {
-				packagesDirectory: RELEASE_DIRECTORY,
+				packagesDirectory: RELEASE_NPM_DIRECTORY,
 				npmOwner: 'ckeditor',
 				npmTag: cliArguments.npmTag,
 				listrTask: task,
@@ -72,10 +72,26 @@ const tasks = new Listr( [
 						// Like in defaults, this package does not define features.
 						'ckeditor5-metadata.json'
 					]
-				}
+				},
+				requireEntryPoint: true,
+				optionalEntryPointPackages: [
+					'ckeditor5'
+				]
 			} );
 		},
 		retry: 3
+	},
+	{
+		title: 'Checking if packages that returned E409 error code were uploaded correctly.',
+		task: async ( _, task ) => {
+			return releaseTools.verifyPackagesPublishedCorrectly( {
+				packagesDirectory: RELEASE_NPM_DIRECTORY,
+				version: latestVersion,
+				onSuccess: text => {
+					task.output = text;
+				}
+			} );
+		}
 	},
 	{
 		title: 'Pushing changes.',
@@ -86,7 +102,7 @@ const tasks = new Listr( [
 			} );
 		},
 		// Nightly releases are not stored in the repository.
-		skip: cliArguments.nightly
+		skip: cliArguments.nightly || cliArguments.nightlyAlpha
 	},
 	{
 		title: 'Creating the release page.',
@@ -103,7 +119,7 @@ const tasks = new Listr( [
 			persistentOutput: true
 		},
 		// Nightly releases are not described in the changelog.
-		skip: cliArguments.nightly
+		skip: cliArguments.nightly || cliArguments.nightlyAlpha
 	}
 ], getListrOptions( cliArguments ) );
 
@@ -111,7 +127,7 @@ const tasks = new Listr( [
 	try {
 		if ( process.env.CKE5_RELEASE_TOKEN ) {
 			githubToken = process.env.CKE5_RELEASE_TOKEN;
-		} else if ( !cliArguments.nightly ) {
+		} else if ( !( cliArguments.nightly || cliArguments.nightlyAlpha ) ) {
 			githubToken = await provideToken();
 		}
 

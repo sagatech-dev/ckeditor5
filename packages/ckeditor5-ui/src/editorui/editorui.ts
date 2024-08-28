@@ -1,5 +1,5 @@
 /**
- * @license Copyright (c) 2003-2023, CKSource Holding sp. z o.o. All rights reserved.
+ * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
  */
 
@@ -9,13 +9,14 @@
 
 /* globals console */
 
-import ComponentFactory from '../componentfactory';
-import TooltipManager from '../tooltipmanager';
-import PoweredBy from './poweredby';
+import ComponentFactory from '../componentfactory.js';
+import TooltipManager from '../tooltipmanager.js';
+import PoweredBy from './poweredby.js';
+import AriaLiveAnnouncer from '../arialiveannouncer.js';
 
-import type EditorUIView from './editoruiview';
-import type ToolbarView from '../toolbar/toolbarview';
-import type { UIViewRenderEvent } from '../view';
+import type EditorUIView from './editoruiview.js';
+import type ToolbarView from '../toolbar/toolbarview.js';
+import type { UIViewRenderEvent } from '../view.js';
 
 import {
 	ObservableMixin,
@@ -26,11 +27,18 @@ import {
 
 import type { Editor } from '@ckeditor/ckeditor5-core';
 import type { ViewDocumentLayoutChangedEvent, ViewScrollToTheSelectionEvent } from '@ckeditor/ckeditor5-engine';
+import type {
+	default as MenuBarView,
+	MenuBarConfigAddedGroup,
+	MenuBarConfigAddedItem,
+	MenuBarConfigAddedMenu
+} from '../menubar/menubarview.js';
+import { normalizeMenuBarConfig } from '../menubar/utils.js';
 
 /**
  * A class providing the minimal interface that is required to successfully bootstrap any editor UI.
  */
-export default abstract class EditorUI extends ObservableMixin() {
+export default abstract class EditorUI extends /* #__PURE__ */ ObservableMixin() {
 	/**
 	 * The editor that the UI belongs to.
 	 */
@@ -57,6 +65,12 @@ export default abstract class EditorUI extends ObservableMixin() {
 	 * A helper that enables the "powered by" feature in the editor and renders a link to the project's webpage.
 	 */
 	public readonly poweredBy: PoweredBy;
+
+	/**
+	 * A helper that manages the content of an `aria-live` regions used by editor features to announce status changes
+	 * to screen readers.
+	 */
+	public readonly ariaLiveAnnouncer: AriaLiveAnnouncer;
 
 	/**
 	 * Indicates the UI is ready. Set `true` after {@link #event:ready} event is fired.
@@ -116,6 +130,16 @@ export default abstract class EditorUI extends ObservableMixin() {
 	private _focusableToolbarDefinitions: Array<FocusableToolbarDefinition> = [];
 
 	/**
+	 * All additional menu bar items, groups or menus that have their default location defined.
+	 */
+	private _extraMenuBarElements: Array<MenuBarConfigAddedItem | MenuBarConfigAddedGroup | MenuBarConfigAddedMenu> = [];
+
+	/**
+	 * The last focused element to which focus should return on `Esc` press.
+	 */
+	private _lastFocusedForeignElement: HTMLElement | null = null;
+
+	/**
 	 * Creates an instance of the editor UI class.
 	 *
 	 * @param editor The editor instance.
@@ -130,6 +154,7 @@ export default abstract class EditorUI extends ObservableMixin() {
 		this.focusTracker = new FocusTracker();
 		this.tooltipManager = new TooltipManager( editor );
 		this.poweredBy = new PoweredBy( editor );
+		this.ariaLiveAnnouncer = new AriaLiveAnnouncer( editor );
 
 		this.set( 'viewportOffset', this._readViewportOffsetFromConfig() );
 
@@ -292,6 +317,51 @@ export default abstract class EditorUI extends ObservableMixin() {
 	}
 
 	/**
+	 * Registers an extra menu bar element, which could be a single item, a group of items, or a menu containing groups.
+	 *
+	 * ```ts
+	 * // Register a new menu bar item.
+	 * editor.ui.extendMenuBar( {
+	 *   item: 'menuBar:customFunctionButton',
+	 *   position: 'after:menuBar:bold'
+	 * } );
+	 *
+	 * // Register a new menu bar group.
+	 * editor.ui.extendMenuBar( {
+	 *   group: {
+	 *     groupId: 'customGroup',
+	 *     items: [
+	 *       'menuBar:customFunctionButton'
+	 *     ]
+	 *   },
+	 *   position: 'start:help'
+	 * } );
+	 *
+	 * // Register a new menu bar menu.
+	 * editor.ui.extendMenuBar( {
+	 *   menu: {
+	 *     menuId: 'customMenu',
+	 *     label: 'customMenu',
+	 *     groups: [
+	 *       {
+	 *         groupId: 'customGroup',
+	 *         items: [
+	 *           'menuBar:customFunctionButton'
+	 *         ]
+	 *       }
+	 *     ]
+	 *   },
+	 *   position: 'after:help'
+	 * } );
+	 * ```
+	 */
+	public extendMenuBar(
+		config: MenuBarConfigAddedItem | MenuBarConfigAddedGroup | MenuBarConfigAddedMenu
+	): void {
+		this._extraMenuBarElements.push( config );
+	}
+
+	/**
 	 * Stores all editable elements used by the editor instance.
 	 *
 	 * @deprecated
@@ -312,6 +382,52 @@ export default abstract class EditorUI extends ObservableMixin() {
 			{ editorUI: this } );
 
 		return this._editableElementsMap;
+	}
+
+	/**
+	 * Initializes menu bar.
+	 */
+	protected _initMenuBar( menuBarView: MenuBarView ): void {
+		const menuBarViewElement = menuBarView.element!;
+
+		this.focusTracker.add( menuBarViewElement );
+		this.editor.keystrokes.listenTo( menuBarViewElement );
+
+		const normalizedMenuBarConfig = normalizeMenuBarConfig( this.editor.config.get( 'menuBar' ) || {} );
+
+		menuBarView.fillFromConfig( normalizedMenuBarConfig, this.componentFactory, this._extraMenuBarElements );
+
+		this.editor.keystrokes.set( 'Esc', ( data, cancel ) => {
+			if ( !menuBarViewElement.contains( this.editor.ui.focusTracker.focusedElement ) ) {
+				return;
+			}
+
+			// Bring focus back to where it came from before focusing the toolbar:
+			// If it came from outside the engine view (e.g. source editing), move it there.
+			if ( this._lastFocusedForeignElement ) {
+				this._lastFocusedForeignElement.focus();
+				this._lastFocusedForeignElement = null;
+			}
+			// Else just focus the view editing.
+			else {
+				this.editor.editing.view.focus();
+			}
+
+			cancel();
+		} );
+
+		this.editor.keystrokes.set( 'Alt+F9', ( data, cancel ) => {
+			// If menu bar is already focused do nothing.
+			if ( menuBarViewElement.contains( this.editor.ui.focusTracker.focusedElement ) ) {
+				return;
+			}
+
+			this._saveLastFocusedForeignElement();
+
+			menuBarView.isFocusBorderEnabled = true;
+			menuBarView.focus();
+			cancel();
+		} );
 	}
 
 	/**
@@ -370,22 +486,11 @@ export default abstract class EditorUI extends ObservableMixin() {
 		const editor = this.editor;
 		const editingView = editor.editing.view;
 
-		let lastFocusedForeignElement: HTMLElement | null;
 		let candidateDefinitions: Array<FocusableToolbarDefinition>;
 
 		// Focus the next focusable toolbar on <kbd>Alt</kbd> + <kbd>F10</kbd>.
 		editor.keystrokes.set( 'Alt+F10', ( data, cancel ) => {
-			const focusedElement = this.focusTracker.focusedElement as HTMLElement;
-
-			// Focus moved out of a DOM element that
-			// * is not a toolbar,
-			// * does not belong to the editing view (e.g. source editing).
-			if (
-				Array.from( this._editableElementsMap.values() ).includes( focusedElement ) &&
-				!Array.from( editingView.domRoots.values() ).includes( focusedElement )
-			) {
-				lastFocusedForeignElement = focusedElement;
-			}
+			this._saveLastFocusedForeignElement();
 
 			const currentFocusedToolbarDefinition = this._getCurrentFocusedToolbarDefinition();
 
@@ -435,9 +540,9 @@ export default abstract class EditorUI extends ObservableMixin() {
 
 			// Bring focus back to where it came from before focusing the toolbar:
 			// 1. If it came from outside the engine view (e.g. source editing), move it there.
-			if ( lastFocusedForeignElement ) {
-				lastFocusedForeignElement.focus();
-				lastFocusedForeignElement = null;
+			if ( this._lastFocusedForeignElement ) {
+				this._lastFocusedForeignElement.focus();
+				this._lastFocusedForeignElement = null;
 			}
 			// 2. There are two possibilities left:
 			//   2.1. It could be that the focus went from an editable element in the view (root or nested).
@@ -454,6 +559,23 @@ export default abstract class EditorUI extends ObservableMixin() {
 
 			cancel();
 		} );
+	}
+
+	/**
+	 * Saves last focused element that doen not belong to editing view to restore focus on `Esc`.
+	 */
+	private _saveLastFocusedForeignElement() {
+		const focusedElement = this.focusTracker.focusedElement as HTMLElement;
+
+		// Focus moved out of a DOM element that
+		// * is not a toolbar,
+		// * does not belong to the editing view (e.g. source editing).
+		if (
+			Array.from( this._editableElementsMap.values() ).includes( focusedElement ) &&
+			!Array.from( this.editor.editing.view.domRoots.values() ).includes( focusedElement )
+		) {
+			this._lastFocusedForeignElement = focusedElement;
+		}
 	}
 
 	/**
