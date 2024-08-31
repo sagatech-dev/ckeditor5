@@ -35,11 +35,12 @@ import { Table, TableToolbar, TableProperties, TableCellProperties } from '@cked
 import { TextTransformation } from '@ckeditor/ckeditor5-typing';
 import { CloudServices } from '@ckeditor/ckeditor5-cloud-services';
 import { Autosave } from '@ckeditor/ckeditor5-autosave';
+import { Base64UploadAdapter } from '@ckeditor/ckeditor5-upload';
 
 // Custom plugins
-import CustomFontSizeUI from '../custom-plugins/custom-font-ui/src/CustomFontSizeUI';
-import CustomFontFamilyUI from '../custom-plugins/custom-font-ui/src/CustomFontFamilyUI';
-import Placeholder from '../custom-plugins/placeholder/src/Placeholder';
+import CustomFontSizeUI from '../custom-plugins/custom-font-ui/src/CustomFontSizeUI.js';
+import CustomFontFamilyUI from '../custom-plugins/custom-font-ui/src/CustomFontFamilyUI.js';
+import Placeholder from '../custom-plugins/placeholder/src/Placeholder.js';
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -83,6 +84,7 @@ export default class DecoupledEditor extends DecoupledEditorBase {
 		TextTransformation,
 		CloudServices,
 		Autosave,
+		Base64UploadAdapter,
 
 		// Custom
 		CustomFontSizeUI,

@@ -18,8 +18,8 @@ import { Link } from '@ckeditor/ckeditor5-link';
 import { List, ListProperties } from '@ckeditor/ckeditor5-list';
 import { Table, TableToolbar, TableProperties, TableCellProperties } from '@ckeditor/ckeditor5-table';
 import { CloudServices } from '@ckeditor/ckeditor5-cloud-services';
-import CustomFontSizeUI from '../custom-plugins/custom-font-ui/src/CustomFontSizeUI';
-import Placeholder from '../custom-plugins/placeholder/src/Placeholder';
+import CustomFontSizeUI from '../custom-plugins/custom-font-ui/src/CustomFontSizeUI.js';
+import Placeholder from '../custom-plugins/placeholder/src/Placeholder.js';
 export default class DecoupledEditor extends DecoupledEditorBase {
     static builtinPlugins: (typeof Essentials | typeof Alignment | typeof FontBackgroundColor | typeof FontColor | typeof FontFamily | typeof FontSize | typeof Heading | typeof Autoformat | typeof Bold | typeof Italic | typeof Strikethrough | typeof Underline | typeof BlockQuote | typeof Image | typeof ImageCaption | typeof ImageResize | typeof ImageStyle | typeof ImageToolbar | typeof ImageUpload | typeof CloudServices | typeof CKBox | typeof CKFinder | typeof List | typeof ListProperties | typeof Indent | typeof Link | typeof Table | typeof TableCellProperties | typeof TableProperties | typeof TableToolbar | typeof PictureEditing | typeof CustomFontSizeUI | typeof Placeholder)[];
     static defaultConfig: {

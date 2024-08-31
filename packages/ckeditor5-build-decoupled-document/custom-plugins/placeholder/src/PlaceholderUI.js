@@ -1,7 +1,12 @@
-import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
-import { addListToDropdown, createDropdown } from '@ckeditor/ckeditor5-ui/src/dropdown/utils';
-import Collection from '@ckeditor/ckeditor5-utils/src/collection';
-import Model from '@ckeditor/ckeditor5-ui/src/model';
+/**
+ * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ */
+
+import Plugin from '@ckeditor/ckeditor5-core/src/plugin.js';
+import { addListToDropdown, createDropdown } from '@ckeditor/ckeditor5-ui/src/dropdown/utils.js';
+import Collection from '@ckeditor/ckeditor5-utils/src/collection.js';
+import Model from '@ckeditor/ckeditor5-ui/src/model.js';
 import placeholderIcon from '../icon/placeholder.svg';
 import listIcon from '../icon/list.svg';
 import fixedIcon from '../icon/fixed.svg';
@@ -20,7 +25,7 @@ export default class PlaceholderUI extends Plugin {
 
 			dropdownView.buttonView.set( {
 				icon: placeholderIcon,
-				label: t( 'Variables' ),
+				label: t( 'Variáveis' ),
 				tooltip: true
 			} );
 

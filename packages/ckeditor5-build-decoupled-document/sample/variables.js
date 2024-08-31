@@ -1,3 +1,8 @@
+/**
+ * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ */
+
 const variables = [
 	{
 		'name': 'ALTURA DO PACIENTE',
@@ -5,6 +10,14 @@ const variables = [
 		'is_fixed': true,
 		'is_solved': false,
 		'value': null,
+		'options': null
+	},
+	{
+		'name': 'SERVICES',
+		'attr': 'quoted_services',
+		'is_fixed': true,
+		'is_solved': true,
+		'value': '<table><tbody><tr><td>Serviço</td><td>Quantidade</td><td>Preço</td><tr><tr><td>123 - Desenvolvimento de Sistema</td><td>1</td><td>R$ 15,70</td></tr></tbody></table>',
 		'options': null
 	},
 	{
