@@ -253,7 +253,7 @@ export default class PlaceholderEditing extends Plugin {
 
 		function createModelWidget( modelElement, viewWriter ) {
 			const isBlock = modelElement.getAttribute( 'isBlock' );
-			const placeholder = {
+			let placeholder = {
 				title: modelElement.getAttribute( 'name' ),
 				class: 'placeholder' +
                     ( modelElement.getAttribute( 'isFixed' ) ? ' placeholder-solved' : ' placeholder-pointer' ) +
@@ -266,18 +266,26 @@ export default class PlaceholderEditing extends Plugin {
 				'data-is-block': isBlock,
 				'data-options': modelElement.getAttribute( 'options' )
 			};
+			if ( isBlock ) {
+				placeholder = {
+					...placeholder,
+					class: placeholder.class + ' table'
+
+				};
+			}
 			const placeholderView = viewWriter.createContainerElement( isBlock ? 'figure' : 'span', placeholder );
 			setContent( viewWriter, placeholder, placeholderView );
 			return toWidget( placeholderView, viewWriter );
 		}
 
 		function setContent( viewWriter, placeholder, placeholderView ) {
-			console.log( viewWriter );
 			if ( placeholder[ 'data-is-block' ] ) {
-				const rElement = viewWriter.createRawElement( 'figure', { class: 'placeholder' }, function( domElement ) {
+				const rElement = viewWriter.createUIElement( 'div', null, function( domDocument ) {
+					const domElement = this.toDomElement( domDocument );
 					domElement.innerHTML = placeholder[ 'data-is-solved' ] ?
 						placeholder[ 'data-value' ] :
 						placeholder[ 'data-name' ];
+					return domElement;
 				} );
 				viewWriter.insert( viewWriter.createPositionAt( placeholderView, 0 ), rElement );
 			} else {
