@@ -10,8 +10,8 @@ export default class PlaceholderEditing extends Plugin {
     _defineSchema(): void;
     _defineConverters(): void;
 }
-import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
-import ContextualBalloon from '@ckeditor/ckeditor5-ui/src/panel/balloon/contextualballoon';
-import PlaceholderOptionsView from './PlaceholderOptionsView';
-import PlaceholderInputView from './PlaceholderInputView';
-import Widget from '@ckeditor/ckeditor5-widget/src/widget';
+import Plugin from '@ckeditor/ckeditor5-core/src/plugin.js';
+import ContextualBalloon from '@ckeditor/ckeditor5-ui/src/panel/balloon/contextualballoon.js';
+import PlaceholderOptionsView from './PlaceholderOptionsView.js';
+import PlaceholderInputView from './PlaceholderInputView.js';
+import Widget from '@ckeditor/ckeditor5-widget/src/widget.js';

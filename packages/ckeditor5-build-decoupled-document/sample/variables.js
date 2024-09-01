@@ -9,6 +9,7 @@ const variables = [
 		'attr': 'patient_height',
 		'is_fixed': true,
 		'is_solved': false,
+		'is_block': false,
 		'value': null,
 		'options': null
 	},
@@ -17,7 +18,8 @@ const variables = [
 		'attr': 'quoted_services',
 		'is_fixed': true,
 		'is_solved': true,
-		'value': '<table><tbody><tr><td>Serviço</td><td>Quantidade</td><td>Preço</td><tr><tr><td>123 - Desenvolvimento de Sistema</td><td>1</td><td>R$ 15,70</td></tr></tbody></table>',
+		'is_block': true,
+		'value': '<table><thead><tr><th style=width:60%>Serviço<th style=text-align:center>Quantidade<th style=text-align:right>Preço<tbody><tr><td><p>D9 - Consultoria Financeira<p><span style=font-size:10pt>Análise de desempenho financeiro e aconselhamento para otimização de custos e maximização de lucro.</span><td style=text-align:center>2<td style=text-align:right>R$ 850,00<tr><td><p>C2 - Apuração de Impostos<p><span style=font-size:10pt>Cálculo e preparação das obrigações fiscais, incluindo o envio das declarações necessárias.</span><td style=text-align:center>2<td style=text-align:right>R$ 1.550,00</table>',
 		'options': null
 	},
 	{
@@ -25,6 +27,7 @@ const variables = [
 		'attr': 'treatment_code',
 		'is_fixed': true,
 		'is_solved': true,
+		'is_block': false,
 		'value': 'US-0013868-23',
 		'options': null
 	},
@@ -33,6 +36,7 @@ const variables = [
 		'attr': 'hic_name',
 		'is_fixed': true,
 		'is_solved': true,
+		'is_block': false,
 		'value': 'AMIL',
 		'options': null
 	},
@@ -41,6 +45,7 @@ const variables = [
 		'attr': 'patient_cpf',
 		'is_fixed': true,
 		'is_solved': false,
+		'is_block': false,
 		'value': null,
 		'options': null
 	},
@@ -49,6 +54,7 @@ const variables = [
 		'attr': 'php_crm',
 		'is_fixed': true,
 		'is_solved': true,
+		'is_block': false,
 		'value': '-',
 		'options': null
 	},
@@ -57,6 +63,7 @@ const variables = [
 		'attr': 'treatment_created_at',
 		'is_fixed': true,
 		'is_solved': true,
+		'is_block': false,
 		'value': '28/04/2023 - 12:18',
 		'options': null
 	},
@@ -65,6 +72,7 @@ const variables = [
 		'attr': 'patient_birthdate',
 		'is_fixed': true,
 		'is_solved': true,
+		'is_block': false,
 		'value': '15/01/1985',
 		'options': null
 	},
@@ -73,6 +81,7 @@ const variables = [
 		'attr': 'treatment_deadline',
 		'is_fixed': true,
 		'is_solved': true,
+		'is_block': false,
 		'value': '02/05/2023 - 12:18',
 		'options': null
 	},
@@ -81,6 +90,7 @@ const variables = [
 		'attr': 'patient_email',
 		'is_fixed': true,
 		'is_solved': false,
+		'is_block': false,
 		'value': null,
 		'options': null
 	},
@@ -89,6 +99,7 @@ const variables = [
 		'attr': 'hf_address',
 		'is_fixed': true,
 		'is_solved': true,
+		'is_block': false,
 		'value': 'SANTOS DUMONT, 2235, , Uberaba-MG, 38050400',
 		'options': null
 	},
@@ -97,6 +108,7 @@ const variables = [
 		'attr': 'patient_address',
 		'is_fixed': true,
 		'is_solved': true,
+		'is_block': false,
 		'value': ', ',
 		'options': null
 	},
@@ -105,6 +117,7 @@ const variables = [
 		'attr': 'php_address',
 		'is_fixed': true,
 		'is_solved': true,
+		'is_block': false,
 		'value': '',
 		'options': null
 	},
@@ -113,6 +126,7 @@ const variables = [
 		'attr': 'hf_business_hour',
 		'is_fixed': true,
 		'is_solved': true,
+		'is_block': false,
 		'value': '00:00:00 às 23:40:00',
 		'options': null
 	},
@@ -121,6 +135,7 @@ const variables = [
 		'attr': 'treatment_model',
 		'is_fixed': true,
 		'is_solved': true,
+		'is_block': false,
 		'value': 'Ultrassonografia',
 		'options': null
 	},
@@ -129,6 +144,7 @@ const variables = [
 		'attr': 'patient_mothername',
 		'is_fixed': true,
 		'is_solved': true,
+		'is_block': false,
 		'value': '',
 		'options': null
 	},
@@ -137,6 +153,7 @@ const variables = [
 		'attr': 'patient_name',
 		'is_fixed': true,
 		'is_solved': true,
+		'is_block': false,
 		'value': 'TIAGO',
 		'options': null
 	},
@@ -145,68 +162,23 @@ const variables = [
 		'attr': 'procedure_name',
 		'is_fixed': true,
 		'is_solved': true,
+		'is_block': false,
 		'value': 'US - Torácico extracardíaco',
 		'options': null
 	},
-	{
-		'name': 'PESO DO PACIENTE',
-		'attr': 'patient_weight',
-		'is_fixed': true,
-		'is_solved': false,
-		'value': null,
-		'options': null
-	},
+
 	{
 		'name': 'PLANO DO PACIENTE',
 		'attr': 'hicp_name',
 		'is_fixed': true,
 		'is_solved': true,
+		'is_block': false,
 		'value': 'AMIL',
-		'options': null
-	},
-	{
-		'name': 'PROCEDÊNCIA',
-		'attr': 'hf_procedence',
-		'is_fixed': true,
-		'is_solved': false,
-		'value': null,
-		'options': null
-	},
-	{
-		'name': 'PROFISSIONAL EXECUTANTE',
-		'attr': 'php_name',
-		'is_fixed': true,
-		'is_solved': false,
-		'value': null,
 		'options': null
 	},
 	{
 		'name': 'PROFISSIONAL SOLICITANTE',
 		'attr': 'rhp_name',
-		'is_fixed': true,
-		'is_solved': false,
-		'value': null,
-		'options': null
-	},
-	{
-		'name': 'RG DO PACIENTE',
-		'attr': 'patient_rg',
-		'is_fixed': true,
-		'is_solved': false,
-		'value': null,
-		'options': null
-	},
-	{
-		'name': 'SENHA DO PACIENTE',
-		'attr': 'patient_password',
-		'is_fixed': true,
-		'is_solved': false,
-		'value': null,
-		'options': null
-	},
-	{
-		'name': 'TELEFONE DO PROFISSIONAL EXECUTANTE   ',
-		'attr': 'php_phone',
 		'is_fixed': true,
 		'is_solved': false,
 		'value': null,

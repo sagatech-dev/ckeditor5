@@ -1,11 +1,16 @@
-import Plugin from '@ckeditor/ckeditor5-core/src/plugin';
-import Widget from '@ckeditor/ckeditor5-widget/src/widget';
-import PlaceholderCommand from './PlaceholderCommand';
-import { toWidget, viewToModelPositionOutsideModelElement } from '@ckeditor/ckeditor5-widget/src/utils';
-import ContextualBalloon from '@ckeditor/ckeditor5-ui/src/panel/balloon/contextualballoon';
-import PlaceholderOptionsView from './PlaceholderOptionsView';
-import PlaceholderInputView from './PlaceholderInputView';
-import { nextPlaceholder } from './PlaceholderUtils';
+/**
+ * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ */
+
+import Plugin from '@ckeditor/ckeditor5-core/src/plugin.js';
+import Widget from '@ckeditor/ckeditor5-widget/src/widget.js';
+import PlaceholderCommand from './PlaceholderCommand.js';
+import { toWidget, viewToModelPositionOutsideModelElement } from '@ckeditor/ckeditor5-widget/src/utils.js';
+import ContextualBalloon from '@ckeditor/ckeditor5-ui/src/panel/balloon/contextualballoon.js';
+import PlaceholderOptionsView from './PlaceholderOptionsView.js';
+import PlaceholderInputView from './PlaceholderInputView.js';
+import { nextPlaceholder } from './PlaceholderUtils.js';
 
 export default class PlaceholderEditing extends Plugin {
 	static get requires() {
@@ -121,6 +126,8 @@ export default class PlaceholderEditing extends Plugin {
 
 	_defineSchema() {
 		const schema = this.editor.model.schema;
+
+		// text
 		schema.register( 'placeholder', {
 
 			// Allow wherever text is allowed:
@@ -131,7 +138,21 @@ export default class PlaceholderEditing extends Plugin {
 			isInline: true,
 
 			// The placeholder can have many types, like date, name, surname, etc:
-			allowAttributes: [ 'name', 'attr', 'value', 'isFixed', 'isSolved', 'options' ]
+			allowAttributes: [ 'name', 'attr', 'value', 'isFixed', 'isSolved', 'isBlock', 'options' ]
+		} );
+
+		// block
+		schema.register( 'placeholderBlock', {
+
+			// Allow wherever block is allowed:
+			allowIn: [ '$root', '$container' ],
+			allowAttributesOf: 'table',
+
+			// The placeholder will act as an block node:
+			isBlock: true,
+
+			// The placeholder can have many types, like date, name, surname, etc:
+			allowAttributes: [ 'name', 'attr', 'value', 'isFixed', 'isSolved', 'isBlock', 'options' ]
 		} );
 	}
 
@@ -140,19 +161,21 @@ export default class PlaceholderEditing extends Plugin {
 		const conversion = editor.conversion;
 		const variables = editor.config.get( 'variables' );
 
+		// Define upcast conversion:
 		conversion.for( 'upcast' ).elementToElement( {
 			view: {
-				name: 'span',
 				classes: [ 'placeholder' ]
 			},
 			model: ( viewElement, conversionApi ) => {
 				const modelWriter = conversionApi.writer;
+				const isBlock = viewElement.getAttribute( 'data-is-block' );
 				const data = {
 					name: viewElement.getAttribute( 'data-name' ),
 					attr: viewElement.getAttribute( 'data-attr' ),
 					value: viewElement.getAttribute( 'data-value' ),
 					isFixed: viewElement.getAttribute( 'data-is-fixed' ),
 					isSolved: viewElement.getAttribute( 'data-is-solved' ),
+					isBlock,
 					options: viewElement.getAttribute( 'data-options' )
 				};
 
@@ -173,7 +196,7 @@ export default class PlaceholderEditing extends Plugin {
 						}
 					}
 				}
-				return modelWriter.createElement( 'placeholder', data );
+				return modelWriter.createElement( isBlock ? 'placeholderBlock' : 'placeholder', data );
 			}
 		} );
 
@@ -185,11 +208,18 @@ export default class PlaceholderEditing extends Plugin {
 				return createModelWidget( modelElement, viewWriter );
 			}
 		} );
+		conversion.for( 'downcast' ).elementToElement( {
+			model: 'placeholderBlock',
+			view: ( modelElement, conversionApi ) => {
+				const viewWriter = conversionApi.writer;
+				return createModelWidget( modelElement, viewWriter );
+			}
+		} );
 
 		conversion.for( 'downcast' ).add( dispatcher => {
 			dispatcher.on( 'attribute', ( evt, data, conversionApi ) => {
 				const modelElement = data.item;
-				if ( modelElement.name !== 'placeholder' ) {
+				if ( ![ 'placeholder', 'placeholderBlock' ].includes( modelElement.name ) ) {
 					return;
 				}
 
@@ -215,12 +245,14 @@ export default class PlaceholderEditing extends Plugin {
 				setContent( wrt, {
 					'data-name': modelElement.getAttribute( 'name' ),
 					'data-value': modelElement.getAttribute( 'value' ),
-					'data-is-solved': modelElement.getAttribute( 'isSolved' )
+					'data-is-solved': modelElement.getAttribute( 'isSolved' ),
+					'data-is-block': modelElement.getAttribute( 'isBlock' )
 				}, placeholderView );
 			} );
 		} );
 
 		function createModelWidget( modelElement, viewWriter ) {
+			const isBlock = modelElement.getAttribute( 'isBlock' );
 			const placeholder = {
 				title: modelElement.getAttribute( 'name' ),
 				class: 'placeholder' +
@@ -231,18 +263,29 @@ export default class PlaceholderEditing extends Plugin {
 				'data-value': modelElement.getAttribute( 'value' ),
 				'data-is-fixed': modelElement.getAttribute( 'isFixed' ),
 				'data-is-solved': modelElement.getAttribute( 'isSolved' ),
+				'data-is-block': isBlock,
 				'data-options': modelElement.getAttribute( 'options' )
 			};
-			const placeholderView = viewWriter.createContainerElement( 'span', placeholder );
+			const placeholderView = viewWriter.createContainerElement( isBlock ? 'figure' : 'span', placeholder );
 			setContent( viewWriter, placeholder, placeholderView );
 			return toWidget( placeholderView, viewWriter );
 		}
 
 		function setContent( viewWriter, placeholder, placeholderView ) {
-			const innerText = viewWriter.createText( placeholder[ 'data-is-solved' ] ?
-				placeholder[ 'data-value' ] :
-				placeholder[ 'data-name' ] );
-			viewWriter.insert( viewWriter.createPositionAt( placeholderView, 0 ), innerText );
+			console.log( viewWriter );
+			if ( placeholder[ 'data-is-block' ] ) {
+				const rElement = viewWriter.createRawElement( 'figure', { class: 'placeholder' }, function( domElement ) {
+					domElement.innerHTML = placeholder[ 'data-is-solved' ] ?
+						placeholder[ 'data-value' ] :
+						placeholder[ 'data-name' ];
+				} );
+				viewWriter.insert( viewWriter.createPositionAt( placeholderView, 0 ), rElement );
+			} else {
+				const innerText = viewWriter.createText( placeholder[ 'data-is-solved' ] ?
+					placeholder[ 'data-value' ] :
+					placeholder[ 'data-name' ] );
+				viewWriter.insert( viewWriter.createPositionAt( placeholderView, 0 ), innerText );
+			}
 		}
 	}
 }
