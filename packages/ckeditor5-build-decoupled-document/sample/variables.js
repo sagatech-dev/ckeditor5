@@ -15,7 +15,16 @@ const variables = [
 	},
 	{
 		'name': 'SERVICES',
-		'attr': 'quoted_services',
+		'attr': 'quoted_services1',
+		'is_fixed': true,
+		'is_solved': false,
+		'is_block': true,
+		'value': null,
+		'options': null
+	},
+	{
+		'name': 'SERVICES SOLVED',
+		'attr': 'quoted_services2',
 		'is_fixed': true,
 		'is_solved': true,
 		'is_block': true,

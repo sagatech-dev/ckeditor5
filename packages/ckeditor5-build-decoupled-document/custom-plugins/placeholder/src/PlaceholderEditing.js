@@ -237,6 +237,7 @@ export default class PlaceholderEditing extends Plugin {
 				}
 				wrt.setAttribute( 'data-value', modelElement.getAttribute( 'value' ), placeholderView );
 				wrt.setAttribute( 'data-is-solved', modelElement.getAttribute( 'isSolved' ), placeholderView );
+				wrt.setAttribute( 'data-is-block', modelElement.getAttribute( 'isBlock' ), placeholderView );
 
 				// Remove current placeholder element contents.
 				wrt.remove( placeholderView.getChild( 0 ) );
@@ -253,11 +254,12 @@ export default class PlaceholderEditing extends Plugin {
 
 		function createModelWidget( modelElement, viewWriter ) {
 			const isBlock = modelElement.getAttribute( 'isBlock' );
-			let placeholder = {
+			const placeholder = {
 				title: modelElement.getAttribute( 'name' ),
 				class: 'placeholder' +
                     ( modelElement.getAttribute( 'isFixed' ) ? ' placeholder-solved' : ' placeholder-pointer' ) +
-                    ( modelElement.getAttribute( 'isSolved' ) ? ' placeholder-solved' : '' ),
+                    ( modelElement.getAttribute( 'isSolved' ) ? ' placeholder-solved' : '' ) +
+					( isBlock ? ' placeholder-block' : '' ),
 				'data-name': modelElement.getAttribute( 'name' ),
 				'data-attr': modelElement.getAttribute( 'attr' ),
 				'data-value': modelElement.getAttribute( 'value' ),
@@ -266,13 +268,6 @@ export default class PlaceholderEditing extends Plugin {
 				'data-is-block': isBlock,
 				'data-options': modelElement.getAttribute( 'options' )
 			};
-			if ( isBlock ) {
-				placeholder = {
-					...placeholder,
-					class: placeholder.class + ' table'
-
-				};
-			}
 			const placeholderView = viewWriter.createContainerElement( isBlock ? 'figure' : 'span', placeholder );
 			setContent( viewWriter, placeholder, placeholderView );
 			return toWidget( placeholderView, viewWriter );
@@ -280,12 +275,10 @@ export default class PlaceholderEditing extends Plugin {
 
 		function setContent( viewWriter, placeholder, placeholderView ) {
 			if ( placeholder[ 'data-is-block' ] ) {
-				const rElement = viewWriter.createUIElement( 'div', null, function( domDocument ) {
-					const domElement = this.toDomElement( domDocument );
+				const rElement = viewWriter.createRawElement( 'div', null, function( domElement ) {
 					domElement.innerHTML = placeholder[ 'data-is-solved' ] ?
 						placeholder[ 'data-value' ] :
-						placeholder[ 'data-name' ];
-					return domElement;
+						`<p style="text-align: center">${ placeholder[ 'data-name' ] }</p>`;
 				} );
 				viewWriter.insert( viewWriter.createPositionAt( placeholderView, 0 ), rElement );
 			} else {
