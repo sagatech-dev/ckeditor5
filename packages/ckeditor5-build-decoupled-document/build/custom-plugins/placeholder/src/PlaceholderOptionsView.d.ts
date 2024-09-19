@@ -46,7 +46,7 @@ export default class PlaceholderOptionsView {
     focus(value: any): void;
     _createOptions(editor: any, data: any, placeholder: any): any[];
 }
-import FocusTracker from '@ckeditor/ckeditor5-utils/src/focustracker';
-import KeystrokeHandler from '@ckeditor/ckeditor5-utils/src/keystrokehandler';
-import ViewCollection from '@ckeditor/ckeditor5-ui/src/viewcollection';
-import FocusCycler from '@ckeditor/ckeditor5-ui/src/focuscycler';
+import FocusTracker from '@ckeditor/ckeditor5-utils/src/focustracker.js';
+import KeystrokeHandler from '@ckeditor/ckeditor5-utils/src/keystrokehandler.js';
+import ViewCollection from '@ckeditor/ckeditor5-ui/src/viewcollection.js';
+import FocusCycler from '@ckeditor/ckeditor5-ui/src/focuscycler.js';

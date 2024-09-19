@@ -1,6 +1,11 @@
+/**
+ * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ */
+
 // Add eventos
-import ViewPosition from '@ckeditor/ckeditor5-engine/src/view/position';
-import ViewTreeWalker from '@ckeditor/ckeditor5-engine/src/view/treewalker';
+import ViewPosition from '@ckeditor/ckeditor5-engine/src/view/position.js';
+import ViewTreeWalker from '@ckeditor/ckeditor5-engine/src/view/treewalker.js';
 
 export function addCustomEvents( editor ) {
 	// Utiliza F6 para avançar variaveis
@@ -24,7 +29,11 @@ export function nextPlaceholder( editor, fromStart ) {
 	for ( const element of walker ) {
 		if ( element.type === 'elementStart' ) {
 			const item = element.item;
-			if ( item.hasClass( 'placeholder' ) && item.hasAttribute( 'data-is-fixed' ) && !item.getAttribute( 'data-is-fixed' ) && !item.getAttribute( 'data-is-solved' ) ) {
+			if ( item.hasClass( 'placeholder' ) &&
+				item.hasAttribute( 'data-is-fixed' ) &&
+				!item.getAttribute( 'data-is-fixed' ) &&
+				!item.getAttribute( 'data-is-solved' )
+			) {
 				const modelElement = editor.editing.mapper.toModelElement( item );
 				editor.model.change( writer => {
 					writer.setSelection( modelElement, 'in' );
@@ -45,7 +54,7 @@ export function nextPlaceholder( editor, fromStart ) {
 /**
  * @return {boolean}
  */
-export function IsJsonString( str ) {
+export function isJsonString( str ) {
 	try {
 		JSON.parse( str );
 	} catch ( e ) {
@@ -53,4 +62,3 @@ export function IsJsonString( str ) {
 	}
 	return true;
 }
-

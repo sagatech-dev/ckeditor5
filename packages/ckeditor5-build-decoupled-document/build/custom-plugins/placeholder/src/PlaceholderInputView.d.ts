@@ -4,7 +4,7 @@
  *
  * @extends View
  */
-export default class PlaceholderInputView extends View<HTMLElement> {
+export default class PlaceholderInputView {
     /**
      * @inheritDoc
      */
@@ -29,7 +29,7 @@ export default class PlaceholderInputView extends View<HTMLElement> {
      * @protected
      * @member {ViewCollection}
      */
-    protected readonly _focusables: ViewCollection<View<HTMLElement>>;
+    protected readonly _focusables: ViewCollection<import("@ckeditor/ckeditor5-ui").View<HTMLElement>>;
     /**
      * Helps cycling over {@link #_focusables} in the view.
      * @readonly
@@ -37,12 +37,15 @@ export default class PlaceholderInputView extends View<HTMLElement> {
      * @member {FocusCycler}
      */
     protected readonly focusCycler: FocusCycler;
-    focus(value: any): void;
+    /**
+     * @inheritDoc
+     */
+    render(): void;
+    focus(): void;
     _createOption(editor: any, data: any): ListItemView[];
 }
-import View from '@ckeditor/ckeditor5-ui/src/view';
-import ListItemView from '@ckeditor/ckeditor5-ui/src/list/listitemview';
-import FocusTracker from '@ckeditor/ckeditor5-utils/src/focustracker';
-import KeystrokeHandler from '@ckeditor/ckeditor5-utils/src/keystrokehandler';
-import ViewCollection from '@ckeditor/ckeditor5-ui/src/viewcollection';
-import FocusCycler from '@ckeditor/ckeditor5-ui/src/focuscycler';
+import ListItemView from '@ckeditor/ckeditor5-ui/src/list/listitemview.js';
+import FocusTracker from '@ckeditor/ckeditor5-utils/src/focustracker.js';
+import KeystrokeHandler from '@ckeditor/ckeditor5-utils/src/keystrokehandler.js';
+import ViewCollection from '@ckeditor/ckeditor5-ui/src/viewcollection.js';
+import FocusCycler from '@ckeditor/ckeditor5-ui/src/focuscycler.js';

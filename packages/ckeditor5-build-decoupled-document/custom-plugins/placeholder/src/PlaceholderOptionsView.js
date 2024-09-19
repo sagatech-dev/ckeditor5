@@ -1,13 +1,18 @@
-import ViewCollection from '@ckeditor/ckeditor5-ui/src/viewcollection';
+/**
+ * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ */
 
-import FocusTracker from '@ckeditor/ckeditor5-utils/src/focustracker';
-import FocusCycler from '@ckeditor/ckeditor5-ui/src/focuscycler';
-import KeystrokeHandler from '@ckeditor/ckeditor5-utils/src/keystrokehandler';
+import ViewCollection from '@ckeditor/ckeditor5-ui/src/viewcollection.js';
 
-import { IsJsonString, nextPlaceholder } from './PlaceholderUtils';
-import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview';
-import ListItemView from '@ckeditor/ckeditor5-ui/src/list/listitemview';
-import ListView from '@ckeditor/ckeditor5-ui/src/list/listview';
+import FocusTracker from '@ckeditor/ckeditor5-utils/src/focustracker.js';
+import FocusCycler from '@ckeditor/ckeditor5-ui/src/focuscycler.js';
+import KeystrokeHandler from '@ckeditor/ckeditor5-utils/src/keystrokehandler.js';
+
+import { isJsonString, nextPlaceholder } from './PlaceholderUtils.js';
+import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview.js';
+import ListItemView from '@ckeditor/ckeditor5-ui/src/list/listitemview.js';
+import ListView from '@ckeditor/ckeditor5-ui/src/list/listview.js';
 
 /**
  * The link actions view class. This view displays the link preview, allows
