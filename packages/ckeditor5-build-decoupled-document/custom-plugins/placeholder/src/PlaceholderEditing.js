@@ -179,20 +179,18 @@ export default class PlaceholderEditing extends Plugin {
 					options: viewElement.getAttribute( 'data-options' )
 				};
 
-				// Converte a variavel fixa caso exista attributos
-				if ( variables ) {
-					if ( data.isFixed ) {
-						const variableFound = variables.find( variable => {
-							return variable.attr === data.attr;
-						} );
-						if ( variableFound ) {
-							if ( variableFound.value ) {
-								data.value = variableFound.value;
-								data.isSolved = 1;
-							} else {
-								data.value = data.name;
-								data.isSolved = 0;
-							}
+				// Converte a variavel fixa caso exista valor
+				if ( variables && data.isFixed ) {
+					const variableFound = variables.find( variable => {
+						return variable.attr === data.attr;
+					} );
+					if ( variableFound ) {
+						if ( variableFound.value ) {
+							data.value = variableFound.value;
+							data.isSolved = 1;
+						} else {
+							data.value = data.name;
+							data.isSolved = 0;
 						}
 					}
 				}
@@ -219,23 +217,20 @@ export default class PlaceholderEditing extends Plugin {
 				};
 
 				// Converte a variavel fixa caso exista attributos
-				if ( variables ) {
-					if ( data.isFixed ) {
-						const variableFound = variables.find( variable => {
-							return variable.attr === data.attr;
-						} );
-						if ( variableFound ) {
-							if ( variableFound.value ) {
-								data.value = variableFound.value;
-								data.isSolved = 1;
-							} else {
-								data.value = data.name;
-								data.isSolved = 0;
-							}
+				if ( variables && data.isFixed ) {
+					const variableFound = variables.find( variable => {
+						return variable.attr === data.attr;
+					} );
+					if ( variableFound ) {
+						if ( variableFound.value ) {
+							data.value = variableFound.value;
+							data.isSolved = 1;
+						} else {
+							data.value = data.name;
+							data.isSolved = 0;
 						}
 					}
 				}
-				console.log( data );
 				return modelWriter.createElement( 'placeholderBlock', data );
 			}
 		} );
@@ -248,7 +243,7 @@ export default class PlaceholderEditing extends Plugin {
 				const placeholder = {
 					title: modelElement.getAttribute( 'name' ),
 					class: 'placeholder' +
-					( modelElement.getAttribute( 'isFixed' ) ? ' placeholder-solved' : ' placeholder-pointer' ) +
+					( modelElement.getAttribute( 'isFixed' ) ? '' : ' placeholder-pointer' ) +
 					( modelElement.getAttribute( 'isSolved' ) ? ' placeholder-solved' : '' ),
 					'data-name': modelElement.getAttribute( 'name' ),
 					'data-attr': modelElement.getAttribute( 'attr' ),
@@ -277,7 +272,7 @@ export default class PlaceholderEditing extends Plugin {
 				const placeholderBlock = {
 					title: modelElement.getAttribute( 'name' ),
 					class: 'placeholder-block' +
-					( modelElement.getAttribute( 'isFixed' ) ? ' placeholder-solved' : ' placeholder-pointer' ) +
+					( modelElement.getAttribute( 'isFixed' ) ? '' : ' placeholder-pointer' ) +
 					( modelElement.getAttribute( 'isSolved' ) ? ' placeholder-solved' : '' ),
 					'data-name': modelElement.getAttribute( 'name' ),
 					'data-attr': modelElement.getAttribute( 'attr' ),

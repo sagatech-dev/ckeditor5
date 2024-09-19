@@ -52,7 +52,8 @@
 	function saveData( data ) {
 		return new Promise( resolve => {
 			setTimeout( () => {
-				console.log( 'Saved', data );
+				console.log( 'Saved' );
+				console.log( data );
 
 				resolve();
 			}, 1000 );
