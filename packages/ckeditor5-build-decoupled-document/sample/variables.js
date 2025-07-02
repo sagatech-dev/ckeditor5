@@ -5,208 +5,43 @@
 
 const variables = [
 	{
-		'name': 'ALTURA DO PACIENTE',
-		'attr': 'patient_height',
+		'name': 'NOME DA EMPRESA',
+		'attr': 'company_name',
 		'is_fixed': true,
-		'is_solved': false,
+		'is_solved': true,
 		'is_block': false,
-		'value': null,
+		'value': 'Sagatech LTDA',
 		'options': null
 	},
 	{
 		'name': 'SERVICES',
-		'attr': 'quoted_services1',
-		'is_fixed': true,
-		'is_solved': false,
-		'is_block': true,
-		'value': null,
-		'options': null
-	},
-	{
-		'name': 'SERVICES SOLVED',
-		'attr': 'quoted_services2',
+		'attr': 'quoted_services',
 		'is_fixed': true,
 		'is_solved': true,
 		'is_block': true,
-		'value': '<table><thead><tr><th style=width:60%>Serviço<th style=text-align:center>Quantidade<th style=text-align:right>Preço<tbody><tr><td><p>D9 - Consultoria Financeira<p><span style=font-size:10pt>Análise de desempenho financeiro e aconselhamento para otimização de custos e maximização de lucro.</span><td style=text-align:center>2<td style=text-align:right>R$ 850,00<tr><td><p>C2 - Apuração de Impostos<p><span style=font-size:10pt>Cálculo e preparação das obrigações fiscais, incluindo o envio das declarações necessárias.</span><td style=text-align:center>2<td style=text-align:right>R$ 1.550,00</table>',
+		'value': '\n' +
+			'<table>\n' +
+			'    <thead>\n' +
+			'    <tr>\n' +
+			'        <th style=&quot;width: 60%&quot;>Serviço</th>\n' +
+			'        <th style=&quot;text-align: center&quot;>Quantidade</th>\n' +
+			'        <th style=&quot;text-align: right&quot;>Preço</th>\n' +
+			'    </tr>\n' +
+			'    </thead>\n' +
+			'    <tbody>\n' +
+			'            <tr>\n' +
+			'            <td>\n' +
+			'                <p>B1 - Contabilidade Geral</p>\n' +
+			'                <p style=&quot;font&quot;>\n' +
+			'                    <span style=&quot;font-size:10pt;&quot;>Registro e organização de todas as transações financeiras da sua empresa.</span>\n' +
+			'                </p>\n' +
+			'            </td>\n' +
+			'            <td style=&quot;text-align: center&quot;>1</td>\n' +
+			'            <td style=&quot;text-align: right&quot;>R$ 2.500,00</td>\n' +
+			'        </tr>\n' +
+			'        </tbody>\n' +
+			'</table>\n',
 		'options': null
-	},
-	{
-		'name': 'CÓDIGO DO ATENDIMENTO',
-		'attr': 'treatment_code',
-		'is_fixed': true,
-		'is_solved': true,
-		'is_block': false,
-		'value': 'US-0013868-23',
-		'options': null
-	},
-	{
-		'name': 'CONVÊNIO DO PACIENTE',
-		'attr': 'hic_name',
-		'is_fixed': true,
-		'is_solved': true,
-		'is_block': false,
-		'value': 'AMIL',
-		'options': null
-	},
-	{
-		'name': 'CPF DO PACIENTE',
-		'attr': 'patient_cpf',
-		'is_fixed': true,
-		'is_solved': false,
-		'is_block': false,
-		'value': null,
-		'options': null
-	},
-	{
-		'name': 'CRM DO PROFISSIONAL EXECUTANTE',
-		'attr': 'php_crm',
-		'is_fixed': true,
-		'is_solved': true,
-		'is_block': false,
-		'value': '-',
-		'options': null
-	},
-	{
-		'name': 'DATA DE ENTRADA DO ATENDIMENTO',
-		'attr': 'treatment_created_at',
-		'is_fixed': true,
-		'is_solved': true,
-		'is_block': false,
-		'value': '28/04/2023 - 12:18',
-		'options': null
-	},
-	{
-		'name': 'DATA DE NASCIMENTO DO PACIENTE',
-		'attr': 'patient_birthdate',
-		'is_fixed': true,
-		'is_solved': true,
-		'is_block': false,
-		'value': '15/01/1985',
-		'options': null
-	},
-	{
-		'name': 'DATA DO PRAZO DE ENTREGA',
-		'attr': 'treatment_deadline',
-		'is_fixed': true,
-		'is_solved': true,
-		'is_block': false,
-		'value': '02/05/2023 - 12:18',
-		'options': null
-	},
-	{
-		'name': 'EMAIL DO PACIENTE',
-		'attr': 'patient_email',
-		'is_fixed': true,
-		'is_solved': false,
-		'is_block': false,
-		'value': null,
-		'options': null
-	},
-	{
-		'name': 'ENDEREÇO DO ESTABELECIMENTO INTERNO',
-		'attr': 'hf_address',
-		'is_fixed': true,
-		'is_solved': true,
-		'is_block': false,
-		'value': 'SANTOS DUMONT, 2235, , Uberaba-MG, 38050400',
-		'options': null
-	},
-	{
-		'name': 'ENDEREÇO DO PACIENTE',
-		'attr': 'patient_address',
-		'is_fixed': true,
-		'is_solved': true,
-		'is_block': false,
-		'value': ', ',
-		'options': null
-	},
-	{
-		'name': 'ENDEREÇO DO PROFISSIONAL EXECUTANTE',
-		'attr': 'php_address',
-		'is_fixed': true,
-		'is_solved': true,
-		'is_block': false,
-		'value': '',
-		'options': null
-	},
-	{
-		'name': 'HORÁRIO DE FUNCIONAMENTO DO ESTABELECIMENTO INTERNO',
-		'attr': 'hf_business_hour',
-		'is_fixed': true,
-		'is_solved': true,
-		'is_block': false,
-		'value': '00:00:00 às 23:40:00',
-		'options': null
-	},
-	{
-		'name': 'MODELO DE ATENDIMENTO',
-		'attr': 'treatment_model',
-		'is_fixed': true,
-		'is_solved': true,
-		'is_block': false,
-		'value': 'Ultrassonografia',
-		'options': null
-	},
-	{
-		'name': 'NOME DA MÃE DO PACIENTE',
-		'attr': 'patient_mothername',
-		'is_fixed': true,
-		'is_solved': true,
-		'is_block': false,
-		'value': '',
-		'options': null
-	},
-	{
-		'name': 'NOME DO PACIENTE',
-		'attr': 'patient_name',
-		'is_fixed': true,
-		'is_solved': true,
-		'is_block': false,
-		'value': 'TIAGO',
-		'options': null
-	},
-	{
-		'name': 'NOME DO PROCEDIMENTO',
-		'attr': 'procedure_name',
-		'is_fixed': true,
-		'is_solved': true,
-		'is_block': false,
-		'value': 'US - Torácico extracardíaco',
-		'options': null
-	},
-
-	{
-		'name': 'PLANO DO PACIENTE',
-		'attr': 'hicp_name',
-		'is_fixed': true,
-		'is_solved': true,
-		'is_block': false,
-		'value': 'AMIL',
-		'options': null
-	},
-	{
-		'name': 'PROFISSIONAL SOLICITANTE',
-		'attr': 'rhp_name',
-		'is_fixed': true,
-		'is_solved': false,
-		'value': null,
-		'options': null
-	},
-	{
-		'name': 'P1',
-		'attr': null,
-		'is_fixed': false,
-		'is_solved': false,
-		'value': null,
-		'options': [
-			'cefálico com dorso lateral à direita',
-			'cefálico com dorso lateral à esquerda',
-			'pélvico com dorso lateral à direita',
-			'pélvico com dorso lateral à esquerda',
-			'transverso com com polo cefálico à direita',
-			'transverso com polo cefálico à esquerda'
-		]
 	},
 	{
 		'name': 'P2',

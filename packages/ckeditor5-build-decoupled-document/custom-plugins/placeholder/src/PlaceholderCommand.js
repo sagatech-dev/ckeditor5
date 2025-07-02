@@ -35,6 +35,7 @@ export default class PlaceholderCommand extends Command {
 		const model = editor.model;
 		const selection = model.document.selection;
 		addCustomEvents( editor );
-		this.isEnabled = model.schema.checkChild( selection.focus.parent, 'placeholder' );
+		this.isEnabled = model.schema.checkChild( selection.focus.parent, 'placeholder' ) ||
+			model.schema.checkChild( selection.focus.parent, 'placeholderBlock' );
 	}
 }
