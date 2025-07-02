@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
@@ -8,10 +8,9 @@
  */
 
 import { Plugin } from 'ckeditor5/src/core.js';
+import { IconUnderline } from 'ckeditor5/src/icons.js';
 import { ButtonView, MenuBarMenuListItemButtonView } from 'ckeditor5/src/ui.js';
 import { getButtonCreator } from '../utils.js';
-
-import underlineIcon from '../../theme/icons/underline.svg';
 
 const UNDERLINE = 'underline';
 
@@ -29,6 +28,13 @@ export default class UnderlineUI extends Plugin {
 	/**
 	 * @inheritDoc
 	 */
+	public static override get isOfficialPlugin(): true {
+		return true;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
 	public init(): void {
 		const editor = this.editor;
 		const t = editor.locale.t;
@@ -36,7 +42,7 @@ export default class UnderlineUI extends Plugin {
 			editor,
 			commandName: UNDERLINE,
 			plugin: this,
-			icon: underlineIcon,
+			icon: IconUnderline,
 			label: t( 'Underline' ),
 			keystroke: 'CTRL+U'
 		} );

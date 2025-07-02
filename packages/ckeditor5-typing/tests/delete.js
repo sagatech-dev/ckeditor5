@@ -1,38 +1,102 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
+import ClassicTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
 import Delete from '../src/delete.js';
+import Typing from '../src/typing.js';
+import Widget from '@ckeditor/ckeditor5-widget/src/widget.js';
 import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
 import UndoEditing from '@ckeditor/ckeditor5-undo/src/undoediting.js';
+import TodoList from '@ckeditor/ckeditor5-list/src/todolist.js';
+import List from '@ckeditor/ckeditor5-list/src/list.js';
+import Heading from '@ckeditor/ckeditor5-heading/src/heading.js';
+import { toWidget, toWidgetEditable } from '@ckeditor/ckeditor5-widget';
 import DomEventData from '@ckeditor/ckeditor5-engine/src/view/observer/domeventdata.js';
-import ClassicTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
+import { setData as setModelData, getData as getModelData } from '@ckeditor/ckeditor5-engine/src/dev-utils/model.js';
 import EventInfo from '@ckeditor/ckeditor5-utils/src/eventinfo.js';
 import Batch from '@ckeditor/ckeditor5-engine/src/model/batch.js';
 import env from '@ckeditor/ckeditor5-utils/src/env.js';
 import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
-
-/* globals document */
+import { getCode } from '@ckeditor/ckeditor5-utils/src/keyboard.js';
+import { fireBeforeInputDomEvent } from './_utils/utils.js';
 
 describe( 'Delete feature', () => {
-	let element, editor, viewDocument;
+	let element, editor, model, viewDocument;
 
 	beforeEach( () => {
 		element = document.createElement( 'div' );
 		document.body.appendChild( element );
 
 		return ClassicTestEditor
-			.create( element, { plugins: [ Delete ] } )
+			.create( element, { plugins: [ Paragraph, Widget, Delete, Typing, TodoList, List, Heading ] } )
 			.then( newEditor => {
 				editor = newEditor;
+				model = editor.model;
 				viewDocument = editor.editing.view.document;
+
+				model.schema.register( 'widget', {
+					inheritAllFrom: '$blockObject'
+				} );
+
+				model.schema.register( 'nested', {
+					allowIn: 'widget',
+					isLimit: true
+				} );
+
+				model.schema.register( 'nested-description', {
+					isLimit: true,
+					allowIn: 'widget',
+					allowContentOf: '$root'
+				} );
+
+				model.schema.extend( '$text', {
+					allowIn: [ 'nested' ],
+					allowAttributes: [ 'attr', 'bttr' ]
+				} );
+
+				model.schema.extend( 'paragraph', {
+					allowIn: 'nested'
+				} );
+
+				editor.conversion.for( 'downcast' )
+					.elementToElement( {
+						model: 'widget',
+						view: ( modelItem, { writer } ) => {
+							const div = writer.createContainerElement( 'div' );
+
+							return toWidget( div, writer, { label: 'element label' } );
+						}
+					} )
+					.elementToElement( {
+						model: 'nested',
+						view: ( modelItem, { writer } ) =>
+							toWidgetEditable( writer.createEditableElement( 'figcaption', { contenteditable: true } ), writer )
+					} );
+
+				editor.conversion.for( 'editingDowncast' ).elementToElement( {
+					model: 'nested-description',
+					view: ( modelElement, { writer: viewWriter } ) => {
+						const div = viewWriter.createEditableElement( 'div' );
+
+						return toWidgetEditable( div, viewWriter );
+					}
+				} );
 			} );
 	} );
 
 	afterEach( () => {
 		element.remove();
 		return editor.destroy();
+	} );
+
+	it( 'should have `isOfficialPlugin` static flag set to `true`', () => {
+		expect( Delete.isOfficialPlugin ).to.be.true;
+	} );
+
+	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
+		expect( Delete.isPremiumPlugin ).to.be.false;
 	} );
 
 	it( 'creates two commands', () => {
@@ -68,6 +132,19 @@ describe( 'Delete feature', () => {
 		expect( spy.calledWithMatch( 'delete', { unit: 'character', sequence: 5 } ) ).to.be.true;
 	} );
 
+	// See https://github.com/ckeditor/ckeditor5/issues/17383.
+	it( 'handles the backspace key in a nested editable', () => {
+		setModelData( model, '<widget><nested>fo[]</nested></widget>' );
+
+		expect( clickBackspace( editor ).preventedKeyDown ).to.be.false;
+
+		expect( getModelData( model ) ).to.equal( '<widget><nested>f[]</nested></widget>' );
+
+		expect( clickBackspace( editor ).preventedKeyDown ).to.be.false;
+
+		expect( getModelData( model ) ).to.equal( '<widget><nested>[]</nested></widget>' );
+	} );
+
 	it( 'passes options.selection parameter to delete command if selection to remove was specified and unit is "selection"', () => {
 		editor.setData( '<p>Foobar</p>' );
 
@@ -89,9 +166,89 @@ describe( 'Delete feature', () => {
 
 		const commandName = spy.args[ 0 ][ 0 ];
 		const options = spy.args[ 0 ][ 1 ];
-		const expectedSelection = editor.model.createSelection( editor.model.createRangeIn( editor.model.document.getRoot() ) );
+		const expectedSelection = editor.model.createSelection(
+			editor.model.createRangeIn( editor.model.document.getRoot().getChild( 0 ) )
+		);
 
 		expect( commandName ).to.equal( 'delete' );
+		expect( options.selection.isEqual( expectedSelection ) ).to.be.true;
+	} );
+
+	it( 'should fix options.selection parameter of delete command when it ends in block object (deleteContentBackward)', () => {
+		setModelData( model,
+			'<paragraph>foo</paragraph>' +
+			'<widget></widget>' +
+			'<paragraph>bar</paragraph>'
+		);
+
+		const spy = sinon.spy( editor, 'execute' );
+		const view = editor.editing.view;
+		const viewDocument = view.document;
+		const domEvt = getDomEvent();
+
+		const viewSelection = view.createSelection( view.createRange(
+			view.createPositionAt( viewDocument.getRoot().getChild( 1 ), 0 ),
+			view.createPositionAt( viewDocument.getRoot().getChild( 2 ).getChild( 0 ), 0 )
+		) );
+
+		viewDocument.fire( 'delete', new DomEventData( viewDocument, domEvt, {
+			direction: 'backward',
+			unit: 'selection',
+			sequence: 1,
+			selectionToRemove: viewSelection
+		} ) );
+
+		expect( spy.calledOnce ).to.be.true;
+
+		const commandName = spy.args[ 0 ][ 0 ];
+		const options = spy.args[ 0 ][ 1 ];
+		const expectedSelection = editor.model.createSelection(
+			editor.model.createRange(
+				editor.model.createPositionAt( editor.model.document.getRoot(), 1 ),
+				editor.model.createPositionAt( editor.model.document.getRoot().getChild( 2 ), 0 )
+			)
+		);
+
+		expect( commandName ).to.equal( 'delete' );
+		expect( options.selection.isEqual( expectedSelection ) ).to.be.true;
+	} );
+
+	it( 'should fix options.selection parameter of delete command when it ends in block object (deleteContentForward)', () => {
+		setModelData( model,
+			'<paragraph>foo</paragraph>' +
+			'<widget></widget>' +
+			'<paragraph>bar</paragraph>'
+		);
+
+		const spy = sinon.spy( editor, 'execute' );
+		const view = editor.editing.view;
+		const viewDocument = view.document;
+		const domEvt = getDomEvent();
+
+		const viewSelection = view.createSelection( view.createRange(
+			view.createPositionAt( viewDocument.getRoot().getChild( 0 ).getChild( 0 ), 3 ),
+			view.createPositionAt( viewDocument.getRoot().getChild( 1 ), 0 )
+		) );
+
+		viewDocument.fire( 'delete', new DomEventData( viewDocument, domEvt, {
+			direction: 'forward',
+			unit: 'selection',
+			sequence: 1,
+			selectionToRemove: viewSelection
+		} ) );
+
+		expect( spy.calledOnce ).to.be.true;
+
+		const commandName = spy.args[ 0 ][ 0 ];
+		const options = spy.args[ 0 ][ 1 ];
+		const expectedSelection = editor.model.createSelection(
+			editor.model.createRange(
+				editor.model.createPositionAt( editor.model.document.getRoot().getChild( 0 ), 3 ),
+				editor.model.createPositionAt( editor.model.document.getRoot(), 2 )
+			)
+		);
+
+		expect( commandName ).to.equal( 'deleteForward' );
 		expect( options.selection.isEqual( expectedSelection ) ).to.be.true;
 	} );
 
@@ -132,6 +289,103 @@ describe( 'Delete feature', () => {
 		} );
 
 		sinon.assert.notCalled( spy );
+	} );
+
+	// See:
+	// https://github.com/ckeditor/ckeditor5/issues/17383
+	// https://github.com/ckeditor/ckeditor5/issues/18356
+	describe( 'prevent backspace at the beginning of editables', () => {
+		it( 'handles the backspace key in an empty nested editable', () => {
+			setModelData( model, '<widget><nested>[]</nested></widget>' );
+
+			expect( clickBackspace( editor ).preventedKeyDown ).to.be.true;
+
+			expect( getModelData( model ) ).to.equal( '<widget><nested><paragraph>[]</paragraph></nested></widget>' );
+		} );
+
+		it( 'handles the backspace key + meta key in a nested editable', () => {
+			setModelData( model, '<widget><nested>[]</nested></widget>' );
+
+			expect( clickBackspace( editor, true ).preventedKeyDown ).to.be.true;
+
+			expect( getModelData( model ) ).to.equal( '<widget><nested><paragraph>[]</paragraph></nested></widget>' );
+		} );
+
+		it( 'handles backspace on list items (root editable)', () => {
+			setModelData( model, '<paragraph listIndent="0" listItemId="e5f06169" listType="todo">[]</paragraph>' );
+
+			expect( clickBackspace( editor ).preventedKeyDown ).to.be.true;
+
+			expect( getModelData( model ) ).to.equal( '<paragraph>[]</paragraph>' );
+		} );
+
+		it( 'handles backspace on list items (nested root-like editable)', () => {
+			setModelData(
+				model,
+				'<widget>' +
+					'<nested-description>' +
+						'<paragraph listIndent="0" listItemId="e5f06162" listType="todo">[]</paragraph>' +
+					'</nested-description>' +
+				'</widget>'
+			);
+
+			expect( clickBackspace( editor ).preventedKeyDown ).to.be.true;
+
+			expect( getModelData( model ) ).to.equal(
+				'<widget>' +
+					'<nested-description>' +
+						'<paragraph>[]</paragraph>' +
+					'</nested-description>' +
+				'</widget>'
+			);
+		} );
+
+		it( 'handles backspace on empty headings (root editable)', () => {
+			setModelData( model, '<heading1>[]</heading1>' );
+
+			expect( clickBackspace( editor ).preventedKeyDown ).to.be.true;
+
+			expect( getModelData( model ) ).to.equal( '<paragraph>[]</paragraph>' );
+		} );
+
+		it( 'handles backspace on empty headings (nested root-like editable)', () => {
+			setModelData(
+				model,
+				'<widget>' +
+					'<nested-description>' +
+						'<heading1>[]</heading1>' +
+					'</nested-description>' +
+				'</widget>'
+			);
+
+			expect( clickBackspace( editor ).preventedKeyDown ).to.be.true;
+
+			expect( getModelData( model ) ).to.equal(
+				'<widget>' +
+					'<nested-description>' +
+						'<paragraph>[]</paragraph>' +
+					'</nested-description>' +
+				'</widget>'
+			);
+		} );
+
+		it( 'should handle case where there is no valid selection range available', () => {
+			model.schema.register( 'emptyLimitContainer', {
+				allowIn: '$root',
+				isLimit: true
+			} );
+
+			editor.conversion.for( 'downcast' ).elementToElement( {
+				model: 'emptyLimitContainer',
+				view: ( modelItem, { writer } ) => writer.createContainerElement( 'div' )
+			} );
+
+			setModelData( model, '<emptyLimitContainer>[]</emptyLimitContainer>' );
+
+			expect( clickBackspace( editor ).preventedKeyDown ).to.be.true;
+
+			expect( getModelData( model ) ).to.equal( '<emptyLimitContainer>[]</emptyLimitContainer>' );
+		} );
 	} );
 } );
 
@@ -485,6 +739,39 @@ describe( 'Delete feature - undo by pressing backspace', () => {
 		} );
 	} );
 } );
+
+function clickBackspace( editor, metaKey = false ) {
+	const view = editor.editing.view;
+	const viewDocument = view.document;
+
+	const keyEventData = {
+		keyCode: getCode( 'Backspace' ),
+		preventDefault: sinon.spy(),
+		domTarget: view.getDomRoot(),
+		metaKey
+	};
+
+	const viewRange = viewDocument.selection.getFirstRange();
+	const viewRoot = view.domConverter.viewToDom( view.document.getRoot() );
+	const domRange = view.domConverter.viewRangeToDom( viewRange );
+
+	// First fire keydown event.
+	viewDocument.fire( 'keydown', new DomEventData( viewDocument, keyEventData, keyEventData ) );
+
+	// Then fire beforeinput if it's not suppressed.
+	const preventedKeyDown = keyEventData.preventDefault.called;
+
+	if ( !preventedKeyDown ) {
+		fireBeforeInputDomEvent( viewRoot, {
+			inputType: 'deleteContentBackward',
+			ranges: [ domRange ]
+		} );
+	}
+
+	return {
+		preventedKeyDown
+	};
+}
 
 function getDomEvent() {
 	return {

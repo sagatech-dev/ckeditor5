@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* globals document, console */
 
 import InlineEditor from '../src/inlineeditor.js';
 import InlineEditorUI from '../src/inlineeditorui.js';
@@ -47,6 +45,10 @@ describe( 'InlineEditor', () => {
 	describe( 'constructor()', () => {
 		beforeEach( () => {
 			editor = new InlineEditor( editorElement );
+		} );
+
+		it( 'it\'s possible to extract editor name from editor instance', () => {
+			expect( Object.getPrototypeOf( editor ).constructor.editorName ).to.be.equal( 'InlineEditor' );
 		} );
 
 		it( 'creates the UI using BoxedEditorUI classes', () => {
@@ -193,7 +195,7 @@ describe( 'InlineEditor', () => {
 			} ).then( editor => {
 				expect( editor.getData() ).to.equal( '<p>Hello world!</p>' );
 
-				editor.destroy();
+				return editor.destroy();
 			} );
 		} );
 

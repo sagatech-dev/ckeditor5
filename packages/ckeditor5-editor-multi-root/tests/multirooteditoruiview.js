@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* globals document */
 
 import MultiRootEditorUIView from '../src/multirooteditoruiview.js';
 import EditingView from '@ckeditor/ckeditor5-engine/src/view/view.js';
@@ -150,7 +148,7 @@ describe( 'MultiRootEditorUIView', () => {
 				const editingView = new EditingView();
 				const fooViewRoot = createRoot( editingView.document, 'div', 'foo' );
 				const barViewRoot = createRoot( editingView.document, 'div', 'bar' );
-				const view = new MultiRootEditorUIView( locale, editingView, [ 'foo', 'bar' ], 	{
+				const view = new MultiRootEditorUIView( locale, editingView, [ 'foo', 'bar' ], {
 					label: {
 						foo: 'Foo',
 						bar: 'Bar'

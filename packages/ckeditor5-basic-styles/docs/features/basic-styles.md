@@ -4,17 +4,16 @@ meta-title: Basic text styles | CKEditor 5 Documentation
 category: features
 ---
 
-{@snippet features/build-basic-styles-source}
-
 The basic styles feature lets you apply the most essential formatting such as bold, italic, underline, strikethrough, subscript, superscript, and code. Coupled with more [formatting features](#related-features), these serve as a base for any WYSIWYG editor toolset.
 
 ## Demo
 
 You may apply basic formatting options with toolbar buttons. You can also make use of the {@link features/autoformat autoformatting feature} that changes Markdown code to formatted text as you type. Use one of these to format text:
-* Bold &ndash; Use the bold toolbar button {@icon @ckeditor/ckeditor5-core/theme/icons/bold.svg Bold} or type `**text**` or `__text__`.
-* Italic &ndash; Use the italic toolbar button {@icon @ckeditor/ckeditor5-basic-styles/theme/icons/italic.svg Italic} or type `*text*` or `_text_`.
-* Code &ndash; Use the code toolbar button {@icon @ckeditor/ckeditor5-basic-styles/theme/icons/code.svg Code} or type ``` `text` ```.
-* Strikethrough &ndash; Use the strikethrough toolbar button {@icon @ckeditor/ckeditor5-basic-styles/theme/icons/strikethrough.svg Strikethrough} or type `~~text~~`.
+
+* Bold &ndash; Use the bold toolbar button {@icon @ckeditor/ckeditor5-icons/theme/icons/bold.svg Bold} or type `**text**` or `__text__`.
+* Italic &ndash; Use the italic toolbar button {@icon @ckeditor/ckeditor5-icons/theme/icons/italic.svg Italic} or type `*text*` or `_text_`.
+* Code &ndash; Use the code toolbar button {@icon @ckeditor/ckeditor5-icons/theme/icons/code.svg Code} or type ``` `text` ```.
+* Strikethrough &ndash; Use the strikethrough toolbar button {@icon @ckeditor/ckeditor5-icons/theme/icons/strikethrough.svg Strikethrough} or type `~~text~~`.
 
 {@snippet features/basic-styles}
 
@@ -72,13 +71,15 @@ CKEditor&nbsp;5 allows for typing both at the inner and outer boundaries of code
 	Starting with {@link updating/update-to-42 version 42.0.0}, we changed the format of import paths. This guide uses the new, shorter format. Refer to the {@link getting-started/legacy-getting-started/legacy-imports Packages in the legacy setup} guide if you use an older version of CKEditor&nbsp;5.
 </info-box>
 
-After {@link getting-started/quick-start installing the editor}, add the plugins which you need to your plugin list. Then, simply configure the toolbar items to make the features available in the user interface.
+After {@link getting-started/integrations-cdn/quick-start installing the editor}, add the plugins which you need to your plugin list. Then, simply configure the toolbar items to make the features available in the user interface.
 
+<code-switcher>
 ```js
 import { ClassicEditor, Bold, Code, Italic, Strikethrough, Subscript, Superscript, Underline } from 'ckeditor5';
 
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
+		licenseKey: '<YOUR_LICENSE_KEY>', // Or 'GPL'.
 		plugins: [ Bold, Code, Italic, Strikethrough, Subscript, Superscript, Underline ],
 		toolbar: {
 			items: [ 'bold', 'italic', 'underline', 'strikethrough', 'code', 'subscript', 'superscript'  ]
@@ -87,6 +88,7 @@ ClassicEditor
 	.then( /* ... */ )
 	.catch( /* ... */ );
 ```
+</code-switcher>
 
 ## Related features
 

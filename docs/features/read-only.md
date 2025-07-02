@@ -2,11 +2,10 @@
 category: features
 modified_at: 2021-11-15
 meta-title: Read-only support | CKEditor 5 Documentation
+meta-descritpion: Learn how to make CKEditor 5 read-only to prevent content editing. Enable, toggle, and configure read-only mode for specific use cases.
 ---
 
 # Read-only support
-
-{@snippet features/read-only-build}
 
 CKEditor&nbsp;5 offers an out-of-the-box read-only mode. You can use it to prevent users under certain circumstances from editing your content.
 

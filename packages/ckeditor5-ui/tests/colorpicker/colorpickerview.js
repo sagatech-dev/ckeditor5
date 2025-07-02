@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* globals CustomEvent, document, customElements */
 
 import ColorPickerView from './../../src/colorpicker/colorpickerview.js';
 import env from '@ckeditor/ckeditor5-utils/src/env.js';
@@ -44,7 +42,7 @@ describe( 'ColorPickerView', () => {
 
 			view.color = 'red';
 
-			expect( view.color ).to.equal( 'hsl( 0, 100%, 50% )' );
+			expect( view.color ).to.equal( 'hsl(0, 100%, 50%)' );
 
 			view.destroy();
 		} );
@@ -277,15 +275,15 @@ describe( 'ColorPickerView', () => {
 				describe( 'wrong color format', () => {
 					testColorUpdateFromInput( {
 						name: 'rgb',
-						inputValue: 'rgb( 100, 100, 100 )',
-						expectedInput: 'rgb( 100, 100, 100 )',
+						inputValue: 'rgb(100, 100, 100)',
+						expectedInput: 'rgb(100, 100, 100)',
 						expectedColorProperty: '#000000'
 					} );
 
 					testColorUpdateFromInput( {
 						name: 'hsl',
-						inputValue: 'hsl( 30, 75%, 60 % )',
-						expectedInput: 'hsl( 30, 75%, 60 % )',
+						inputValue: 'hsl(30, 75%, 60 %)',
+						expectedInput: 'hsl(30, 75%, 60 %)',
 						expectedColorProperty: '#000000'
 					} );
 
@@ -370,6 +368,36 @@ describe( 'ColorPickerView', () => {
 			view.destroy();
 			view.element.remove();
 		} );
+
+		// See: https://github.com/ckeditor/ckeditor5/issues/17069
+		it( 'should focus input before color slider to avoid selection issues', () => {
+			const buggyBrowsers = [ 'isGecko', 'isiOS', 'isSafari', 'isBlink' ];
+
+			const inputField = view.hexInputRow.children.get( 1 );
+			const slider = view.slidersView.first;
+
+			const inputSpy = sinon.spy( inputField, 'focus' );
+			const sliderSpy = sinon.spy( slider.element, 'focus' );
+
+			buggyBrowsers.forEach( browser => {
+				inputSpy.resetHistory();
+				sliderSpy.resetHistory();
+
+				mockBrowser( browser );
+
+				view.focus();
+
+				sinon.assert.callOrder( inputSpy, sliderSpy );
+				sinon.assert.calledOnce( inputSpy );
+				sinon.assert.calledOnce( sliderSpy );
+			} );
+
+			function mockBrowser( mockFlag ) {
+				for ( const flag of buggyBrowsers ) {
+					testUtils.sinon.stub( env, flag ).get( () => flag === mockFlag );
+				}
+			}
+		} );
 	} );
 
 	describe( 'isValid()', () => {
@@ -419,7 +447,7 @@ describe( 'ColorPickerView', () => {
 
 		describe( 'output format integration', () => {
 			it( 'respects rgb output format', () => {
-				testOutputFormat( 'rgb', '#001000', 'rgb( 0, 16, 0 )' );
+				testOutputFormat( 'rgb', '#001000', 'rgb(0, 16, 0)' );
 			} );
 
 			it( 'respects hex output format', () => {
@@ -427,19 +455,19 @@ describe( 'ColorPickerView', () => {
 			} );
 
 			it( 'respects hsl output format', () => {
-				testOutputFormat( 'hsl', '#3D9BFF', 'hsl( 211, 100%, 62% )' );
+				testOutputFormat( 'hsl', '#3D9BFF', 'hsl(211, 100%, 62%)' );
 			} );
 
 			it( 'respects hwb output format', () => {
-				testOutputFormat( 'hwb', '#5cb291', 'hwb( 157, 36, 30 )' );
+				testOutputFormat( 'hwb', '#5cb291', 'hwb(157, 36, 30)' );
 			} );
 
 			it( 'respects lab output format', () => {
-				testOutputFormat( 'lab', '#bfe972', 'lab( 87% -32 53 )' );
+				testOutputFormat( 'lab', '#bfe972', 'lab(87% -32 53)' );
 			} );
 
 			it( 'respects lch output format', () => {
-				testOutputFormat( 'lch', '#be0909', 'lch( 40% 81 39 )' );
+				testOutputFormat( 'lch', '#be0909', 'lch(40% 81 39)' );
 			} );
 
 			function testOutputFormat( format, inputColor, outputColor ) {

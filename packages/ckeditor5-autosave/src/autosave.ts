@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
@@ -20,9 +20,7 @@ import { DomEmitterMixin, type DomEmitter } from 'ckeditor5/src/utils.js';
 
 import type { DocumentChangeEvent } from 'ckeditor5/src/engine.js';
 
-import { debounce, type DebouncedFunc } from 'lodash-es';
-
-/* globals window */
+import { debounce, type DebouncedFunction } from 'es-toolkit/compat';
 
 /**
  * The {@link module:autosave/autosave~Autosave} plugin allows you to automatically save the data (e.g. send it to the server)
@@ -81,7 +79,7 @@ export default class Autosave extends Plugin {
 	 * Debounced save method. The `save()` method is called the specified `waitingTime` after `debouncedSave()` is called,
 	 * unless a new action happens in the meantime.
 	 */
-	private _debouncedSave: DebouncedFunc<( () => void )>;
+	private _debouncedSave: DebouncedFunction<( () => Promise<void> )>;
 
 	/**
 	 * The last saved document version.
@@ -129,6 +127,13 @@ export default class Autosave extends Plugin {
 	 */
 	public static get pluginName() {
 		return 'Autosave' as const;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public static override get isOfficialPlugin(): true {
+		return true;
 	}
 
 	/**

@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 import {
@@ -1764,6 +1764,7 @@ describe( 'List - utils - model', () => {
 
 	describe( 'outdentFollowingItems()', () => {
 		it( 'should outdent all items and keep nesting structure where possible', () => {
+			/* eslint-disable @stylistic/no-multi-spaces */
 			const input = modelList( [
 				'0',
 				'* 1',
@@ -1781,6 +1782,7 @@ describe( 'List - utils - model', () => {
 				'  * 13',
 				'    * 14'
 			] );
+			/* eslint-enable @stylistic/no-multi-spaces */
 
 			const fragment = parseModel( input, schema );
 			let changedBlocks;

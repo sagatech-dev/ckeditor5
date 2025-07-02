@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* globals document, window */
 
 import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview.js';
 import LinkEditing from '@ckeditor/ckeditor5-link/src/linkediting.js';
@@ -18,7 +16,7 @@ import CloudServicesCoreMock from './_utils/cloudservicescoremock.js';
 import ImageInsertUI from '@ckeditor/ckeditor5-image/src/imageinsert/imageinsertui.js';
 import Model from '@ckeditor/ckeditor5-ui/src/model.js';
 import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
-import { icons } from 'ckeditor5/src/core.js';
+import { IconImageAssetManager, IconBrowseFiles } from 'ckeditor5/src/icons.js';
 
 import CKBoxUI from '../src/ckboxui.js';
 import CKBoxEditing from '../src/ckboxediting.js';
@@ -71,6 +69,14 @@ describe( 'CKBoxUI', () => {
 
 	it( 'should have proper name', () => {
 		expect( CKBoxUI.pluginName ).to.equal( 'CKBoxUI' );
+	} );
+
+	it( 'should have `isOfficialPlugin` static flag set to `true`', () => {
+		expect( CKBoxUI.isOfficialPlugin ).to.be.true;
+	} );
+
+	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
+		expect( CKBoxUI.isPremiumPlugin ).to.be.false;
 	} );
 
 	it( 'should not add the "ckbox" component to the factory if the "ckbox" command does not exist', async () => {
@@ -134,7 +140,7 @@ describe( 'CKBoxUI', () => {
 
 			expect( dropdownButton ).to.be.instanceOf( ButtonView );
 			expect( dropdownButton.withText ).to.be.false;
-			expect( dropdownButton.icon ).to.equal( icons.imageAssetManager );
+			expect( dropdownButton.icon ).to.equal( IconImageAssetManager );
 			expect( dropdownButton.label ).to.equal( 'Insert image with file manager' );
 		} );
 
@@ -150,7 +156,7 @@ describe( 'CKBoxUI', () => {
 
 			expect( buttonView ).to.be.instanceOf( ButtonView );
 			expect( buttonView.withText ).to.be.true;
-			expect( buttonView.icon ).to.equal( icons.imageAssetManager );
+			expect( buttonView.icon ).to.equal( IconImageAssetManager );
 			expect( buttonView.label ).to.equal( 'Insert with file manager' );
 		} );
 
@@ -162,16 +168,17 @@ describe( 'CKBoxUI', () => {
 
 			expect( buttonView ).to.be.instanceOf( MenuBarMenuListItemButtonView );
 			expect( buttonView.withText ).to.be.true;
-			expect( buttonView.icon ).to.equal( icons.imageAssetManager );
+			expect( buttonView.icon ).to.equal( IconImageAssetManager );
 			expect( buttonView.label ).to.equal( 'With file manager' );
 		} );
 
 		it( 'should create CKBox button in menu bar - only integration', () => {
-			const buttonView = editor.ui.componentFactory.create( 'menuBar:insertImage' );
+			const submenu = editor.ui.componentFactory.create( 'menuBar:insertImage' );
+			const buttonView = submenu.panelView.children.first.items.first.children.first;
 
 			expect( buttonView ).to.be.instanceOf( MenuBarMenuListItemButtonView );
 			expect( buttonView.withText ).to.be.true;
-			expect( buttonView.icon ).to.equal( icons.imageAssetManager );
+			expect( buttonView.icon ).to.equal( IconImageAssetManager );
 			expect( buttonView.label ).to.equal( 'Image' );
 		} );
 
@@ -241,7 +248,7 @@ describe( 'CKBoxUI', () => {
 		} );
 
 		it( 'should set an #icon of the #buttonView', () => {
-			expect( button.icon ).to.equal( icons.browseFiles );
+			expect( button.icon ).to.equal( IconBrowseFiles );
 		} );
 
 		it( 'should execute the command afer firing the event', () => {

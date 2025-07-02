@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* global document */
 
 import ClassicTestEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor.js';
 import TableToolbar from '../src/tabletoolbar.js';
@@ -23,6 +21,14 @@ import ClipboardPipeline from '@ckeditor/ckeditor5-clipboard/src/clipboardpipeli
 
 describe( 'TableToolbar', () => {
 	testUtils.createSinonSandbox();
+
+	it( 'should have `isOfficialPlugin` static flag set to `true`', () => {
+		expect( TableToolbar.isOfficialPlugin ).to.be.true;
+	} );
+
+	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
+		expect( TableToolbar.isPremiumPlugin ).to.be.false;
+	} );
 
 	describe( 'contentToolbar', () => {
 		let editor, model, doc, widgetToolbarRepository, toolbar, balloon, editorElement;

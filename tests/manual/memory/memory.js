@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* globals console:false, document */
 
 import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor.js';
 import TableProperties from '@ckeditor/ckeditor5-table/src/tableproperties.js';
@@ -142,11 +140,12 @@ function initEditor() {
 			function printData() {
 				const iframeElement = document.getElementById( 'print-data-container' );
 
-				/* eslint-disable max-len */
+				/* eslint-disable @stylistic/max-len */
 				iframeElement.srcdoc = '<html>' +
 					'<head>' +
 					`<title>${ document.title }</title>` +
-					'<link rel="stylesheet" href="https://ckeditor.com/docs/ckeditor5/latest/snippets/features/page-break/snippet.css" type="text/css">' +
+					'<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/nightly/ckeditor5.css">' +
+					'<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5-premium-features/nightly/ckeditor5-premium-features.css">' +
 					'</head>' +
 					'<body class="ck-content">' +
 					editor.getData() +
@@ -155,7 +154,7 @@ function initEditor() {
 					'</script>' +
 					'</body>' +
 					'</html>';
-				/* eslint-enable max-len */
+				/* eslint-enable @stylistic/max-len */
 			}
 
 			function clearData() {

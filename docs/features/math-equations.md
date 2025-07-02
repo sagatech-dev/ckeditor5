@@ -2,6 +2,7 @@
 category: features
 menu-title: Math and chemical formulas
 meta-title: Math equations and chemical formulas | CKEditor 5 Documentation
+meta-description: Add math equations and chemical formulas to CKEditor 5 using MathType. Learn how to enable, configure, and customize math formula support.
 badges: [ premium ]
 ---
 
@@ -10,9 +11,7 @@ badges: [ premium ]
 [MathType](http://www.wiris.com/en/mathtype) is a popular mathematical and science formula editor with classical and handwriting input modes. You can use it to create math equations or chemical formulas right inside the CKEditor&nbsp;5 content.
 
 <info-box>
-	This is a premium feature that is additionally payable on top of CKEditor&nbsp;5 commercial license fee and delivered by our partner, [Wiris](https://www.wiris.com/en/). Please [contact us](https://ckeditor.com/contact/) if you have any feedback or questions.
-
-	You can also report any issues in the official [CKEditor&nbsp;5 GitHub repository](https://github.com/ckeditor/ckeditor5/issues).
+	This is a premium add-on that is a part of CKEditor Custom Plan, and delivered by our partner, [Wiris](https://www.wiris.com/en/). [Choose the Custom Plan](https://ckeditor.com/pricing/) to enable it.
 </info-box>
 
 ## Demo
@@ -75,8 +74,12 @@ import MathType from '@wiris/mathtype-ckeditor5/dist/index.js';
 
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
+		licenseKey: '<YOUR_LICENSE_KEY>', // Or 'GPL'.
 		plugins: [ MathType, /* ... */ ],
 		toolbar: [ 'MathType', 'ChemType', /* ... */ ]
+		mathTypeParameters : {
+			// Configuration.
+		}
 	} )
 	.then( /* ... */ )
 	.catch( /* ... */ );
@@ -99,16 +102,7 @@ To install the Java service, follow the steps below:
 	```js
 	ClassicEditor
 		.create( document.querySelector( '#example' ), {
-				plugins: [ MathType, /* ... */ ],
-				toolbar: {
-					items: [
-						'MathType',
-						'ChemType',
-						// More toolbar items.
-						// ...
-					]
-				},
-				language: 'en',
+				// ... Other configuration options ...
 				// MathType parameters.
 				mathTypeParameters : {
 					serviceProviderProperties : {
@@ -134,16 +128,7 @@ To install the PHP service, follow the steps below:
 	```js
 	ClassicEditor
 		.create( document.querySelector( '#example' ), {
-				plugins: [ MathType, /* ... */ ],
-				toolbar: {
-					items: [
-						'MathType',
-						'ChemType',
-						// More toolbar items.
-						// ...
-					]
-				},
-				language: 'en',
+				// ... Other configuration options ...
 				// MathType parameters.
 				mathTypeParameters : {
 					serviceProviderProperties : {
@@ -170,16 +155,7 @@ To install the .NET service, follow the steps below:
 	```js
 	ClassicEditor
 		.create( document.querySelector( '#example' ), {
-				plugins: [ MathType, /* ... */ ],
-				toolbar: {
-					items: [
-						'MathType',
-						'ChemType',
-						// More toolbar items.
-						// ...
-					]
-				},
-				language: 'en',
+				// ... Other configuration options ...
 				// MathType parameters.
 				mathTypeParameters : {
 					serviceProviderProperties : {
@@ -210,16 +186,7 @@ To install the Ruby on Rails service, follow the steps below:
 	```js
 	ClassicEditor
 		.create( document.querySelector( '#example' ), {
-				plugins: [ MathType, /* ... */ ],
-				toolbar: {
-					items: [
-						'MathType',
-						'ChemType',
-						// More toolbar items.
-						// ...
-					]
-				},
-				language: 'en',
+				// ... Other configuration options ...
 				// MathType parameters.
 				mathTypeParameters : {
 					serviceProviderProperties : {
@@ -236,5 +203,5 @@ To install the Ruby on Rails service, follow the steps below:
 
 By default, MathType returns equations in MathML which is [not supported by all browsers](https://developer.mozilla.org/en-US/docs/Web/MathML#browser_compatibility). To display equations on a page, you will need to use an engine that will handle the rendering process.
 
-Fortunately, MathType introduces the full MathML mode that handles the unsupported markup and converts it into a form that can be properly recognized by browsers. You can read more about the full MathML mode [in the documentation](https://docs.wiris.com/en/mathtype/mathtype_web/integrations/mathml-mode).
+Fortunately, MathType introduces the full MathML mode that handles the unsupported markup and converts it into a form that can be properly recognized by browsers. You can read more about the full MathML mode [in the documentation](https://docs.wiris.com/mathtype-web-interface-features/full-mathml-mode-wirispluginsjs).
 

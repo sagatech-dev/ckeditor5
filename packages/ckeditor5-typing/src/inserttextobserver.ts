@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
@@ -19,6 +19,8 @@ import {
 	type ViewDocumentSelection,
 	type ViewSelection
 } from '@ckeditor/ckeditor5-engine';
+
+// @if CK_DEBUG_TYPING // const { _buildLogMessage } = require( '@ckeditor/ckeditor5-engine/src/dev-utils/utils.js' );
 
 const TYPING_INPUT_TYPES = [
 	// For collapsed range:
@@ -69,7 +71,7 @@ export default class InsertTextObserver extends Observer {
 				return;
 			}
 
-			const { data: text, targetRanges, inputType, domEvent } = data;
+			const { data: text, targetRanges, inputType, domEvent, isComposing } = data;
 
 			if ( !typingInputTypes.includes( inputType ) ) {
 				return;
@@ -83,7 +85,8 @@ export default class InsertTextObserver extends Observer {
 
 			viewDocument.fire( eventInfo, new DomEventData( view, domEvent, {
 				text,
-				selection: view.createSelection( targetRanges )
+				selection: view.createSelection( targetRanges ),
+				isComposing
 			} ) );
 
 			// Stop the beforeinput event if `delete` event was stopped.
@@ -111,20 +114,23 @@ export default class InsertTextObserver extends Observer {
 				}
 
 				// @if CK_DEBUG_TYPING // if ( ( window as any ).logCKETyping ) {
-				// @if CK_DEBUG_TYPING // 	console.log( `%c[InsertTextObserver]%c Fire insertText event, %c${ JSON.stringify( data ) }`,
-				// @if CK_DEBUG_TYPING // 		'font-weight: bold; color: green;', 'font-weight: bold', 'color: blue'
-				// @if CK_DEBUG_TYPING // 	);
+				// @if CK_DEBUG_TYPING // 	console.log( ..._buildLogMessage( this, 'InsertTextObserver',
+				// @if CK_DEBUG_TYPING // 		`%cFire insertText event, %c${ JSON.stringify( data ) }`,
+				// @if CK_DEBUG_TYPING // 		'font-weight: bold',
+				// @if CK_DEBUG_TYPING // 		 'color: blue'
+				// @if CK_DEBUG_TYPING // 	) );
 				// @if CK_DEBUG_TYPING // }
 
 				// How do we know where to insert the composed text?
 				// 1. The SelectionObserver is blocked and the view is not updated with the composition changes.
 				// 2. The last moment before it's locked is the `compositionstart` event.
 				// 3. The `SelectionObserver` is listening for `compositionstart` event and immediately converts
-				//    the selection. Handles this at the lowest priority so after the rendering is blocked.
+				//    the selection. Handle this at the low priority so after the rendering is blocked.
 				viewDocument.fire( 'insertText', new DomEventData( view, domEvent, {
-					text: data
+					text: data,
+					isComposing: true
 				} ) );
-			}, { priority: 'lowest' } );
+			}, { priority: 'low' } );
 		}
 	}
 
@@ -169,4 +175,14 @@ export interface InsertTextEventData extends DomEventData {
 	 * If not specified, the insertion should occur at the current view selection.
 	 */
 	selection?: ViewSelection | ViewDocumentSelection;
+
+	/**
+	 * A flag indicating that event was fired during composition.
+	 *
+	 * Corresponds to the
+	 * {@link module:engine/view/document~Document#event:compositionstart},
+	 * {@link module:engine/view/document~Document#event:compositionupdate},
+	 * and {@link module:engine/view/document~Document#event:compositionend } trio.
+	 */
+	isComposing?: boolean;
 }

@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* global document, console */
 
 import {
 	View,
@@ -2201,6 +2199,89 @@ describe( 'MenuBarView', () => {
 
 			expect( getMenuByLabel( menuBarView, 'Edit' ).isOpen ).to.be.false;
 			expect( getMenuByLabel( menuBarView, 'Format' ).isOpen ).to.be.false;
+		} );
+	} );
+
+	describe( 'disable()', () => {
+		it( 'should disable all top-level sub-menus', () => {
+			menuBarView.fillFromConfig( normalizeMenuBarConfig( {
+				items: [
+					{
+						menuId: 'edit',
+						label: 'Edit',
+						groups: [
+							{
+								groupId: '1',
+								items: [
+									'item1'
+								]
+							}
+						]
+					},
+					{
+						menuId: 'format',
+						label: 'Format',
+						groups: [
+							{
+								groupId: '1',
+								items: [
+									'item1'
+								]
+							}
+						]
+					}
+				]
+			} ), factory );
+
+			menuBarView.render();
+
+			getMenuByLabel( menuBarView, 'Edit' ).isOpen = true;
+
+			menuBarView.disable();
+
+			expect( getMenuByLabel( menuBarView, 'Edit' ).isEnabled ).to.be.false;
+			expect( getMenuByLabel( menuBarView, 'Format' ).isEnabled ).to.be.false;
+		} );
+	} );
+
+	describe( 'enable()', () => {
+		it( 'should enable all top-level sub-menus', () => {
+			menuBarView.fillFromConfig( normalizeMenuBarConfig( {
+				items: [
+					{
+						menuId: 'edit',
+						label: 'Edit',
+						groups: [
+							{
+								groupId: '1',
+								items: [
+									'item1'
+								]
+							}
+						]
+					},
+					{
+						menuId: 'format',
+						label: 'Format',
+						groups: [
+							{
+								groupId: '1',
+								items: [
+									'item1'
+								]
+							}
+						]
+					}
+				]
+			} ), factory );
+
+			menuBarView.render();
+
+			menuBarView.disable();
+			menuBarView.enable();
+
+			expect( getMenuByLabel( menuBarView, 'Edit' ).isEnabled ).to.be.true;
+			expect( getMenuByLabel( menuBarView, 'Format' ).isEnabled ).to.be.true;
 		} );
 	} );
 

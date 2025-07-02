@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 import Model from '../../src/model/model.js';
@@ -22,8 +22,6 @@ import UpcastHelpers from '../../src/conversion/upcasthelpers.js';
 import DowncastHelpers from '../../src/conversion/downcasthelpers.js';
 import { expectToThrowCKEditorError } from '@ckeditor/ckeditor5-utils/tests/_utils/utils.js';
 import { StylesProcessor } from '../../src/view/stylesmap.js';
-
-/* global console */
 
 describe( 'DataController', () => {
 	let model, modelDocument, data, schema, upcastHelpers, downcastHelpers, viewDocument;

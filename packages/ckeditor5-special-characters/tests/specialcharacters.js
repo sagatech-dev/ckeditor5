@@ -1,10 +1,9 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-/* global document */
-
+import { IconSpecialCharacters } from 'ckeditor5/src/icons.js';
 import ClassicTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
 import EventInfo from '@ckeditor/ckeditor5-utils/src/eventinfo.js';
 import Typing from '@ckeditor/ckeditor5-typing/src/typing.js';
@@ -13,7 +12,6 @@ import SpecialCharactersMathematical from '../src/specialcharactersmathematical.
 import SpecialCharactersArrows from '../src/specialcharactersarrows.js';
 import CharacterGridView from '../src/ui/charactergridview.js';
 import CharacterInfoView from '../src/ui/characterinfoview.js';
-import specialCharactersIcon from '../theme/icons/specialcharacters.svg';
 import { expectToThrowCKEditorError } from '@ckeditor/ckeditor5-utils/tests/_utils/utils.js';
 import SpecialCharactersCategoriesView from '../src/ui/specialcharacterscategoriesview.js';
 import { Dialog } from '@ckeditor/ckeditor5-ui';
@@ -56,6 +54,14 @@ describe( 'SpecialCharacters', () => {
 		expect( SpecialCharacters.pluginName ).to.equal( 'SpecialCharacters' );
 	} );
 
+	it( 'should have `isOfficialPlugin` static flag set to `true`', () => {
+		expect( SpecialCharacters.isOfficialPlugin ).to.be.true;
+	} );
+
+	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
+		expect( SpecialCharacters.isPremiumPlugin ).to.be.false;
+	} );
+
 	describe( 'toolbar button', () => {
 		beforeEach( () => {
 			button = editor.ui.componentFactory.create( 'specialCharacters' );
@@ -79,7 +85,7 @@ describe( 'SpecialCharacters', () => {
 	function testButton() {
 		it( 'should get basic properties', () => {
 			expect( button.label ).to.equal( 'Special characters' );
-			expect( button.icon ).to.equal( specialCharactersIcon );
+			expect( button.icon ).to.equal( IconSpecialCharacters );
 			expect( button.isToggleable ).to.be.true;
 		} );
 

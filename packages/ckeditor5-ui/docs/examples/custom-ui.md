@@ -3,6 +3,7 @@ category: examples-framework
 order: 100
 toc: false
 meta-title: Custom UI with Bootstrap example | CKEditor 5 Documentation
+meta-description: Create custom UI elements in CKEditor 5 to extend the editor interface with tailored buttons, panels, and interactions.
 classes: main__content--no-toc
 ---
 
@@ -10,7 +11,7 @@ classes: main__content--no-toc
 
 The editor below runs a completely custom user interface written in [Bootstrap](http://getbootstrap.com/), while the editing is provided by CKEditor&nbsp;5.
 
-{@snippet examples/bootstrap-ui}
+<iframe src="%BASE_PATH%/snippets/examples/bootstrap-ui.html" style="width: 100%;height: 420px;border: 0;"></iframe>
 
 ## Detailed guide
 

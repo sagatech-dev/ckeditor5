@@ -1,6 +1,7 @@
 ---
 category: framework-deep-dive-ui
 meta-title: Third party UI | CKEditor 5 Framework Documentation
+meta-description: Discover how to create and integrate external UI components with CKEditor 5 for seamless editor extension and customization.
 order: 20
 ---
 
@@ -8,14 +9,15 @@ order: 20
 
 CKEditor&nbsp;5 is a modular editing framework that allows various flexible configurations. This includes the usage of a third–party user interface on top of the base editor classes.
 
-In this guide, a [classic–like](https://www.npmjs.com/package/@ckeditor/ckeditor5-build-classic) editor will be bound to a completely separate, existing UI created in [Bootstrap](http://getbootstrap.com/), providing the basic structure and toolbar items necessary to start editing.
+In this guide, a {@link getting-started/setup/editor-types#classic-editor classic-like} editor will be bound to a completely separate, existing UI created in [Bootstrap](http://getbootstrap.com/), providing the basic structure and toolbar items necessary to start editing.
 
-{@snippet examples/bootstrap-ui}
+<iframe src="%BASE_PATH%/snippets/examples/bootstrap-ui.html" style="width: 100%;height: 420px;border: 0;"></iframe>
 
 ## Readying the editor side
 
 The editor types, such as the {@link getting-started/setup/editor-types#classic-editor classic} or {@link getting-started/setup/editor-types#inline-editor inline editor}, have a dedicated default user interface and a theme. However, only a limited subset of features is required to create an editor instance bound to a Bootstrap UI. You need to import them first:
 
+<code-switcher>
 ```js
 // Basic classes to create an editor.
 import {
@@ -47,6 +49,7 @@ import {
 	HeadingEditing
 } from 'ckeditor5';
 ```
+</code-switcher>
 
 <info-box info>
 	Note that instead of {@link module:basic-styles/bold~Bold}, which loads the default bold UI and bold editing feature, just the {@link module:basic-styles/bold/boldediting~BoldEditing} is imported. It provides the [engine](https://www.npmjs.com/package/@ckeditor/ckeditor5-engine) features associated with editing any bold text but does not come with the actual UI.
@@ -493,5 +496,3 @@ BootstrapEditor.create( $( '#editor' ).get( 0 ), {
 	console.error( err.stack );
 } );
 ```
-
-Once everything works as expected, you may want to create a custom preset of your editor to ship it across the applications. To learn more check out the {@link getting-started/legacy-getting-started/quick-start-other#building-the-editor-from-source Creating custom builds guide}.

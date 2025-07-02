@@ -2,6 +2,7 @@
 category: framework
 order: 500
 meta-title: CKEditor 5 How-tos | CKEditor 5 Documentation
+meta-description: Find out how to configure a specific setting of CKEditor 5.
 modified_at: 2023-07-17
 ---
 
@@ -23,12 +24,9 @@ The height of the editing area can be easily controlled with CSS.
 
 ### How to customize the CKEditor&nbsp;5 icons?
 
-<info-box warning>
-	This method only works with the webpack setup that was the default one before new installation methods introduced in CKEditor&nbsp;5 v42.0.0. We are working on the ability to replace icons in the current default method. Stay tuned!
-</info-box>
+If you are using the new installation methods introduced in CKEditor&nbsp;5 v42.0.0, you can check out our dedicated {@link getting-started/setup/customizing-icons icon customization} guide.
 
-The easiest way is to use webpack's [`NormalModuleReplacementPlugin`](https://webpack.js.org/plugins/normal-module-replacement-plugin/) plugin. For example, to replace the bold icon, use the following code in your `webpack.config.js`:
-
+Otherwise, the easiest way is to use webpack's [`NormalModuleReplacementPlugin`](https://webpack.js.org/plugins/normal-module-replacement-plugin/) plugin. For example, to replace the bold icon, use the following code in your `webpack.config.js`:
 
 ```js
 // ...
@@ -39,8 +37,6 @@ plugins: [
 	)
 ]
 ```
-
-You can also use the relative path which is resolved relative to the resource that imports `bold.svg` (the {@link module:basic-styles/bold/boldui~BoldUI `BoldUI`} class file in this scenario).
 
 Learn more about {@link getting-started/advanced/integrating-from-source-webpack#webpack-configuration building CKEditor 5 using webpack}.
 
@@ -95,7 +91,6 @@ function MyPlugin(editor) {
 
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
-		// If you're using builds, this is going to be extraPlugins property.
 		plugins: [
 			MyPlugin,
 			// Other plugins.
@@ -303,8 +298,9 @@ for ( const range of wordRanges ) {
 
 ### How to listen on a double-click (for example, link elements)?
 
+<code-switcher>
 ```js
-// Add observer for double click and extend a generic DomEventObserver class by a native DOM dblclick event:
+// Add observer for double-click and extend a generic DomEventObserver class by a native DOM dblclick event:
 import { DomEventObserver } from 'ckeditor5';
 
 class DoubleClickObserver extends DomEventObserver {
@@ -335,11 +331,13 @@ editor.listenTo(
 	{ context: 'a' }
 );
 ```
+</code-switcher>
 
 There are many observers provided with our features, and you should check if there is no conflicting observer that already fires for the given DOM event.
 
 ### How to create a widget with a single view element and multiple/nested model elements?
 
+<code-switcher>
 ```js
 import { Plugin, toWidget, toWidgetEditable } from 'ckeditor5'
 
@@ -448,9 +446,11 @@ class Forms extends Plugin {
 	}
 }
 ```
+</code-switcher>
 
 ### How to add a custom button to the link dialog?
 
+<code-switcher>
 ```js
 import { ButtonView, Plugin, LinkUI } from 'ckeditor5';
 
@@ -507,6 +507,7 @@ class InternalLink extends Plugin {
 	}
 }
 ```
+</code-switcher>
 
 ## Framework integrations
 

@@ -1,6 +1,7 @@
 ---
 menu-title: Styles
 meta-title: Styles | CKEditor 5 Documentation
+meta-description: Apply predefined styles to content in CKEditor 5 using the Style feature to ensure consistent formatting and visual design.
 category: features
 modified_at: 2022-07-22
 ---
@@ -231,31 +232,25 @@ The style sheet:
 	Starting with {@link updating/update-to-42 version 42.0.0}, we changed the format of import paths. This guide uses the new, shorter format. Refer to the {@link getting-started/legacy-getting-started/legacy-imports Packages in the legacy setup} guide if you use an older version of CKEditor&nbsp;5.
 </info-box>
 
-After {@link getting-started/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
+After {@link getting-started/integrations-cdn/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
 
+<code-switcher>
 ```js
 import { ClassicEditor, Style } from 'ckeditor5';
 
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
+		licenseKey: '<YOUR_LICENSE_KEY>', // Or 'GPL'.
 		plugins: [ Style, /* ... */ ],
-		toolbar: {
-			items: [
-				'style',
-				// More toolbar items.
-				// ...
-			],
-		},
+		toolbar: [ 'style', /* ... */ ],
 		style: {
-			definitions: [
-				// Styles definitions.
-				// ...
-			]
+			// Configuration.
 		}
 	} )
 	.then( /* ... */ )
 	.catch( /* ... */ );
 ```
+</code-switcher>
 
 ## Configuration
 
@@ -264,14 +259,7 @@ Configuring the styles feature takes two steps. First, you need to define the st
 ```js
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
-		plugins: [ Style, /* ... */ ],
-		toolbar: {
-			items: [
-				'style',
-				// More toolbar items.
-				// ...
-			],
-		},
+		// ... Other configuration options ...
 		style: {
 			definitions: [
 				{
@@ -322,6 +310,7 @@ At present, the style feature may clash with other features that bring in simila
 ## Related features
 
 Check out also these CKEditor&nbsp;5 features to gain better control over your content style and format:
+
 * {@link features/basic-styles Basic text styles} &ndash; Apply the most frequently used formatting such as bold, italic, underline, etc.
 * {@link features/font Font styles} &ndash; Control the font {@link features/font#configuring-the-font-family-feature family}, {@link features/font#configuring-the-font-size-feature size}, {@link features/font#configuring-the-font-color-and-font-background-color-features text or background color}.
 * {@link features/headings Headings} &ndash; Divide your content into sections.
@@ -341,7 +330,7 @@ You can execute the command using the {@link module:core/editor/editor~Editor#ex
 ```js
 // Applies the style to the selected content.
 // Executing the command again will remove the style from the selected content.
-editor.execute( 'style', 'Article category' );
+editor.execute( 'style', { styleName: 'Article category' } );
 ```
 
 <info-box>

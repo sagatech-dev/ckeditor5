@@ -1,9 +1,9 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import Mapper from '../../src/conversion/mapper.js';
+import Mapper, { MapperCache } from '../../src/conversion/mapper.js';
 
 import ModelElement from '../../src/model/element.js';
 import ModelRootElement from '../../src/model/rootelement.js';
@@ -21,6 +21,7 @@ import ViewDocumentFragment from '../../src/view/documentfragment.js';
 import { StylesProcessor } from '../../src/view/stylesmap.js';
 
 import CKEditorError from '@ckeditor/ckeditor5-utils/src/ckeditorerror.js';
+import { ViewAttributeElement } from '../../src/index.js';
 
 describe( 'Mapper', () => {
 	let viewDocument;
@@ -467,6 +468,160 @@ describe( 'Mapper', () => {
 			it( 'should transform modelP 9', () => createToViewTest( modelP, 9, viewTextB, 1 ) );
 			it( 'should transform modelP 10', () => createToViewTest( modelP, 10, viewTextM, 0 ) );
 			it( 'should transform modelP 11', () => createToViewTest( modelP, 11, viewP, 5 ) );
+
+			// Below tests a particular code execution path that can happen only if cache for given mapped element ends deep (in view)
+			// in that element while we request mapping that reaches somewhere further in this model element.
+			it( 'should transform modelDiv 2 starting from nested cache', () => {
+				// We need to create a different model and view for this sample as the one used in other tests cannot reproduce this.
+				//
+				// View structure is:
+				//
+				// <p>
+				//   ├─ a
+				//   ├─ <b>
+				//   │   ├─ b
+				//   │   ├─ <u>
+				//   │   │   └─ c
+				//   │   ├─ <i>
+				//   │   │   └─ d
+				//   │   └─ e
+				//   └─ f
+				//
+				const modelP2 = new ModelElement( 'paragraph', {}, [
+					new ModelText( 'a' ),
+					new ModelText( 'b', { b: true } ),
+					new ModelText( 'c', { b: true, u: true } ),
+					new ModelText( 'd', { b: true, i: true } ),
+					new ModelText( 'e', { b: true } ),
+					new ModelText( 'f' )
+				] );
+
+				const viewTextA = new ViewText( viewDocument, 'a' );
+				const viewTextB = new ViewText( viewDocument, 'b' );
+				const viewTextC = new ViewText( viewDocument, 'c' );
+				const viewTextD = new ViewText( viewDocument, 'd' );
+				const viewTextE = new ViewText( viewDocument, 'e' );
+				const viewTextF = new ViewText( viewDocument, 'f' );
+
+				const viewU = new ViewElement( viewDocument, 'u', {}, [ viewTextC ] );
+				const viewI = new ViewElement( viewDocument, 'i', {}, [ viewTextD ] );
+				const viewB = new ViewElement( viewDocument, 'b', {}, [ viewTextB, viewU, viewI, viewTextE ] );
+
+				const viewP2 = new ViewElement( viewDocument, 'p', {}, [ viewTextA, viewB, viewTextF ] );
+
+				mapper.bindElements( modelP2, viewP2 );
+
+				// Since tests in this suite are artificial and the view and model is modified directly, the scenario is easier to simulate.
+				//
+				// First request some mappings to build whole cache.
+				//
+				mapper.toViewPosition( ModelPosition._createAt( modelP2, 1 ) );
+				mapper.toViewPosition( ModelPosition._createAt( modelP2, 2 ) );
+				mapper.toViewPosition( ModelPosition._createAt( modelP2, 3 ) );
+				mapper.toViewPosition( ModelPosition._createAt( modelP2, 4 ) );
+				mapper.toViewPosition( ModelPosition._createAt( modelP2, 5 ) );
+				mapper.toViewPosition( ModelPosition._createAt( modelP2, 6 ) );
+				//
+				// Then we will invalidate part of the cache by adding another letter to `<i>`.
+				//
+				modelP2._removeChildren( 3, 1 );
+				modelP2._insertChild( 3, new ModelText( 'dd', { b: true, i: true } ) );
+				viewTextD._data = 'dd';
+				//
+				// After invalidation the cache will end before `<i>`: `<p>a<b>b<u>c</u>|<i>dd</i>e</b>f</p>`
+				//
+				// Then, again request mapping for model offset at the end of `<paragraph>`.
+				// This way, `Mapper` will start looking side `viewU` and will have to "traverse up" into `<p>` after reaching end of `<b>`.
+				createToViewTest( modelP2, 7, viewTextF, 1 );
+			} );
+
+			// Below tests whether the cache is correctly built and invalidated in a particular scenario that involves nested attribute
+			// elements and cached model position after an attribute element. It was discovered when fixing
+			// https://github.com/ckeditor/ckeditor5/issues/18678, but this is not the case described in the issue.
+			it( 'should correctly invalidate cache and map position if nested attribute was earlier partially invalidated', () => {
+				// We need to create a different model and view for this sample as the one used in other tests cannot reproduce this.
+				//
+				// View structure is: <p>a<b>b<u>c</u>d</b><i>e</i></p>.
+				//
+				const modelP2 = new ModelElement( 'paragraph', {}, [
+					new ModelText( 'a' ),
+					new ModelText( 'b', { b: true } ),
+					new ModelText( 'c', { b: true, u: true } ),
+					new ModelText( 'd', { b: true } ),
+					new ModelText( 'e', { i: true } )
+				] );
+
+				const viewTextA = new ViewText( viewDocument, 'a' );
+				const viewTextB = new ViewText( viewDocument, 'b' );
+				const viewTextC = new ViewText( viewDocument, 'c' );
+				const viewTextD = new ViewText( viewDocument, 'd' );
+				const viewTextE = new ViewText( viewDocument, 'e' );
+
+				const viewU = new ViewElement( viewDocument, 'u', {}, [ viewTextC ] );
+				const viewB = new ViewElement( viewDocument, 'b', {}, [ viewTextB, viewU, viewTextD ] );
+				const viewI = new ViewElement( viewDocument, 'i', {}, [ viewTextE ] );
+
+				const viewP2 = new ViewElement( viewDocument, 'p', {}, [ viewTextA, viewB, viewI ] );
+
+				mapper.bindElements( modelP2, viewP2 );
+
+				// Since tests in this suite are artificial and the view and model is modified directly, the scenario is easier to simulate.
+				//
+				// First request some mappings to build whole cache.
+				//
+				mapper.toViewPosition( ModelPosition._createAt( modelP2, 1 ) );
+				mapper.toViewPosition( ModelPosition._createAt( modelP2, 2 ) );
+				mapper.toViewPosition( ModelPosition._createAt( modelP2, 3 ) );
+				mapper.toViewPosition( ModelPosition._createAt( modelP2, 4 ) );
+				mapper.toViewPosition( ModelPosition._createAt( modelP2, 5 ) );
+				//
+				// Then we will invalidate part of the cache by adding another letter to `c`.
+				//
+				modelP2._removeChildren( 2, 1 );
+				modelP2._insertChild( 2, new ModelText( 'cc', { b: true, u: true } ) );
+				viewTextC._data = 'cc';
+				//
+				// After invalidation the cache will end before `<u>`: `<p>a<b>b|<u>cc</u>d</b><i>e</i></p>`
+				//
+				// Now we again make a request, for model offset `6`, which is after `e`.
+				// Since we have position cached before `<u>` we will continue from there.
+				// We will "move up" when reaching end of `</b>`.
+				// Note, that before fixes were made `<b>` would not be cached when "moving up".
+				//
+				mapper.toViewPosition( ModelPosition._createAt( modelP2, 6 ) );
+				//
+				// This has lead to a situation where model offset `5` was cached after `d`, and `7` was cached after `</i>`:
+				//
+				// <p>a<b>b<u>cc</u>d|</b><i>e</i>|</p>
+				//
+				// But `<b></b>` was not cached.
+				//
+				// This has lead to incorrect behavior when something was added between `</b><i>`. Mapper cache would try to invalidate
+				// cache starting from before `<b>` element, but `<b>` element was not cached. Since `<b>` is directly inside `<p>` (mapped
+				// element), the cache "thought" there's nothing to invalidate. But that's not true as there's cached position after `</i>`.
+				//
+				modelP2._insertChild( 5, new ModelText( 'xxx' ) );
+				const viewTextX = new ViewText( viewDocument, 'xxx' );
+				viewP2._insertChild( 2, viewTextX );
+				//
+				// After inserting `x`: `<p>a<b>b<u>cc</u>d</b>xxx<i>e</i></p>`
+				//
+				const modelPosition = ModelPosition._createAt( modelP2, 6 );
+				const viewPosition = mapper.toViewPosition( modelPosition );
+				//
+				// Since there was outdated cached position for model offset `6`, mapped to view position `(p, 3)`, in incorrect scenario,
+				// we would get mapping for model offset `6` from cache, and it would point after `xxx`, which actually is offset `8`.
+				//
+				// Correct mapping for model offset `6` is of course `x{}xx`:
+				//
+				expect( viewPosition.parent ).to.equal( viewTextX );
+				expect( viewPosition.offset ).to.equal( 1 );
+				//
+				// Incorrect before fix `xxx{}` (note it is moved to text node from `(p, 3)`:
+				//
+				// expect( viewPosition.parent ).to.equal( viewTextX );
+				// expect( viewPosition.offset ).to.equal( 3 );
+			} );
 		} );
 
 		describe( 'toModelRange', () => {
@@ -491,6 +646,12 @@ describe( 'Mapper', () => {
 			} );
 		} );
 
+		it( 'should throw if model offset is to big and cannot be found in mapped view element', () => {
+			expect( () => {
+				mapper.findPositionIn( viewDiv, 5 );
+			} ).to.throw( CKEditorError, 'mapping-model-offset-not-found' );
+		} );
+
 		function createToViewTest( modelElement, modelOffset, viewElement, viewOffset ) {
 			const modelPosition = ModelPosition._createAt( modelElement, modelOffset );
 			const viewPosition = mapper.toViewPosition( modelPosition );
@@ -512,7 +673,7 @@ describe( 'Mapper', () => {
 			viewTextX, viewTextFOO, viewTextZZ, viewTextLABEL,
 			mapper;
 
-		before( () => {
+		beforeEach( () => {
 			// Tree Model:
 			//
 			// <div>                 ---> modelDiv
@@ -872,4 +1033,426 @@ describe( 'Mapper', () => {
 			expect( mapper.flushUnboundMarkerNames() ).to.deep.equal( [] );
 		} );
 	} );
+} );
+
+describe( 'MapperCache', () => {
+	let cache, viewContainer, viewDocument, viewTextAb, viewSpan, viewEm, viewB, viewTextCd, viewTextE, viewTextF, viewTextGh;
+
+	beforeEach( () => {
+		viewDocument = new ViewDocument( new StylesProcessor() );
+		cache = new MapperCache();
+
+		// <p>ab<span>cd<em><b>e</b>f</em></span>gh</p>.
+		viewTextAb = new ViewText( viewDocument, 'ab' );
+		viewTextCd = new ViewText( viewDocument, 'cd' );
+		viewTextE = new ViewText( viewDocument, 'e' );
+		viewTextF = new ViewText( viewDocument, 'f' );
+
+		viewB = new ViewAttributeElement( viewDocument, 'b', null, [ viewTextE ] );
+		viewEm = new ViewAttributeElement( viewDocument, 'em', null, [ viewB, viewTextF ] );
+		viewSpan = new ViewAttributeElement( viewDocument, 'span', null, [ viewTextCd, viewEm ] );
+		viewTextGh = new ViewText( viewDocument, 'gh' );
+		viewContainer = new ViewElement( viewDocument, 'p', null, [ viewTextAb, viewSpan, viewTextGh ] );
+	} );
+
+	describe( 'getClosest()', () => {
+		it( 'should start tracking and return position at the start of element if element was not tracked before', () => {
+			const { viewPosition, modelOffset } = cache.getClosest( viewContainer, 6 );
+
+			expect( viewPosition.parent ).to.equal( viewContainer );
+			expect( viewPosition.offset ).to.equal( 0 );
+			expect( modelOffset ).to.equal( 0 );
+		} );
+
+		it( 'should return previously saved position', () => {
+			cache.startTracking( viewContainer );
+			cache.save( viewContainer, 2, viewContainer, 6 );
+
+			const { viewPosition, modelOffset } = cache.getClosest( viewContainer, 6 );
+
+			expect( viewPosition.parent ).to.equal( viewContainer );
+			expect( viewPosition.offset ).to.equal( 2 );
+			expect( modelOffset ).to.equal( 6 );
+		} );
+
+		it( 'should return previously saved position (deep)', () => {
+			cache.startTracking( viewContainer );
+			cache.save( viewEm, 1, viewContainer, 5 );
+
+			const { viewPosition, modelOffset } = cache.getClosest( viewContainer, 5 );
+
+			expect( viewPosition.parent ).to.equal( viewEm );
+			expect( viewPosition.offset ).to.equal( 1 );
+			expect( modelOffset ).to.equal( 5 );
+		} );
+
+		it( 'should return closest saved position if exact position was not saved', () => {
+			cache.startTracking( viewContainer );
+			cache.save( viewContainer, 2, viewContainer, 6 );
+
+			const { viewPosition, modelOffset } = cache.getClosest( viewContainer, 8 );
+
+			expect( viewPosition.parent ).to.equal( viewContainer );
+			expect( viewPosition.offset ).to.equal( 2 );
+			expect( modelOffset ).to.equal( 6 );
+		} );
+
+		it( 'should return closest saved position if exact position was not saved (deep)', () => {
+			cache.startTracking( viewContainer );
+			cache.save( viewEm, 1, viewContainer, 5 );
+
+			const { viewPosition, modelOffset } = cache.getClosest( viewContainer, 8 );
+
+			expect( viewPosition.parent ).to.equal( viewEm );
+			expect( viewPosition.offset ).to.equal( 1 );
+			expect( modelOffset ).to.equal( 5 );
+		} );
+
+		it( 'should return closest saved position if exact position was not saved (multiple saved positions)', () => {
+			cache.startTracking( viewContainer );
+
+			// Save model offsets in random order to give extra spice and cover some code...
+			cache.save( viewContainer, 2, viewContainer, 6 );
+			cache.save( viewContainer, 3, viewContainer, 8 );
+			cache.save( viewSpan, 1, viewContainer, 4 );
+			cache.save( viewContainer, 1, viewContainer, 2 );
+
+			check( 1, viewContainer, 0, 0 );
+			check( 3, viewContainer, 1, 2 );
+			check( 5, viewSpan, 1, 4 );
+			check( 7, viewContainer, 2, 6 );
+			check( 9, viewContainer, 3, 8 );
+		} );
+	} );
+
+	describe( 'save()', () => {
+		it( 'should not overwrite previously saved cache for given model offset', () => {
+			cache.startTracking( viewContainer );
+			cache.save( viewContainer, 2, viewContainer, 6 );
+			cache.save( viewSpan, 2, viewContainer, 6 );
+
+			const { viewPosition, modelOffset } = cache.getClosest( viewContainer, 6 );
+
+			expect( viewPosition.parent ).to.equal( viewContainer );
+			expect( viewPosition.offset ).to.equal( 2 );
+			expect( modelOffset ).to.equal( 6 );
+		} );
+	} );
+
+	describe( 'stopTracking()', () => {
+		it( 'should remove all cache data', () => {
+			cache.startTracking( viewContainer );
+			cache.save( viewContainer, 2, viewContainer, 6 );
+			cache.stopTracking( viewContainer );
+
+			const { viewPosition, modelOffset } = cache.getClosest( viewContainer, 2 );
+
+			expect( viewPosition.parent ).to.equal( viewContainer );
+			expect( viewPosition.offset ).to.equal( 0 );
+			expect( modelOffset ).to.equal( 0 );
+		} );
+	} );
+
+	describe( 'cache invalidation', () => {
+		it( 'should invalidate part of the existing cache when a node is inserted', () => {
+			cache.startTracking( viewContainer );
+
+			cache.save( viewContainer, 1, viewContainer, 2 );
+			cache.save( viewContainer, 2, viewContainer, 6 );
+			cache.save( viewSpan, 1, viewContainer, 4 );
+			cache.save( viewContainer, 3, viewContainer, 8 );
+
+			// <p>ab<span>cd<em><b>e</b>f</em></span>^gh</p> -> <p>ab<span>cd<em><b>e</b>f</em></span><strong></strong>gh</p>.
+			// This should invalidate cache starting from `<span>` (yes, that's correct, we invalidate a bit more than necessary).
+			viewContainer._insertChild( 2, new ViewAttributeElement( viewDocument, 'strong' ) );
+
+			// Retained cached:
+			check( 2, viewContainer, 1, 2 );
+			check( 3, viewContainer, 1, 2 );
+
+			// Later cache is cleared, the closest value is returned:
+			check( 6, viewContainer, 1, 2 );
+			check( 8, viewContainer, 1, 2 );
+		} );
+
+		it( 'should invalidate part of the existing cache when a node is inserted (deep)', () => {
+			cache.startTracking( viewContainer );
+
+			cache.save( viewContainer, 1, viewContainer, 2 );
+			cache.save( viewSpan, 1, viewContainer, 4 );
+			cache.save( viewContainer, 2, viewContainer, 6 );
+			cache.save( viewSpan, 2, viewContainer, 6 );
+			cache.save( viewEm, 2, viewContainer, 6 );
+			cache.save( viewContainer, 3, viewContainer, 8 );
+
+			// <p>ab<span>cd<em>^<b>e</b>f</em></span>gh</p> -> <p>ab<span>cd<em><strong></strong><b>e</b>f</em></span>gh</p>.
+			// Since the insertion position is at the beginning of `<em>`, the position will be treated like it is before `<em>`.
+			// So the invalidation will start from "cd".
+			viewEm._insertChild( 0, new ViewAttributeElement( viewDocument, 'strong' ) );
+
+			// Retained cached:
+			check( 2, viewContainer, 1, 2 );
+			check( 3, viewContainer, 1, 2 );
+
+			// Later cache is cleared, the closest value is returned:
+			check( 4, viewContainer, 1, 2 );
+			check( 5, viewContainer, 1, 2 );
+			check( 6, viewContainer, 1, 2 );
+			check( 8, viewContainer, 1, 2 );
+		} );
+
+		it( 'should invalidate part of the existing cache when a node is inserted (deep #2 - direct parent not cached)', () => {
+			// This is a similar scenario as above, but this time, `<em>` -- the direct parent of insertion -- is not cached.
+			cache.startTracking( viewContainer );
+
+			cache.save( viewContainer, 1, viewContainer, 2 );
+			cache.save( viewSpan, 1, viewContainer, 4 );
+			cache.save( viewContainer, 2, viewContainer, 6 );
+			cache.save( viewContainer, 3, viewContainer, 8 );
+
+			// <p>ab<span>cd<em>^<b>e</b>f</em></span>gh</p> -> <p>ab<span>cd<em><strong></strong><b>e</b>f</em></span>gh</p>.
+			// This should invalidate cache starting from before `<span>` (not before `<em>`).
+			// That's because `<em>` is not cached, so we invalidate starting from before its parent.
+			viewEm._insertChild( 0, new ViewAttributeElement( viewDocument, 'strong' ) );
+
+			// Retained cached:
+			check( 2, viewContainer, 1, 2 );
+			check( 3, viewContainer, 1, 2 );
+
+			// Later cache is cleared, the closest value is returned:
+			check( 4, viewContainer, 1, 2 );
+			check( 6, viewContainer, 1, 2 );
+		} );
+
+		it( 'should invalidate part of the existing cache when a node is inserted (deep #3 - only top element cached)', () => {
+			// To show that only part of the cache is invalidated, we need more items in this sample.
+			const viewTextXXX = new ViewText( viewDocument, 'xxx' );
+			const viewStrong = new ViewAttributeElement( viewDocument, 'strong', null, viewTextXXX );
+			viewContainer._insertChild( 0, viewStrong );
+
+			// This is a similar scenario as above, but this time, `<em>` -- the direct parent of insertion -- is not cached.
+			cache.startTracking( viewContainer );
+
+			cache.save( viewContainer, 1, viewContainer, 3 );
+			cache.save( viewContainer, 2, viewContainer, 5 );
+			cache.save( viewContainer, 3, viewContainer, 9 );
+			cache.save( viewContainer, 4, viewContainer, 11 );
+
+			// <p><strong>xxx</strong>ab<span>cd<em>^<b>e</b>f</em></span>gh</p>
+			// -> <p><strong>xxx</strong>ab<span>cd<em><strong></strong><b>e</b>f</em></span>gh</p>.
+			// This should invalidate cache like the insertion is before `<span>`.
+			// That's because neither `<em>` nor "cd" are not cached, so we need to invalidate from a point further behind.
+			// In this case we invalidate all cache after "ab".
+			viewEm._insertChild( 0, new ViewAttributeElement( viewDocument, 'strong' ) );
+
+			// Retained cached:
+			check( 3, viewContainer, 1, 3 );
+
+			// Later cache is cleared, the closest value is returned:
+			check( 5, viewContainer, 1, 3 );
+			check( 9, viewContainer, 1, 3 );
+			check( 11, viewContainer, 1, 3 );
+		} );
+
+		it( 'should invalidate the existing cache when a node is inserted at the beginning of a non-tracked element', () => {
+			// This is a similar scenario as above, but this time, `<em>` -- the direct parent of insertion -- is not cached.
+			cache.startTracking( viewContainer );
+
+			cache.save( viewContainer, 1, viewContainer, 2 );
+			cache.save( viewSpan, 1, viewContainer, 4 );
+			cache.save( viewB, 1, viewContainer, 5 );
+			cache.save( viewEm, 1, viewContainer, 5 );
+			cache.save( viewEm, 2, viewContainer, 6 );
+			cache.save( viewSpan, 2, viewContainer, 6 );
+			cache.save( viewContainer, 2, viewContainer, 6 );
+			cache.save( viewContainer, 3, viewContainer, 8 );
+
+			// <p>ab<span>^cd<em><b>e</b>f</em></span>gh</p> -> <p>ab<span><strong></strong>cd<em><b>e</b>f</em></span>gh</p>.
+			// This should invalidate cache starting from before `<span>`.
+			viewEm._insertChild( 0, new ViewAttributeElement( viewDocument, 'strong' ) );
+
+			// Retained cached:
+			check( 2, viewContainer, 1, 2 );
+
+			// Later cache is cleared, the closest value is returned:
+			check( 3, viewContainer, 1, 2 );
+			check( 4, viewContainer, 1, 2 );
+			check( 5, viewContainer, 1, 2 );
+			check( 6, viewContainer, 1, 2 );
+			check( 7, viewContainer, 1, 2 );
+			check( 8, viewContainer, 1, 2 );
+		} );
+
+		it( 'nothing happens if change is after valid cache', () => {
+			cache.startTracking( viewContainer );
+
+			cache.save( viewContainer, 1, viewContainer, 2 );
+			cache.save( viewSpan, 1, viewContainer, 4 );
+			cache.save( viewEm, 1, viewContainer, 5 );
+
+			// <p>ab<span>cd<em>ef</em></span>gh^</p> -> <p>ab<span>cd<em>ef</em></span>gh<strong></strong></p>.
+			viewContainer._insertChild( 3, new ViewAttributeElement( viewDocument, 'strong' ) );
+
+			check( 2, viewContainer, 1, 2 );
+			check( 3, viewContainer, 1, 2 );
+			check( 4, viewSpan, 1, 4 );
+			check( 5, viewEm, 1, 5 );
+			check( 6, viewEm, 1, 5 );
+			check( 7, viewEm, 1, 5 );
+			check( 8, viewEm, 1, 5 );
+			check( 9, viewEm, 1, 5 );
+		} );
+
+		it( 'should invalidate all cache if change is at the beginning of tracked element', () => {
+			cache.startTracking( viewContainer );
+
+			cache.save( viewContainer, 1, viewContainer, 2 );
+			cache.save( viewSpan, 1, viewContainer, 4 );
+			cache.save( viewContainer, 2, viewContainer, 6 );
+			cache.save( viewContainer, 3, viewContainer, 8 );
+
+			// <p>^ab<span>cd<em><b>e</b>f</em></span>gh</p> -> <p><strong></strong>ab<span>cd<em><b>e</b>f</em></span>gh</p>.
+			// This should invalidate all cache.
+			viewContainer._insertChild( 0, new ViewAttributeElement( viewDocument, 'strong' ) );
+
+			// Cache is cleared, the closest value is returned:
+			check( 1, viewContainer, 0, 0 );
+			check( 2, viewContainer, 0, 0 );
+			check( 8, viewContainer, 0, 0 );
+		} );
+
+		it( 'should invalidate cache when text node changes', () => {
+			cache.startTracking( viewContainer );
+
+			cache.save( viewContainer, 1, viewContainer, 2 );
+			cache.save( viewSpan, 1, viewContainer, 4 );
+			cache.save( viewContainer, 2, viewContainer, 6 );
+			cache.save( viewContainer, 3, viewContainer, 8 );
+
+			// <p>ab<span>cd<em><b>e</b>f</em></span>gh^</p> -> <p><strong></strong>ab<span>cd<em><b>e</b>f</em></span>ghi</p>.
+			// This should invalidate cache starting from before `"ghi"`.
+			viewTextGh._data = 'ghi';
+
+			// Retained cached:
+			check( 2, viewContainer, 1, 2 );
+			check( 4, viewSpan, 1, 4 );
+			check( 6, viewContainer, 2, 6 );
+
+			// Later cache is cleared, the closest value is returned:
+			check( 8, viewContainer, 2, 6 );
+		} );
+
+		it( 'should invalidate cache when text node changes (deep)', () => {
+			cache.startTracking( viewContainer );
+
+			cache.save( viewContainer, 1, viewContainer, 2 );
+			cache.save( viewSpan, 1, viewContainer, 4 );
+			cache.save( viewEm, 1, viewContainer, 6 );
+			cache.save( viewContainer, 2, viewContainer, 6 );
+			cache.save( viewContainer, 3, viewContainer, 8 );
+
+			// <p>ab<span>cd<em><b>e^</b>f</em></span>gh</p> -> <p><strong></strong>ab<span>cd<em><b>ex</b>f</em></span></p>.
+			// This should invalidate cache starting from before `"ex"`. But "e" is first node, and its parents `<b>` and `<em>` are
+			// also first nodes, so we invalidate starting from before "cd".
+			viewTextE._data = 'ex';
+
+			// Retained cached:
+			check( 2, viewContainer, 1, 2 );
+
+			// Later cache is cleared, the closest value is returned:
+			check( 4, viewContainer, 1, 2 );
+			check( 6, viewContainer, 1, 2 );
+			check( 8, viewContainer, 1, 2 );
+		} );
+
+		it( 'should invalidate cache when text node changes (deep - text node not cached)', () => {
+			cache.startTracking( viewContainer );
+
+			cache.save( viewContainer, 1, viewContainer, 2 );
+			cache.save( viewSpan, 1, viewContainer, 4 );
+			cache.save( viewContainer, 2, viewContainer, 6 );
+			cache.save( viewContainer, 3, viewContainer, 8 );
+
+			// <p>ab<span>cd<em><b>e^</b>f</em></span>gh</p> -> <p><strong></strong>ab<span>cd<em><b>ex</b>f</em></span></p>.
+			// This should invalidate cache starting from before `"ex"`. But "e" is first node, and its parents `<b>` and `<em>` are
+			// also first nodes, so we invalidate starting from before "cd".
+			viewTextE._data = 'ex';
+
+			// Retained cached:
+			check( 2, viewContainer, 1, 2 );
+
+			// Later cache is cleared, the closest value is returned:
+			check( 4, viewContainer, 1, 2 );
+			check( 6, viewContainer, 1, 2 );
+			check( 8, viewContainer, 1, 2 );
+		} );
+
+		it( 'should invalidate cache if first child in tracked element has 0 model length (#1 - ui element + remove)', () => {
+			// This test checks a fix for an edge case scenario bug found in multi-level lists.
+			// Multi-level lists items always start from a UI element. Since it was a 0-model-length element it was not correctly saved
+			// to a cache, and later on, it prevented a validation to happen (the cache thought there is nothing cached).
+			const viewUIElement = new ViewUIElement( viewDocument, 'ui' );
+			const viewTextX = new ViewText( viewDocument, 'x' );
+			const viewB = new ViewAttributeElement( viewDocument, 'b', null, [ new ViewText( viewDocument, 'y' ) ] );
+			// <p><ui />x<b>y</b></p>.
+			const viewContainer2 = new ViewElement( viewDocument, 'p', null, [ viewUIElement, viewTextX, viewB ] );
+
+			cache.startTracking( viewContainer2 );
+
+			cache.save( viewContainer2, 1, viewContainer2, 0 ); // Note that `viewUIElement` has 0 model length, hence `modelOffset` is 0.
+			cache.save( viewContainer2, 2, viewContainer2, 1 );
+			cache.save( viewContainer2, 3, viewContainer2, 2 );
+
+			check( 0, viewContainer2, 0, 0, viewContainer2 ); // Still returns position `viewContainer2, 0`, not position after UI element.
+			check( 1, viewContainer2, 2, 1, viewContainer2 );
+			check( 2, viewContainer2, 3, 2, viewContainer2 );
+			check( 3, viewContainer2, 3, 2, viewContainer2 );
+
+			viewContainer2._removeChildren( 1, 1 );
+
+			// Should fully invalidate cached data.
+			check( 0, viewContainer2, 0, 0, viewContainer2 );
+			check( 1, viewContainer2, 0, 0, viewContainer2 );
+			check( 2, viewContainer2, 0, 0, viewContainer2 );
+			check( 3, viewContainer2, 0, 0, viewContainer2 );
+		} );
+
+		it( 'should invalidate cache if first child in tracked element has 0 model length (#2 - attribute element + typing)', () => {
+			// This test checks a similar scenario as above, although this scenario was working before the fix.
+			const viewUIElement = new ViewUIElement( viewDocument, 'ui' );
+			const viewTextX = new ViewText( viewDocument, 'x' );
+			const viewB = new ViewAttributeElement( viewDocument, 'b', null, [ new ViewText( viewDocument, 'y' ) ] );
+			// <p><ui />x<b>y</b></p>.
+			const viewContainer2 = new ViewElement( viewDocument, 'p', null, [ viewUIElement, viewTextX, viewB ] );
+
+			cache.startTracking( viewContainer2 );
+
+			cache.save( viewContainer2, 1, viewContainer2, 0 ); // Note that `viewUIElement` has 0 model length, hence `modelOffset` is 0.
+			cache.save( viewContainer2, 2, viewContainer2, 1 );
+			cache.save( viewContainer2, 3, viewContainer2, 2 );
+
+			check( 0, viewContainer2, 0, 0, viewContainer2 ); // Still returns position `viewContainer2, 0`, not position after UI element.
+			check( 1, viewContainer2, 2, 1, viewContainer2 );
+			check( 2, viewContainer2, 3, 2, viewContainer2 );
+			check( 3, viewContainer2, 3, 2, viewContainer2 );
+
+			viewTextX._data = 'xx';
+
+			// Should fully invalidate cached data.
+			check( 0, viewContainer2, 0, 0, viewContainer2 );
+			check( 1, viewContainer2, 0, 0, viewContainer2 );
+			check( 2, viewContainer2, 0, 0, viewContainer2 );
+			check( 3, viewContainer2, 0, 0, viewContainer2 );
+		} );
+	} );
+
+	function check(
+		modelOffsetToCheck, expectedViewParent, expectedViewOffset, expectedModelOffset, viewContainerToCheck = viewContainer
+	) {
+		const { viewPosition, modelOffset } = cache.getClosest( viewContainerToCheck, modelOffsetToCheck );
+
+		expect( viewPosition.parent ).to.equal( expectedViewParent );
+		expect( viewPosition.offset ).to.equal( expectedViewOffset );
+		expect( modelOffset ).to.equal( expectedModelOffset );
+	}
 } );

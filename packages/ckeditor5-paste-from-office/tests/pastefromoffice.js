@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 import PasteFromOffice from '../src/pastefromoffice.js';
@@ -18,8 +18,6 @@ import CodeBlockEditing from '@ckeditor/ckeditor5-code-block/src/codeblockeditin
 import { setData as setModelData } from '@ckeditor/ckeditor5-engine/src/dev-utils/model.js';
 import { priorities } from '@ckeditor/ckeditor5-utils';
 import { DomConverter } from '@ckeditor/ckeditor5-engine';
-
-/* global document, DOMParser */
 
 describe( 'PasteFromOffice', () => {
 	const htmlDataProcessor = new HtmlDataProcessor( new ViewDocument( new StylesProcessor() ) );
@@ -50,6 +48,14 @@ describe( 'PasteFromOffice', () => {
 
 	it( 'has proper name', () => {
 		expect( PasteFromOffice.pluginName ).to.equal( 'PasteFromOffice' );
+	} );
+
+	it( 'should have `isOfficialPlugin` static flag set to `true`', () => {
+		expect( PasteFromOffice.isOfficialPlugin ).to.be.true;
+	} );
+
+	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
+		expect( PasteFromOffice.isPremiumPlugin ).to.be.false;
 	} );
 
 	it( 'should load Clipboard plugin', () => {

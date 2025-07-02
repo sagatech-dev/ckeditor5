@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* globals document */
 
 import LabeledFieldView from '@ckeditor/ckeditor5-ui/src/labeledfield/labeledfieldview.js';
 
@@ -50,7 +48,7 @@ describe( 'ImageInsertUrlView', () => {
 
 	describe( 'template', () => {
 		it( 'should create element from the template', () => {
-			expect( view.element.tagName ).to.equal( 'DIV' );
+			expect( view.element.tagName ).to.equal( 'FORM' );
 			expect( view.element.classList.contains( 'ck' ) ).to.true;
 			expect( view.element.classList.contains( 'ck-image-insert-url' ) ).to.true;
 

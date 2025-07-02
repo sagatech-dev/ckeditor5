@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* globals document, window, NodeFilter, MutationObserver, HTMLImageElement, console */
 
 import View from '../../src/view/view.js';
 import ViewElement from '../../src/view/element.js';
@@ -185,6 +183,19 @@ describe( 'Renderer', () => {
 
 			expect( domRoot.getAttribute( 'class' ) ).to.equal( 'foo' );
 			expect( domRoot.getAttribute( 'id' ) ).to.be.not.ok;
+
+			expect( renderer.markedAttributes.size ).to.equal( 0 );
+		} );
+
+		it( 'should remove all attributes', () => {
+			domRoot.setAttribute( 'style', 'border:1px solid red' );
+			domRoot.setAttribute( 'class', 'bar' );
+
+			renderer.markToSync( 'attributes', viewRoot );
+			renderer.render();
+
+			expect( domRoot.getAttribute( 'class' ) ).to.be.not.ok;
+			expect( domRoot.getAttribute( 'style' ) ).to.be.not.ok;
 
 			expect( renderer.markedAttributes.size ).to.equal( 0 );
 		} );
@@ -2135,6 +2146,22 @@ describe( 'Renderer', () => {
 
 				const domSelection = domRoot.ownerDocument.getSelection();
 				assertDomSelectionContents( domSelection, domParagraph, /^foo bar$/ );
+			} );
+
+			it( 'should remove fake selection container when selection is no longer fake even if editor is not focused', () => {
+				selection._setTo( selection.getRanges(), { fake: true } );
+				renderer.render();
+
+				renderer.isFocused = false;
+
+				selection._setTo( selection.getRanges(), { fake: false } );
+				renderer.render();
+
+				expect( domRoot.childNodes.length ).to.equal( 1 );
+
+				const domParagraph = domRoot.childNodes[ 0 ];
+				expect( domParagraph.childNodes.length ).to.equal( 1 );
+				expect( domParagraph.tagName.toLowerCase() ).to.equal( 'p' );
 			} );
 
 			it( 'should reuse fake selection container #1', () => {
@@ -4399,7 +4426,7 @@ describe( 'Renderer', () => {
 				);
 			} );
 
-			it( 'should rename attributes that can not be rendered in the editing pipeline', () => {
+			it( 'should rename attributes that cannot be rendered in the editing pipeline', () => {
 				setViewData( view,
 					'<container:p>' +
 						'bar' +
@@ -4649,13 +4676,13 @@ describe( 'Renderer', () => {
 				'added: [ text: "bar" ], removed: []',	// <p><strong>123</strong>bar456</p>
 
 				// Insert <strong>xyz123</strong>.
-				'added: [ <strong> ], removed: []',		// <p><strong>123</strong>bar<strong>xyz123</strong>456</p>
+				'added: [ <strong> ], removed: []', // <p><strong>123</strong>bar<strong>xyz123</strong>456</p>
 
 				// Insert "abc". Note that "abc" is a final result of all changes in the mutation result.
-				'updated text: "123" to "abc"',			// <p><strong>abc123</strong>bar<strong>xyz123</strong>456</p>
+				'updated text: "123" to "abc"', // <p><strong>abc123</strong>bar<strong>xyz123</strong>456</p>
 
 				// Delete "123". Note that "abc" is a final result of all changes in the mutation result.
-				'updated text: "abc123" to "abc"'		// <p><strong>abc</strong>bar<strong>xyz123</strong>456</p>
+				'updated text: "abc123" to "abc"' // <p><strong>abc</strong>bar<strong>xyz123</strong>456</p>
 			] );
 		} );
 
@@ -4692,10 +4719,10 @@ describe( 'Renderer', () => {
 
 			expect( getMutationStats( observer.takeRecords() ) ).to.deep.equal( [
 				// Insert `<em>abc<em>`.
-				'added: [ <em> ], removed: []',		// <p><em>abc</em>foo<strong>123</strong>456</p>
+				'added: [ <em> ], removed: []', // <p><em>abc</em>foo<strong>123</strong>456</p>
 
 				// Insert "bar". Note that "bar" is a final result of all changes in the mutation result.
-				'updated text: "foo" to "bar"',		// <p><em>abc</em>barfoo<strong>123</strong>456</p>
+				'updated text: "foo" to "bar"', // <p><em>abc</em>barfoo<strong>123</strong>456</p>
 
 				// Delete "foo". Note that "bar" is a final result of all changes in the mutation result.
 				'updated text: "barfoo" to "bar"',	// <p><em>abc</em>bar<strong>123</strong>456</p>
@@ -5018,7 +5045,7 @@ describe( 'Renderer', () => {
 				} );
 
 				// https://github.com/ckeditor/ckeditor5/issues/11472.
-				it( 'should not remove the inline filler while the user is making selection', () => {
+				it( 'should not remove the inline filler while the user is making selection (#11472)', () => {
 					const domSelection = document.getSelection();
 
 					const {

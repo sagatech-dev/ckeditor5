@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
@@ -44,6 +44,8 @@ export {
 	type ColorSelectorColorPickerShowEvent
 } from './colorselector/colorselectorview.js';
 
+export { default as DocumentColorCollection } from './colorselector/documentcolorcollection.js';
+
 export { default as ComponentFactory } from './componentfactory.js';
 
 export { default as Dialog } from './dialog/dialog.js';
@@ -67,6 +69,7 @@ export { default as EditorUIView } from './editorui/editoruiview.js';
 export { default as BoxedEditorUIView } from './editorui/boxed/boxededitoruiview.js';
 export { default as InlineEditableUIView } from './editableui/inline/inlineeditableuiview.js';
 
+export { default as FormRowView } from './formrow/formrowview.js';
 export { default as FormHeaderView } from './formheader/formheaderview.js';
 export {
 	default as FocusCycler,

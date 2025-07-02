@@ -4,6 +4,7 @@ order: 80
 classes: main__content--no-toc
 toc: false
 meta-title: Chat with mentions | CKEditor 5 Documentation
+meta-description: Build a chat interface with user tagging in CKEditor 5 to create interactive messaging experiences using the "mentions" feature.
 ---
 
 # Chat with mentions
@@ -36,6 +37,7 @@ import {
 
 ClassicEditor
 	.create( document.querySelector( '.chat__editor' ), {
+		licenseKey: 'GPL', // Or '<YOUR_LICENSE_KEY>'.
 		extraPlugins: [ Essentials, Paragraph, Mention, MentionLinks, Bold, Italic, Underline, Strikethrough, Link ],
 		toolbar: {
 			items: [

@@ -4,13 +4,11 @@ category: features
 meta-title: Block indentation | CKEditor 5 Documentation
 ---
 
-{@snippet features/build-indent-source}
-
 The block indentation feature lets you set indentation for text blocks such as paragraphs, headings, or lists. This way you can visually distinguish parts of your content.
 
 ## Demo
 
-Use the indent {@icon @ckeditor/ckeditor5-core/theme/icons/indent.svg Indent} or outdent {@icon @ckeditor/ckeditor5-core/theme/icons/outdent.svg Outdent} toolbar buttons in the editor below to change the indentation level. Try this on different elements: paragraphs, headings, and list items.
+Use the indent {@icon @ckeditor/ckeditor5-icons/theme/icons/indent.svg Indent} or outdent {@icon @ckeditor/ckeditor5-icons/theme/icons/outdent.svg Outdent} toolbar buttons in the editor below to change the indentation level. Try this on different elements: paragraphs, headings, and list items.
 
 {@snippet features/indent}
 
@@ -26,19 +24,25 @@ Use the indent {@icon @ckeditor/ckeditor5-core/theme/icons/indent.svg Indent} or
 	Starting with {@link updating/update-to-42 version 42.0.0}, we changed the format of import paths. This guide uses the new, shorter format. Refer to the {@link getting-started/legacy-getting-started/legacy-imports Packages in the legacy setup} guide if you use an older version of CKEditor&nbsp;5.
 </info-box>
 
-After {@link getting-started/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
+After {@link getting-started/integrations-cdn/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
 
+<code-switcher>
 ```js
 import { ClassicEditor, Indent, IndentBlock } from 'ckeditor5';
 
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
+		licenseKey: '<YOUR_LICENSE_KEY>', // Or 'GPL'.
 		plugins: [ Indent, IndentBlock, /* ... */ ],
 		toolbar: [ 'outdent', 'indent', /* ... */ ]
+		indentBlock: {
+			// Configuration.
+		}
 	} )
 	.then( /* ... */ )
 	.catch( /* ... */ );
 ```
+</code-switcher>
 
 ## Configuring the block indentation feature
 
@@ -53,14 +57,9 @@ The rich-text editor from the {@link features/indent#demo demo} section above us
 You can change that value to, for example, `1em`:
 
 ```js
-import { ClassicEditor, Indent } from 'ckeditor5';
-
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
-		plugins: [ Indent, /* ... */ ],
-		toolbar: {
-			items: [ 'heading', '|', 'outdent', 'indent', '|', 'bulletedList', 'numberedList', '|', 'undo', 'redo' ]
-		},
+		// ... Other configuration options ...
 		indentBlock: {
 			offset: 1,
 			unit: 'em'
@@ -77,14 +76,9 @@ If you want more semantics in your content, use CSS classes instead of fixed ind
 Here is how you can configure the block indentation feature to set indentation by applying one of the defined CSS classes:
 
 ```js
-import { ClassicEditor, Indent, IndentBlock } from 'ckeditor5';
-
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
-		plugins: [ Indent, IndentBlock, /* ... */ ],
-		toolbar: {
-			items: [ 'heading', '|', 'outdent', 'indent', '|', 'bulletedList', 'numberedList', '|', 'undo', 'redo' ]
-		},
+		// ... Other configuration options ...
 		indentBlock: {
 			classes: [
 				'custom-block-indent-a', // First step - smallest indentation.

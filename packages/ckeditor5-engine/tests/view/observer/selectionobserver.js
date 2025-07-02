@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* globals setTimeout, document, console, Event */
 
 import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
 
@@ -123,9 +121,47 @@ describe( 'SelectionObserver', () => {
 		sinon.assert.calledOnce( flushSpy );
 	} );
 
+	it( 'should not fire selectionChange while editable is not focused', done => {
+		viewDocument.on( 'selectionChange', () => {
+			throw new Error( 'selectionChange fired while editable is not focused' );
+		} );
+
+		viewDocument.isFocused = false;
+		changeDomSelection();
+
+		setTimeout( done, 100 );
+	} );
+
+	it( 'should fire selectionChange after editor is focused and there were pending selection changes', done => {
+		viewDocument.on( 'selectionChange', () => done() );
+
+		viewDocument.isFocused = false;
+		changeDomSelection();
+
+		setTimeout( () => {
+			viewDocument.isFocused = true;
+		}, 100 );
+	} );
+
+	// See https://github.com/ckeditor/ckeditor5/issues/18514.
+	it( 'should fire selectionChange while editable is not focused but the editor is in read-only mode', done => {
+		const spy = sinon.spy();
+
+		viewDocument.on( 'selectionChange', spy );
+
+		viewDocument.isReadOnly = true;
+		viewDocument.isFocused = false;
+		changeDomSelection();
+
+		setTimeout( () => {
+			expect( spy.calledOnce ).to.be.true;
+			done();
+		}, 100 );
+	} );
+
 	it( 'should not fire selectionChange while user is composing', done => {
 		viewDocument.on( 'selectionChange', () => {
-			throw 'selectionChange fired while composing';
+			throw new Error( 'selectionChange fired while composing' );
 		} );
 
 		viewDocument.isComposing = true;
@@ -237,7 +273,7 @@ describe( 'SelectionObserver', () => {
 
 	it( 'should not fire selectionChange for ignored target', done => {
 		viewDocument.on( 'selectionChange', () => {
-			throw 'selectionChange fired in ignored elements';
+			throw new Error( 'selectionChange fired in ignored elements' );
 		} );
 
 		view.getObserver( MutationObserver ).disable();
@@ -250,7 +286,7 @@ describe( 'SelectionObserver', () => {
 
 	it( 'should not fire selectionChange on render', done => {
 		viewDocument.on( 'selectionChange', () => {
-			throw 'selectionChange on render';
+			throw new Error( 'selectionChange on render' );
 		} );
 
 		setTimeout( done, 70 );
@@ -266,7 +302,7 @@ describe( 'SelectionObserver', () => {
 		view.getObserver( SelectionObserver ).disable();
 
 		viewDocument.on( 'selectionChange', () => {
-			throw 'selectionChange on render';
+			throw new Error( 'selectionChange on render' );
 		} );
 
 		setTimeout( done, 70 );
@@ -299,8 +335,6 @@ describe( 'SelectionObserver', () => {
 	} );
 
 	it( 'should not enter infinite loop', () => {
-		let counter = 70;
-
 		const viewFoo = viewDocument.getRoot().getChild( 0 ).getChild( 0 );
 		view.change( writer => {
 			writer.setSelection( viewFoo, 0 );
@@ -315,18 +349,29 @@ describe( 'SelectionObserver', () => {
 		selectionObserver._clearInfiniteLoop();
 		viewDocument.on( 'selectionChange', selectionChangeSpy );
 
+		let counter = 70;
+
+		const simulateSelectionChanges = () => {
+			if ( !counter ) {
+				return;
+			}
+
+			changeDomSelection();
+			counter--;
+
+			setTimeout( simulateSelectionChanges, 10 );
+		};
+
 		return new Promise( resolve => {
 			viewDocument.on( 'selectionChangeDone', () => {
 				expect( wasInfiniteLoopDetected ).to.be.true;
 				expect( selectionChangeSpy.callCount ).to.equal( 60 );
 
+				counter = 0;
 				resolve();
 			} );
 
-			while ( counter > 0 ) {
-				changeDomSelection();
-				counter--;
-			}
+			simulateSelectionChanges();
 		} );
 	} );
 
@@ -611,7 +656,7 @@ describe( 'SelectionObserver', () => {
 			}, { priority: 'highest' } );
 
 			viewDocument.on( 'selectionChange', () => {
-				throw 'selectionChange fired';
+				throw new Error( 'selectionChange fired' );
 			} );
 
 			viewDocument.isSelecting = false;

@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* globals window */
 
 import VirtualTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/virtualtesteditor.js';
 
@@ -22,7 +20,7 @@ import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
 import ImageInlineEditing from '../../src/image/imageinlineediting.js';
 
 describe( 'ImageUploadProgress', () => {
-	// eslint-disable-next-line max-len
+	// eslint-disable-next-line @stylistic/max-len
 	const base64Sample = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
 	let editor, model, doc, fileRepository, view, nativeReaderMock, loader, adapterMock, imagePlaceholder;
 
@@ -71,6 +69,14 @@ describe( 'ImageUploadProgress', () => {
 
 				imagePlaceholder = editor.plugins.get( 'ImageUploadProgress' ).placeholder;
 			} );
+	} );
+
+	it( 'should have `isOfficialPlugin` static flag set to `true`', () => {
+		expect( ImageUploadProgress.isOfficialPlugin ).to.be.true;
+	} );
+
+	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
+		expect( ImageUploadProgress.isPremiumPlugin ).to.be.false;
 	} );
 
 	it( 'should convert image\'s "reading" uploadStatus attribute', () => {

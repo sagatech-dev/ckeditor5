@@ -1,6 +1,7 @@
 ---
 category: framework-contributing
 meta-title: Contributing | CKEditor 5 Framework Documentation
+meta-description: Discover how to contribute to CKEditor 5, including guidelines for reporting issues, submitting code, and joining the community.
 order: 10
 ---
 
@@ -95,7 +96,7 @@ Some additional things you should keep in mind:
 
 CKEditor&nbsp;5 is a project with global impact, so contributing translations is both an easy and powerful way to help.
 
-We use the Transifex service for translations at the following address: [https://www.transifex.com/ckeditor/ckeditor5/dashboard/](https://www.transifex.com/ckeditor/ckeditor5/dashboard/).
+To make CKEditor&nbsp;5 available in multiple languages, we use `.po` files for storing translations. These are text files commonly used in software development to translate interface texts. Each CKEditor&nbsp;5 package keeps translation files in the `lang/translations` directory. To provide missing translations, just edit the `.po` file and prepare a [pull request](#creating-a-pull-request).
 
 Here as well, having a CLA in place is a requirement to become an official translator (see below).
 

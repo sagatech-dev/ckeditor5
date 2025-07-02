@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
@@ -15,7 +15,7 @@ import {
 } from '@ckeditor/ckeditor5-utils';
 import { type FocusableView } from '../focuscycler.js';
 import View from '../view.js';
-import { isObject } from 'lodash-es';
+import { isObject } from 'es-toolkit/compat';
 import ListItemView from '../list/listitemview.js';
 import ListSeparatorView from '../list/listseparatorview.js';
 import type ViewCollection from '../viewcollection.js';
@@ -171,6 +171,24 @@ export default class MenuBarView extends View implements FocusableView {
 	}
 
 	/**
+	 * Disables all menus in the bar.
+	 */
+	public disable(): void {
+		for ( const topLevelCategoryMenuView of this.children ) {
+			topLevelCategoryMenuView.isEnabled = false;
+		}
+	}
+
+	/**
+	 * Enables all menus in the bar.
+	 */
+	public enable(): void {
+		for ( const topLevelCategoryMenuView of this.children ) {
+			topLevelCategoryMenuView.isEnabled = true;
+		}
+	}
+
+	/**
 	 * Registers a menu view in the menu bar. Every {@link module:ui/menubar/menubarmenuview~MenuBarMenuView} instance must be registered
 	 * in the menu bar to be properly managed.
 	 */
@@ -286,8 +304,8 @@ export default class MenuBarView extends View implements FocusableView {
 			 * {@link module:ui/menubar/menubarmenulistitembuttonview~MenuBarMenuListItemButtonView} (button).
 			 *
 			 * @error menu-bar-component-unsupported
-			 * @param componentName A name of the unsupported component used in the configuration.
-			 * @param componentView An unsupported component view.
+			 * @param {string} componentName A name of the unsupported component used in the configuration.
+			 * @param {module:ui/view~View} componentView An unsupported component view.
 			 */
 			logWarning( 'menu-bar-component-unsupported', {
 				componentName,

@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* globals document, console */
 
 import ClassicTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
 import Essentials from '@ckeditor/ckeditor5-essentials/src/essentials.js';
@@ -38,6 +36,14 @@ describe( 'ImageInsertUI', () => {
 
 	it( 'should have pluginName', () => {
 		expect( ImageInsertUI.pluginName ).to.equal( 'ImageInsertUI' );
+	} );
+
+	it( 'should have `isOfficialPlugin` static flag set to `true`', () => {
+		expect( ImageInsertUI.isOfficialPlugin ).to.be.true;
+	} );
+
+	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
+		expect( ImageInsertUI.isPremiumPlugin ).to.be.false;
 	} );
 
 	describe( '#constructor()', () => {
@@ -313,7 +319,12 @@ describe( 'ImageInsertUI', () => {
 			} );
 
 			it( 'should create a menu bar button', () => {
-				const button = editor.ui.componentFactory.create( 'menuBar:insertImage' );
+				const menu = editor.ui.componentFactory.create( 'menuBar:insertImage' );
+
+				expect( menu ).to.be.instanceOf( MenuBarMenuView );
+
+				const submenuList = menu.panelView.children.get( 0 );
+				const button = submenuList.items.get( 0 ).children.get( 0 );
 
 				expect( button ).to.be.instanceOf( MenuBarMenuListItemButtonView );
 				expect( button.label ).to.equal( 'button url' );

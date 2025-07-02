@@ -663,7 +663,7 @@ If you are using predefined builds from npm, follow the steps below:
 
 	Before:
 	```js
-	import DecoupledEditor from '@ckeditor/ckeditor5-build-multi-root';
+	import MultiRootEditor from '@ckeditor/ckeditor5-build-multi-root';
 
 	MultiRootEditor
 		.create( /* Configuration */ )
@@ -1722,7 +1722,6 @@ One notable difference between the old build and the new ESM build is that the f
 			toolbar: [
 				'aiCommands', 'aiAssistant',
 				'|',
-				// Productivity pack.
 				'tableOfContents', 'formatPainter', 'insertTemplate', 'caseChange',
 				'|',
 				'pagination',

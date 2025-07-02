@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* global console */
 
 import TodoDocumentList from '../src/tododocumentlist.js';
 import TodoList from '../src/todolist.js';
@@ -14,6 +12,14 @@ describe( 'TodoDocumentList', () => {
 
 	it( 'should be named', () => {
 		expect( TodoDocumentList.pluginName ).to.equal( 'TodoDocumentList' );
+	} );
+
+	it( 'should have `isOfficialPlugin` static flag set to `true`', () => {
+		expect( TodoDocumentList.isOfficialPlugin ).to.be.true;
+	} );
+
+	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
+		expect( TodoDocumentList.isPremiumPlugin ).to.be.false;
 	} );
 
 	it( 'should require TodoList', () => {

@@ -1,7 +1,9 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
+
+/* eslint-disable @stylistic/no-multi-spaces */
 
 import LegacyListEditing from '../../src/legacylist/legacylistediting.js';
 import LegacyListCommand from '../../src/legacylist/legacylistcommand.js';
@@ -67,6 +69,14 @@ describe( 'LegacyListEditing', () => {
 
 	it( 'should have pluginName', () => {
 		expect( LegacyListEditing.pluginName ).to.equal( 'LegacyListEditing' );
+	} );
+
+	it( 'should have `isOfficialPlugin` static flag set to `true`', () => {
+		expect( LegacyListEditing.isOfficialPlugin ).to.be.true;
+	} );
+
+	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
+		expect( LegacyListEditing.isPremiumPlugin ).to.be.false;
 	} );
 
 	it( 'should be loaded', () => {
@@ -605,7 +615,7 @@ describe( 'LegacyListEditing', () => {
 					);
 				} );
 
-				describe.skip( 'multiple blocks', () => { // Skip due to #112 issue.
+				describe.skip( 'multiple blocks (skipped due to #112)', () => { // Skip due to #112 issue.
 					testList(
 						'nested items #1',
 						'<ol><li><p>123</p><ul><li><h2>Foo</h2><p>Bar</p></li></ul><p>456</p></li></ol>',

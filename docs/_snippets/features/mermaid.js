@@ -1,19 +1,17 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-/* globals console, window, document */
+import { CKBox, PictureEditing, ImageResize, AutoImage, LinkImage } from 'ckeditor5';
+import {
+	CS_CONFIG,
+	ClassicEditor,
+	getViewportTopOffsetConfig
+} from '@snippets/index.js';
+import { Mermaid } from '@ckeditor/ckeditor5-mermaid/dist/index.js';
 
-import { CKBox } from '@ckeditor/ckeditor5-ckbox';
-import { PictureEditing, ImageResize, AutoImage } from '@ckeditor/ckeditor5-image';
-import { LinkImage } from '@ckeditor/ckeditor5-link';
-import { CS_CONFIG } from '@ckeditor/ckeditor5-cloud-services/tests/_utils/cloud-services-config.js';
-
-import Mermaid from '@ckeditor/ckeditor5-mermaid/src/mermaid.js';
-
-// Umberto combines all `packages/*/docs` into the `docs/` directory. The import path must be valid after merging all directories.
-import ClassicEditor from '../build-classic.js';
+import '@ckeditor/ckeditor5-mermaid/dist/index.css';
 
 ClassicEditor
 	.create( document.querySelector( '#mermaid' ), {
@@ -36,7 +34,7 @@ ClassicEditor
 		},
 		ui: {
 			viewportOffset: {
-				top: window.getViewportTopOffsetConfig()
+				top: getViewportTopOffsetConfig()
 			}
 		},
 		cloudServices: CS_CONFIG

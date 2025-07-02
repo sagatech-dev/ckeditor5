@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 import Model from '@ckeditor/ckeditor5-engine/src/model/model.js';
@@ -380,6 +380,7 @@ function stringifyElement( content, listAttributes = {} ) {
 	let selectionBefore = '';
 	let selectionAfter = '';
 
+	/* eslint-disable @stylistic/no-multi-spaces */
 	const regexp = new RegExp(
 		'^(?<selectionBefore>[\\[\\]])?' +													// [<element
 			'(?:' +
@@ -391,6 +392,7 @@ function stringifyElement( content, listAttributes = {} ) {
 			')' +
 		'(?<selectionAfter>[\\[\\]])?$'														// </element>] or <element/>]
 	);
+	/* eslint-enable @stylistic/no-multi-spaces */
 
 	const match = content.match( regexp );
 

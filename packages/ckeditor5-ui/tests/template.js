@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* globals HTMLElement, Event, document */
 
 import { default as Template, TemplateToBinding, TemplateIfBinding } from '../src/template.js';
 import View from '../src/view.js';
@@ -367,7 +365,7 @@ describe( 'Template', () => {
 
 						observable.backgroundColor = '';
 
-						expect( normalizeHtml( el.outerHTML ) ).to.equal( '<p></p>' );
+						expect( normalizeHtml( el.outerHTML ) ).to.equal( '<p style=""></p>' );
 					} );
 
 					it( 'renders with falsy values', () => {

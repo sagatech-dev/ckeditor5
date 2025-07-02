@@ -1,14 +1,15 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
  * @module image/imageinsert/imageinsertviaurlui
  */
 
-import { icons, Plugin } from 'ckeditor5/src/core.js';
+import { Plugin } from 'ckeditor5/src/core.js';
 import { ButtonView, Dialog, MenuBarMenuListItemButtonView } from 'ckeditor5/src/ui.js';
+import { IconImageUrl } from 'ckeditor5/src/icons.js';
 
 import ImageInsertUI from './imageinsertui.js';
 import ImageInsertUrlView from './ui/imageinserturlview.js';
@@ -33,6 +34,13 @@ export default class ImageInsertViaUrlUI extends Plugin {
 	 */
 	public static get pluginName() {
 		return 'ImageInsertViaUrlUI' as const;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public static override get isOfficialPlugin(): true {
+		return true;
 	}
 
 	/**
@@ -70,7 +78,7 @@ export default class ImageInsertViaUrlUI extends Plugin {
 	): InstanceType<T> {
 		const button = new ButtonClass( this.editor.locale ) as InstanceType<T>;
 
-		button.icon = icons.imageUrl;
+		button.icon = IconImageUrl;
 		button.on( 'execute', () => {
 			this._showModal();
 		} );
@@ -175,9 +183,7 @@ export default class ImageInsertViaUrlUI extends Plugin {
 
 		dialog.show( {
 			id: 'insertImageViaUrl',
-			title: this._imageInsertUI.isImageSelected ?
-				t( 'Update image URL' ) :
-				t( 'Insert image via URL' ),
+			title: t( 'Image via URL' ),
 			isModal: true,
 			content: this._formView,
 			actionButtons: [
@@ -187,7 +193,7 @@ export default class ImageInsertViaUrlUI extends Plugin {
 					onExecute: () => dialog.hide()
 				},
 				{
-					label: t( 'Accept' ),
+					label: this._imageInsertUI.isImageSelected ? t( 'Save' ) : t( 'Insert' ),
 					class: 'ck-button-action',
 					withText: true,
 					onExecute: () => this._handleSave()

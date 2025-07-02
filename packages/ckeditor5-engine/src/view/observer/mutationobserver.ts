@@ -1,17 +1,15 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
  * @module engine/view/observer/mutationobserver
  */
 
-/* globals window */
-
 import Observer from './observer.js';
 import { startsWithFiller } from '../filler.js';
-import { isEqualWith } from 'lodash-es';
+import { isEqualWith } from 'es-toolkit/compat';
 
 import type DomConverter from '../domconverter.js';
 import type View from '../view.js';
@@ -20,7 +18,7 @@ import type ViewNode from '../node.js';
 import type ViewText from '../text.js';
 import type { ChangeType } from '../document.js';
 
-// @if CK_DEBUG_TYPING // const { _debouncedLine } = require( '../../dev-utils/utils.js' );
+// @if CK_DEBUG_TYPING // const { _debouncedLine, _buildLogMessage } = require( '../../dev-utils/utils.js' );
 
 /**
  * Mutation observer's role is to watch for any DOM changes inside the editor that weren't
@@ -223,9 +221,10 @@ export default class MutationObserver extends Observer {
 		if ( mutations.length ) {
 			// @if CK_DEBUG_TYPING // if ( ( window as any ).logCKETyping ) {
 			// @if CK_DEBUG_TYPING // 	_debouncedLine();
-			// @if CK_DEBUG_TYPING // 	console.group( '%c[MutationObserver]%c Mutations detected',
-			// @if CK_DEBUG_TYPING // 		'font-weight: bold; color: green', 'font-weight: bold'
-			// @if CK_DEBUG_TYPING // 	);
+			// @if CK_DEBUG_TYPING // 	console.group( ..._buildLogMessage( this, 'MutationObserver',
+			// @if CK_DEBUG_TYPING // 		'%cMutations detected',
+			// @if CK_DEBUG_TYPING // 		'font-weight: bold'
+			// @if CK_DEBUG_TYPING // 	) );
 			// @if CK_DEBUG_TYPING // }
 
 			this.document.fire<ViewDocumentMutationsEvent>( 'mutations', { mutations } );
@@ -258,7 +257,7 @@ export default class MutationObserver extends Observer {
 }
 
 function sameNodes( child1: ViewNode, child2: ViewNode ) {
-	// First level of comparison (array of children vs array of children) – use the Lodash's default behavior.
+	// First level of comparison (array of children vs array of children) – use the es-toolkit's default behavior.
 	if ( Array.isArray( child1 ) ) {
 		return;
 	}

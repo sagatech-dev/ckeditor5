@@ -2,6 +2,7 @@
 category: features
 menu-title: Document title
 meta-title: Document title | CKEditor 5 Documentation
+meta-description: Add and configure a document title in CKEditor 5 to define the main heading, thereby improving content structure and accessibility.
 ---
 
 # Document title
@@ -30,18 +31,24 @@ The title plugin lets you move from the title to the body element using the <kbd
 	Starting with {@link updating/update-to-42 version 42.0.0}, we changed the format of import paths. This guide uses the new, shorter format. Refer to the {@link getting-started/legacy-getting-started/legacy-imports Packages in the legacy setup} guide if you use an older version of CKEditor&nbsp;5.
 </info-box>
 
-After {@link getting-started/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
+After {@link getting-started/integrations-cdn/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
 
+<code-switcher>
 ```js
 import { ClassicEditor, Title } from 'ckeditor5';
 
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
+		licenseKey: '<YOUR_LICENSE_KEY>', // Or 'GPL'.
 		plugins: [ Title, /* ... */ ]
+		title: {
+			// Configuration.
+		}
 	} )
 	.then( /* ... */ )
 	.catch( /* ... */ );
 ```
+</code-switcher>
 
 ## Placeholder integration
 
@@ -52,7 +59,7 @@ To change the title placeholder, use the {@link module:heading/title~TitleConfig
 ```js
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
-		plugins: [ Title, /* ... */ ],
+		// ... Other configuration options ...
 		title: {
 			placeholder: 'My custom placeholder for the title'
 		},
@@ -85,6 +92,10 @@ In the CKEditor&nbsp;5 data model the document title is represented as follows:
 <info-box>
 	We recommend using the official {@link framework/development-tools/inspector CKEditor&nbsp;5 inspector} for development and debugging. It will give you tons of useful information about the state of the editor such as internal data structures, selection, commands, and many more.
 </info-box>
+
+## Known issues
+
+The feature is not compatible with the {@link features/pagination pagination} feature.
 
 ## Related features
 

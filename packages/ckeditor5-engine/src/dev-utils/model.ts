@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
@@ -67,7 +67,7 @@ import type ModelElement from '../model/element.js';
 
 import { toMap, type EventInfo } from '@ckeditor/ckeditor5-utils';
 
-import { isPlainObject } from 'lodash-es';
+import { isPlainObject } from 'es-toolkit/compat';
 
 /**
  * Writes the content of a model {@link module:engine/model/document~Document document} to an HTML-like string.
@@ -501,7 +501,7 @@ function convertToModelElement( mapper: Mapper ) {
 function convertToModelText() {
 	return (
 		evt: EventInfo,
-		data: UpcastConversionData<ViewElement | ViewText >,
+		data: UpcastConversionData<ViewElement | ViewText>,
 		conversionApi: UpcastConversionApi
 	) => {
 		if ( !conversionApi.schema.checkChild( data.modelCursor, '$text' ) ) {
@@ -542,7 +542,7 @@ function convertToModelText() {
 function parseAttributeValue( attribute: string ): any {
 	try {
 		return JSON.parse( attribute );
-	} catch ( e ) {
+	} catch {
 		return attribute;
 	}
 }

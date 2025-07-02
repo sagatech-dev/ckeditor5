@@ -1,16 +1,13 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
  * @module watchdog/watchdog
  */
 
-/* globals window */
-
-// eslint-disable-next-line ckeditor5-rules/no-cross-package-imports
-import type { CKEditorError } from 'ckeditor5/src/utils.js';
+import type { CKEditorError } from '@ckeditor/ckeditor5-utils';
 import type { EditorWatchdogRestartEvent } from './editorwatchdog.js';
 import type { ContextWatchdogItemErrorEvent, ContextWatchdogItemRestartEvent } from './contextwatchdog.js';
 

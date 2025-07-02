@@ -1,17 +1,16 @@
 ---
 title: Find and replace
 meta-title: Find and replace | CKEditor 5 Documentation
+meta-description: Quickly find and replace text in CKEditor 5 with a powerful, user-friendly interface to streamline content editing and corrections.
 category: features
 modified_at: 2024-01-03
 ---
-
-{@snippet features/build-find-and-replace-source}
 
 The find and replace feature lets you find and replace any text in your document. This speeds up your work and helps with the consistency of your content.
 
 ## Demo
 
-Use the find and replace toolbar button {@icon @ckeditor/ckeditor5-find-and-replace/theme/icons/find-replace.svg Find and replace} to open the search dialog. Use it to find and replace words or phrases. You can also use the <kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>F</kbd> keyboard shortcut. Try replacing "AI" with "artificial intelligence" to make the content appeal to less tech-savvy users. Be careful to match the case!
+Use the find and replace toolbar button {@icon @ckeditor/ckeditor5-icons/theme/icons/find-replace.svg Find and replace} to open the search dialog. Use it to find and replace words or phrases. You can also use the <kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>F</kbd> keyboard shortcut. Try replacing "AI" with "artificial intelligence" to make the content appeal to less tech-savvy users. Be careful to match the case!
 
 {@snippet features/find-and-replace}
 
@@ -27,19 +26,25 @@ Use the find and replace toolbar button {@icon @ckeditor/ckeditor5-find-and-repl
 	Starting with {@link updating/update-to-42 version 42.0.0}, we changed the format of import paths. This guide uses the new, shorter format. Refer to the {@link getting-started/legacy-getting-started/legacy-imports Packages in the legacy setup} guide if you use an older version of CKEditor&nbsp;5.
 </info-box>
 
-After {@link getting-started/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
+After {@link getting-started/integrations-cdn/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
 
+<code-switcher>
 ```js
 import { ClassicEditor, FindAndReplace } from 'ckeditor5';
 
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
+		licenseKey: '<YOUR_LICENSE_KEY>', // Or 'GPL'.
 		plugins: [ FindAndReplace, /* ... */ ],
 		toolbar: [ 'findAndReplace', /* ... */ ],
+		findAndReplace: {
+			// Configuration.
+		}
 	} )
 	.then( /* ... */ )
 	.catch( /* ... */ );
 ```
+</code-switcher>
 
 ## Configuration
 
@@ -50,6 +55,7 @@ By default, the find and replace form displays inside a dialog. That allows for 
 ```js
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
+		// ... Other configuration options ...
 		findAndReplace: {
 			uiType: 'dropdown'
 		}

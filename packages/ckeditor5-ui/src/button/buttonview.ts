@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
@@ -239,6 +239,7 @@ export default class ButtonView extends View<HTMLButtonElement> implements Butto
 				class: 'ck-button__icon'
 			}
 		} );
+		this.iconView.bind( 'content' ).to( this, 'icon' );
 
 		this.keystrokeView = this._createKeystrokeView();
 
@@ -340,9 +341,16 @@ export default class ButtonView extends View<HTMLButtonElement> implements Butto
 		super.render();
 
 		if ( this.icon ) {
-			this.iconView.bind( 'content' ).to( this, 'icon' );
 			this.children.add( this.iconView );
 		}
+
+		this.on( 'change:icon', ( evt, prop, newIcon, oldIcon ) => {
+			if ( newIcon && !oldIcon ) {
+				this.children.add( this.iconView, 0 );
+			} else if ( !newIcon && oldIcon ) {
+				this.children.remove( this.iconView );
+			}
+		} );
 
 		this.children.add( this.labelView );
 

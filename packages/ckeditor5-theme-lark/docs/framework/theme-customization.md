@@ -1,6 +1,7 @@
 ---
 category: framework-deep-dive-ui
 meta-title: Theme customization | CKEditor 5 Framework Documentation
+meta-description: Learn how to customize CKEditor 5 themes, including styling components and applying custom CSS for a unique editor look.
 order: 10
 ---
 
@@ -12,7 +13,7 @@ Below you can see a demo of an editor with the dark theme as a result of customi
 
 ## Customization with CSS variables
 
-Assuming you finished our {@link getting-started/quick-start quick start} guide, and you have a running CKEditor&nbsp;5 instance, let's use the full potential of CSS variables (custom properties). The customization explained in this guide will make the theme dark, with slightly bigger text and more rounded corners.
+Assuming you finished our {@link getting-started/integrations-cdn/quick-start quick start} guide, and you have a running CKEditor&nbsp;5 instance, let's use the full potential of CSS variables (custom properties). The customization explained in this guide will make the theme dark, with slightly bigger text and more rounded corners.
 
 The file containing custom variables can be named `custom.css` and it will look as below:
 

@@ -3,6 +3,7 @@ category: crash-course
 order: 30
 menu-title: Model and schema
 meta-title: CKEditor 5 crash course - Model and schema | CKEditor 5 Documentation
+meta-description: Understand the model and schema in CKEditor 5 to structure and validate content effectively while building custom features.
 modified_at: 2023-08-16
 ---
 
@@ -26,8 +27,6 @@ The first and most important part of the editing engine is the model. The model 
 One major difference between the model and HTML is that in the model, both text and elements can have attributes.
 
 Let's see how the model compares to HTML.
-
-{@snippet framework/mini-inspector}
 
 {@snippet tutorials/mini-inspector-basic-styles}
 

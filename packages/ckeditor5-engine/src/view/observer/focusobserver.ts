@@ -1,18 +1,18 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
  * @module engine/view/observer/focusobserver
  */
 
-/* globals setTimeout, clearTimeout */
-
 import DomEventObserver from './domeventobserver.js';
 import type DomEventData from './domeventdata.js';
 import type View from '../view.js';
 import type { ViewDocumentInputEvent } from './inputobserver.js';
+
+// @if CK_DEBUG_TYPING // const { _debouncedLine, _buildLogMessage } = require( '../../dev-utils/utils.js' );
 
 /**
  * {@link module:engine/view/document~Document#event:focus Focus}
@@ -68,8 +68,19 @@ export default class FocusObserver extends DomEventObserver<'focus' | 'blur'> {
 	 */
 	public flush(): void {
 		if ( this._isFocusChanging ) {
+			// @if CK_DEBUG_TYPING // if ( ( window as any ).logCKETyping ) {
+			// @if CK_DEBUG_TYPING // 	_debouncedLine();
+			// @if CK_DEBUG_TYPING // 	console.group( ..._buildLogMessage( this, 'FocusObserver',
+			// @if CK_DEBUG_TYPING // 		'flush focus'
+			// @if CK_DEBUG_TYPING // 	) );
+			// @if CK_DEBUG_TYPING // }
+
 			this._isFocusChanging = false;
 			this.document.isFocused = true;
+
+			// @if CK_DEBUG_TYPING // if ( ( window as any ).logCKETyping ) {
+			// @if CK_DEBUG_TYPING // 	console.groupEnd();
+			// @if CK_DEBUG_TYPING // }
 		}
 	}
 
@@ -77,7 +88,28 @@ export default class FocusObserver extends DomEventObserver<'focus' | 'blur'> {
 	 * @inheritDoc
 	 */
 	public onDomEvent( domEvent: FocusEvent ): void {
+		// @if CK_DEBUG_TYPING // if ( ( window as any ).logCKETyping ) {
+		// @if CK_DEBUG_TYPING // 	_debouncedLine();
+		// @if CK_DEBUG_TYPING // 	console.group( ..._buildLogMessage( this, 'FocusObserver',
+		// @if CK_DEBUG_TYPING // 		`${ domEvent.type } event`
+		// @if CK_DEBUG_TYPING // 	) );
+		// @if CK_DEBUG_TYPING // 	console.info( ..._buildLogMessage( this, 'FocusObserver',
+		// @if CK_DEBUG_TYPING // 		'DOM target:',
+		// @if CK_DEBUG_TYPING // 		{ target: domEvent.target, relatedTarget: domEvent.relatedTarget }
+		// @if CK_DEBUG_TYPING // 	) );
+		// @if CK_DEBUG_TYPING // 	const domSelection = window.getSelection();
+		// @if CK_DEBUG_TYPING // 	console.info( ..._buildLogMessage( this, 'FocusObserver',
+		// @if CK_DEBUG_TYPING // 		'DOM Selection:',
+		// @if CK_DEBUG_TYPING // 		{ node: domSelection!.anchorNode, offset: domSelection!.anchorOffset },
+		// @if CK_DEBUG_TYPING // 		{ node: domSelection!.focusNode, offset: domSelection!.focusOffset }
+		// @if CK_DEBUG_TYPING // 	) );
+		// @if CK_DEBUG_TYPING // }
+
 		this.fire( domEvent.type, domEvent );
+
+		// @if CK_DEBUG_TYPING // if ( ( window as any ).logCKETyping ) {
+		// @if CK_DEBUG_TYPING // 	console.groupEnd();
+		// @if CK_DEBUG_TYPING // }
 	}
 
 	/**
@@ -105,8 +137,19 @@ export default class FocusObserver extends DomEventObserver<'focus' | 'blur'> {
 		// in a situation where `selectionchange` already caused selection change.
 		this._renderTimeoutId = setTimeout( () => {
 			this._renderTimeoutId = null;
+
+			// @if CK_DEBUG_TYPING // if ( ( window as any ).logCKETyping ) {
+			// @if CK_DEBUG_TYPING // 	console.group( ..._buildLogMessage( this, 'FocusObserver',
+			// @if CK_DEBUG_TYPING // 		'flush on timeout'
+			// @if CK_DEBUG_TYPING // 	) );
+			// @if CK_DEBUG_TYPING // }
+
 			this.flush();
 			this.view.change( () => {} );
+
+			// @if CK_DEBUG_TYPING // if ( ( window as any ).logCKETyping ) {
+			// @if CK_DEBUG_TYPING // 	console.groupEnd();
+			// @if CK_DEBUG_TYPING // }
 		}, 50 );
 	}
 
@@ -116,13 +159,30 @@ export default class FocusObserver extends DomEventObserver<'focus' | 'blur'> {
 	private _handleBlur( data: DomEventData<FocusEvent> ): void {
 		const selectedEditable = this.document.selection.editableElement;
 
+		// @if CK_DEBUG_TYPING // if ( ( window as any ).logCKETyping ) {
+		// @if CK_DEBUG_TYPING // 	console.info( ..._buildLogMessage( this, 'FocusObserver',
+		// @if CK_DEBUG_TYPING // 		'selectedEditable:',
+		// @if CK_DEBUG_TYPING // 		{ selectedEditable }
+		// @if CK_DEBUG_TYPING // 	) );
+		// @if CK_DEBUG_TYPING // }
+
 		if ( selectedEditable === null || selectedEditable === data.target ) {
+			// @if CK_DEBUG_TYPING // if ( ( window as any ).logCKETyping ) {
+			// @if CK_DEBUG_TYPING // 	console.group( ..._buildLogMessage( this, 'FocusObserver',
+			// @if CK_DEBUG_TYPING // 		'document no longer focused'
+			// @if CK_DEBUG_TYPING // 	) );
+			// @if CK_DEBUG_TYPING // }
+
 			this.document.isFocused = false;
 			this._isFocusChanging = false;
 
 			// Re-render the document to update view elements
 			// (changing document.isFocused already marked view as changed since last rendering).
 			this.view.change( () => {} );
+
+			// @if CK_DEBUG_TYPING // if ( ( window as any ).logCKETyping ) {
+			// @if CK_DEBUG_TYPING // 	console.groupEnd();
+			// @if CK_DEBUG_TYPING // }
 		}
 	}
 

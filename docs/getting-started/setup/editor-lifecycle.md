@@ -1,6 +1,7 @@
 ---
 category: setup
-meta-title: Editor lifecycle | CKEditor 5 documentation
+meta-title: Editor lifecycle | CKEditor 5 Documentation
+meta-description: Handling the editor lifecycle. With examples.
 order: 20
 modified_at: 2024-06-25
 ---
@@ -29,12 +30,15 @@ Add an element that CKEditor&nbsp;5 should replace on your HTML page:
 
 Then you call {@link module:editor-classic/classiceditor~ClassicEditor#create `ClassicEditor.create()`} to **replace** the `<div>` element with a classic editor:
 
+<code-switcher>
 ```js
 import { ClassicEditor, Essentials } from 'ckeditor5';
 
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
+		licenseKey: '<YOUR_LICENSE_KEY>', // Or 'GPL'.
 		plugins: [ Essentials, /* ... */ ],
+		toolbar: [ /* .. */ ],
 	} )
 	.then( editor => {
 		console.log( editor );
@@ -43,6 +47,7 @@ ClassicEditor
 		console.error( error );
 	} );
 ```
+</code-switcher>
 
 After creation, the editor will appear on the page in the selected area.
 
@@ -66,12 +71,15 @@ Add the elements where CKEditor&nbsp;5 should initialize the toolbar and the edi
 
 Then call the {@link module:editor-decoupled/decouplededitor~DecoupledEditor#create `DecoupledEditor.create()`} method to create a decoupled editor instance with the toolbar and the editable in two separate containers:
 
+<code-switcher>
 ```js
 import { DecoupledEditor, Essentials } from 'ckeditor5';
 
 DecoupledEditor
 	.create( document.querySelector( '#editor' ), {
+		licenseKey: '<YOUR_LICENSE_KEY>', // Or 'GPL'.
 		plugins: [ Essentials, /* ... */ ],
+		toolbar: [ /* .. */ ],
 	} )
 	.then( editor => {
 		const toolbarContainer = document.querySelector( '#toolbar-container' );
@@ -82,6 +90,7 @@ DecoupledEditor
 		console.error( error );
 	} );
 ```
+</code-switcher>
 
 ## Getting the editor's instance
 
@@ -110,4 +119,4 @@ editor
 	} );
 ```
 
-Once destroyed, resources used by the editor instance are released and the original element used to create the editor is automatically displayed and updated to reflect the final editor data.
+Once the editor is destroyed, resources used by the editor instance are released. However, if `updateSourceElementOnDestroy` is enabled, the original element (`<textarea>` or similar) used to create the editor is updated to reflect the final editor content upon destruction. This has some security implication, so enable it only after making yourself familiar with {@link getting-started/setup/getting-and-setting-data#updating-the-source-element this related section}.

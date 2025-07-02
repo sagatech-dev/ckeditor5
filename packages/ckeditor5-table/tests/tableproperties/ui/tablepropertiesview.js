@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* globals document, Event */
 
 import TablePropertiesView from '../../../src/tableproperties/ui/tablepropertiesview.js';
 import LabeledFieldView from '@ckeditor/ckeditor5-ui/src/labeledfield/labeledfieldview.js';
@@ -520,6 +518,16 @@ describe( 'table properties', () => {
 							expect( view.alignment ).to.equal( 'left' );
 							expect( toolbar.items.last.isOn ).to.be.false;
 							expect( toolbar.items.first.isOn ).to.be.true;
+						} );
+
+						it( 'should set proper ARIA properties', () => {
+							expect( toolbar.role ).to.equal( 'radiogroup' );
+							expect( toolbar.ariaLabel ).to.equal( 'Table alignment toolbar' );
+						} );
+
+						it( 'should have role=radio set on buttons', () => {
+							expect( [ ...toolbar.items ].some( ( { role, isToggleable } ) => role && isToggleable ) ).to.be.true;
+							expect( toolbar.items.length ).to.equal( 3 );
 						} );
 					} );
 				} );

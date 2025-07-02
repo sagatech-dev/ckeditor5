@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* globals btoa, console, document, window, AbortController, Response */
 
 import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
 import LinkEditing from '@ckeditor/ckeditor5-link/src/linkediting.js';
@@ -35,8 +33,11 @@ describe( 'CKBoxUtils', () => {
 
 	testUtils.createSinonSandbox();
 
+	let fetchStub;
+
 	beforeEach( async () => {
 		TokenMock.initialToken = token;
+		fetchStub = sinon.stub( window, 'fetch' ).resolves();
 
 		originalCKBox = window.CKBox;
 		window.CKBox = {};
@@ -53,11 +54,21 @@ describe( 'CKBoxUtils', () => {
 
 	afterEach( async () => {
 		window.CKBox = originalCKBox;
+		fetchStub.restore();
+
 		await editor.destroy();
 	} );
 
 	it( 'should have proper name', () => {
 		expect( CKBoxUtils.pluginName ).to.equal( 'CKBoxUtils' );
+	} );
+
+	it( 'should have `isOfficialPlugin` static flag set to `true`', () => {
+		expect( CKBoxUtils.isOfficialPlugin ).to.be.true;
+	} );
+
+	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
+		expect( CKBoxUtils.isPremiumPlugin ).to.be.false;
 	} );
 
 	it( 'should be loaded', () => {
@@ -67,6 +78,62 @@ describe( 'CKBoxUtils', () => {
 	describe( 'getToken()', () => {
 		it( 'should return an instance of token', async () => {
 			expect( await ckboxUtils.getToken() ).to.be.instanceOf( Token );
+		} );
+	} );
+
+	describe( '_authorizePrivateCategoriesAccess', () => {
+		it( 'should be called when retrieving a token', async () => {
+			await editor.destroy();
+
+			const authorizeSpy = sinon.spy( CKBoxUtils.prototype, '_authorizePrivateCategoriesAccess' );
+
+			editor = await createTestEditor( {
+				ckbox: {
+					tokenUrl: 'http://cs.example.com',
+					serviceOrigin: CKBOX_API_URL
+				}
+			} );
+
+			expect( authorizeSpy.calledOnce ).to.be.true;
+			expect( authorizeSpy.firstCall.args[ 0 ] ).to.equal( token );
+
+			authorizeSpy.restore();
+		} );
+
+		it( 'should make a fetch request with correct headers', async () => {
+			fetchStub.reset();
+
+			await ckboxUtils._authorizePrivateCategoriesAccess( 'test-token' );
+
+			expect( fetchStub.calledOnce ).to.be.true;
+
+			const fetchCall = fetchStub.firstCall;
+			const url = fetchCall.args[ 0 ];
+			const options = fetchCall.args[ 1 ];
+
+			expect( url ).to.equal( `${ CKBOX_API_URL }/categories/authorizePrivateAccess` );
+			expect( options.method ).to.equal( 'POST' );
+			expect( options.credentials ).to.equal( 'include' );
+			expect( options.mode ).to.equal( 'no-cors' );
+		} );
+
+		it( 'should make a fetch request with proper form data', async () => {
+			const testToken = 'example-token';
+
+			fetchStub.restore();
+			fetchStub = sinon.stub( window, 'fetch' ).callsFake( ( url, options ) => {
+				const formData = options.body;
+
+				expect( formData ).to.be.instanceOf( FormData );
+				expect( formData.get( 'token' ) ).to.equal( testToken );
+
+				return Promise.resolve();
+			} );
+
+			await ckboxUtils._authorizePrivateCategoriesAccess( testToken );
+
+			expect( fetchStub.calledOnce ).to.be.true;
+			expect( fetchStub.firstCall.args[ 0 ] ).to.equal( `${ CKBOX_API_URL }/categories/authorizePrivateAccess` );
 		} );
 	} );
 
@@ -384,13 +451,13 @@ describe( 'CKBoxUtils', () => {
 	} );
 
 	describe( 'getCategoryIdForFile', () => {
-		let fetchStub;
 		const file = { name: 'image.jpg' };
 		const url = 'https://example.com/image';
 		const options = { signal: new AbortController().signal };
 
 		beforeEach( () => {
-			fetchStub = sinon.stub( window, 'fetch' ).resolves( new Response( null, { headers: { 'content-type': 'image/jpeg' } } ) );
+			fetchStub.reset();
+			fetchStub = fetchStub.resolves( new Response( null, { headers: { 'content-type': 'image/jpeg' } } ) );
 		} );
 
 		it( 'should pass abort signal to other calls (file)', async () => {

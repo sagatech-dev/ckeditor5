@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 import EditorUI from '../../src/editorui/editorui.js';
@@ -9,16 +9,16 @@ import ComponentFactory from '../../src/componentfactory.js';
 import ToolbarView from '../../src/toolbar/toolbarview.js';
 import TooltipManager from '../../src/tooltipmanager.js';
 import PoweredBy from '../../src/editorui/poweredby.js';
+import EvaluationBadge from '../../src/editorui/evaluationbadge.js';
 import AriaLiveAnnouncer from '../../src/arialiveannouncer.js';
 import { EditorUIView, InlineEditableUIView, MenuBarView, View } from '../../src/index.js';
 
 import FocusTracker from '@ckeditor/ckeditor5-utils/src/focustracker.js';
 import { keyCodes } from '@ckeditor/ckeditor5-utils/src/keyboard.js';
 import { Editor } from '@ckeditor/ckeditor5-core';
+import env from '@ckeditor/ckeditor5-utils/src/env.js';
 import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
 import ClassicTestEditor, { ClassicTestEditorUI } from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
-
-/* global document, console */
 
 class MyEditorUI extends EditorUI {
 	constructor( editor ) {
@@ -41,10 +41,16 @@ describe( 'EditorUI', () => {
 	beforeEach( () => {
 		editor = new Editor();
 		editor.ui = ui = new MyEditorUI( editor );
+		editor.state = 'ready';
 	} );
 
-	afterEach( () => {
+	afterEach( async () => {
 		ui.destroy();
+
+		if ( editor.state !== 'destroyed' ) {
+			editor.fire( 'ready' );
+			await editor.destroy();
+		}
 	} );
 
 	describe( 'constructor()', () => {
@@ -66,6 +72,10 @@ describe( 'EditorUI', () => {
 
 		it( 'should create #poweredBy', () => {
 			expect( ui.poweredBy ).to.be.instanceOf( PoweredBy );
+		} );
+
+		it( 'should create #evaluationBadge', () => {
+			expect( ui.evaluationBadge ).to.be.instanceOf( EvaluationBadge );
 		} );
 
 		it( 'should create the aria live announcer instance', () => {
@@ -126,8 +136,8 @@ describe( 'EditorUI', () => {
 		} );
 
 		it( 'should reset editables array', () => {
-			ui.setEditableElement( 'foo', {} );
-			ui.setEditableElement( 'bar', {} );
+			ui.setEditableElement( 'foo', document.createElement( 'div' ) );
+			ui.setEditableElement( 'bar', document.createElement( 'div' ) );
 
 			expect( [ ...ui.getEditableElementsNames() ] ).to.deep.equal( [ 'foo', 'bar' ] );
 
@@ -187,6 +197,14 @@ describe( 'EditorUI', () => {
 
 		it( 'should destroy #poweredBy', () => {
 			const destroySpy = sinon.spy( ui.poweredBy, 'destroy' );
+
+			ui.destroy();
+
+			sinon.assert.calledOnce( destroySpy );
+		} );
+
+		it( 'should destroy #evaluationBadge', () => {
+			const destroySpy = sinon.spy( ui.evaluationBadge, 'destroy' );
 
 			ui.destroy();
 
@@ -391,7 +409,7 @@ describe( 'EditorUI', () => {
 
 			const ui = new MyEditorUI( editor );
 
-			expect( ui.viewportOffset ).to.deep.equal( { top: 200 } );
+			expect( ui.viewportOffset ).to.deep.equal( { top: 200, visualTop: 200 } );
 			sinon.assert.calledOnce( stub );
 		} );
 
@@ -406,8 +424,193 @@ describe( 'EditorUI', () => {
 
 			const ui = new MyEditorUI( editor );
 
-			expect( ui.viewportOffset ).to.deep.equal( { top: 200 } );
+			expect( ui.viewportOffset ).to.deep.equal( { top: 200, visualTop: 200 } );
 			sinon.assert.calledWithMatch( consoleStub, 'editor-ui-deprecated-viewport-offset-config' );
+		} );
+
+		it( 'should generate viewportOffset.visualTop property when viewportOffset is set', () => {
+			const ui = new MyEditorUI( editor );
+
+			ui.viewportOffset = { top: 100, left: 20 };
+
+			expect( ui.viewportOffset ).to.deep.equal( { top: 100, visualTop: 100, left: 20 } );
+		} );
+
+		it( 'should not create domEmitter if visualViewport is not supported', () => {
+			testUtils.sinon.stub( window, 'visualViewport' ).get( () => null );
+
+			const ui = new MyEditorUI( editor );
+
+			expect( ui._domEmitter ).to.be.undefined;
+		} );
+
+		describe( 'on iOS', () => {
+			beforeEach( () => {
+				testUtils.sinon.stub( env, 'isiOS' ).get( () => true );
+			} );
+
+			it( 'should update viewportOffset.visualTop when visual viewport is scrolled', () => {
+				let offsetTop = 0;
+
+				testUtils.sinon.stub( window.visualViewport, 'offsetTop' ).get( () => offsetTop );
+
+				const ui = new MyEditorUI( editor );
+
+				ui.viewportOffset = { top: 100 };
+
+				// Fully visible top offset.
+				expect( ui.viewportOffset ).to.deep.equal( { top: 100, visualTop: 100 } );
+
+				// Partly non-visible top offset.
+				offsetTop = 30;
+				window.visualViewport.dispatchEvent( new window.Event( 'scroll' ) );
+
+				expect( ui.viewportOffset ).to.deep.equal( { top: 100, visualTop: 70 } );
+
+				// Top offset fully outside the visual viewport.
+				offsetTop = 110;
+				window.visualViewport.dispatchEvent( new window.Event( 'scroll' ) );
+
+				expect( ui.viewportOffset ).to.deep.equal( { top: 100, visualTop: 0 } );
+			} );
+
+			it( 'should update viewportOffset.visualTop when visual viewport is resized', () => {
+				let offsetTop = 0;
+
+				testUtils.sinon.stub( window.visualViewport, 'offsetTop' ).get( () => offsetTop );
+
+				const ui = new MyEditorUI( editor );
+
+				ui.viewportOffset = { top: 100 };
+
+				// Fully visible top offset.
+				expect( ui.viewportOffset ).to.deep.equal( { top: 100, visualTop: 100 } );
+
+				// Partly non-visible top offset.
+				offsetTop = 30;
+				window.visualViewport.dispatchEvent( new window.Event( 'resize' ) );
+
+				expect( ui.viewportOffset ).to.deep.equal( { top: 100, visualTop: 70 } );
+
+				// Top offset fully outside the visual viewport.
+				offsetTop = 110;
+				window.visualViewport.dispatchEvent( new window.Event( 'resize' ) );
+
+				expect( ui.viewportOffset ).to.deep.equal( { top: 100, visualTop: 0 } );
+			} );
+		} );
+
+		describe( 'in Safari', () => {
+			beforeEach( () => {
+				testUtils.sinon.stub( env, 'isSafari' ).get( () => true );
+			} );
+
+			it( 'should not update viewportOffset.visualTop when visual viewport is scrolled', () => {
+				let offsetTop = 0;
+
+				testUtils.sinon.stub( window.visualViewport, 'offsetTop' ).get( () => offsetTop );
+
+				const ui = new MyEditorUI( editor );
+
+				ui.viewportOffset = { top: 100 };
+
+				// Fully visible top offset.
+				expect( ui.viewportOffset ).to.deep.equal( { top: 100, visualTop: 100 } );
+
+				// Partly non-visible top offset.
+				offsetTop = 30;
+				window.visualViewport.dispatchEvent( new window.Event( 'scroll' ) );
+
+				expect( ui.viewportOffset ).to.deep.equal( { top: 100, visualTop: 70 } );
+
+				// Top offset fully outside the visual viewport.
+				offsetTop = 110;
+				window.visualViewport.dispatchEvent( new window.Event( 'scroll' ) );
+
+				expect( ui.viewportOffset ).to.deep.equal( { top: 100, visualTop: 0 } );
+			} );
+
+			it( 'should not update viewportOffset.visualTop when visual viewport is resized', () => {
+				let offsetTop = 0;
+
+				testUtils.sinon.stub( window.visualViewport, 'offsetTop' ).get( () => offsetTop );
+
+				const ui = new MyEditorUI( editor );
+
+				ui.viewportOffset = { top: 100 };
+
+				// Fully visible top offset.
+				expect( ui.viewportOffset ).to.deep.equal( { top: 100, visualTop: 100 } );
+
+				// Partly non-visible top offset.
+				offsetTop = 30;
+				window.visualViewport.dispatchEvent( new window.Event( 'resize' ) );
+
+				expect( ui.viewportOffset ).to.deep.equal( { top: 100, visualTop: 70 } );
+
+				// Top offset fully outside the visual viewport.
+				offsetTop = 110;
+				window.visualViewport.dispatchEvent( new window.Event( 'resize' ) );
+
+				expect( ui.viewportOffset ).to.deep.equal( { top: 100, visualTop: 0 } );
+			} );
+		} );
+
+		describe( 'in non-Safari browser', () => {
+			beforeEach( () => {
+				testUtils.sinon.stub( env, 'isSafari' ).get( () => false );
+				testUtils.sinon.stub( env, 'isiOS' ).get( () => false );
+			} );
+
+			it( 'should not update viewportOffset.visualTop when visual viewport is scrolled', () => {
+				let offsetTop = 0;
+
+				testUtils.sinon.stub( window.visualViewport, 'offsetTop' ).get( () => offsetTop );
+
+				const ui = new MyEditorUI( editor );
+
+				ui.viewportOffset = { top: 100 };
+
+				// Fully visible top offset.
+				expect( ui.viewportOffset ).to.deep.equal( { top: 100, visualTop: 100 } );
+
+				// Partly non-visible top offset.
+				offsetTop = 30;
+				window.visualViewport.dispatchEvent( new window.Event( 'scroll' ) );
+
+				expect( ui.viewportOffset ).to.deep.equal( { top: 100, visualTop: 100 } );
+
+				// Top offset fully outside the visual viewport.
+				offsetTop = 110;
+				window.visualViewport.dispatchEvent( new window.Event( 'scroll' ) );
+
+				expect( ui.viewportOffset ).to.deep.equal( { top: 100, visualTop: 100 } );
+			} );
+
+			it( 'should not update viewportOffset.visualTop when visual viewport is resized', () => {
+				let offsetTop = 0;
+
+				testUtils.sinon.stub( window.visualViewport, 'offsetTop' ).get( () => offsetTop );
+
+				const ui = new MyEditorUI( editor );
+
+				ui.viewportOffset = { top: 100 };
+
+				// Fully visible top offset.
+				expect( ui.viewportOffset ).to.deep.equal( { top: 100, visualTop: 100 } );
+
+				// Partly non-visible top offset.
+				offsetTop = 30;
+				window.visualViewport.dispatchEvent( new window.Event( 'resize' ) );
+
+				expect( ui.viewportOffset ).to.deep.equal( { top: 100, visualTop: 100 } );
+
+				// Top offset fully outside the visual viewport.
+				offsetTop = 110;
+				window.visualViewport.dispatchEvent( new window.Event( 'resize' ) );
+
+				expect( ui.viewportOffset ).to.deep.equal( { top: 100, visualTop: 100 } );
+			} );
 		} );
 	} );
 
@@ -524,13 +727,13 @@ describe( 'EditorUI', () => {
 				} );
 
 				describe( 'for a ToolbarView that has already been rendered', () => {
-					it( 'adds ToolbarView#element to the EditorUI#focusTracker', () => {
+					it( 'adds ToolbarView to the EditorUI#focusTracker', () => {
 						const spy = testUtils.sinon.spy( ui.focusTracker, 'add' );
 						toolbar.render();
 
 						ui.addToolbar( toolbar );
 
-						sinon.assert.calledOnce( spy );
+						sinon.assert.calledOnceWithExactly( spy, toolbar );
 					} );
 
 					it( 'adds ToolbarView#element to Editor#keystokeHandler', () => {
@@ -553,7 +756,7 @@ describe( 'EditorUI', () => {
 						await new Promise( resolve => {
 							toolbar.once( 'render', () => {
 								sinon.assert.calledOnce( spy );
-								sinon.assert.calledOnce( spy2 );
+								sinon.assert.calledOnceWithExactly( spy2, toolbar );
 
 								resolve();
 							} );
@@ -659,7 +862,7 @@ describe( 'EditorUI', () => {
 					sinon.assert.notCalled( invisibleSpy );
 				} );
 
-				it( 'should do nothing if no toolbars were registered', () => {
+				it( 'should do nothing if no toolbars were registered', done => {
 					const editor = new Editor();
 					const ui = editor.ui = new MyEditorUI( editor );
 					const editingArea = document.createElement( 'div' );
@@ -673,7 +876,9 @@ describe( 'EditorUI', () => {
 					} ).to.not.throw();
 
 					editingArea.remove();
-					editor.destroy();
+
+					editor.fire( 'ready' );
+					editor.destroy().then( () => done() );
 					ui.destroy();
 				} );
 
@@ -840,7 +1045,7 @@ describe( 'EditorUI', () => {
 
 					ui.addToolbar( visibleToolbarA );
 					ui.addToolbar( visibleToolbarB );
-					ui._initMenuBar( visibleMenuBar );
+					ui.initMenuBar( visibleMenuBar );
 
 					editingAreaA = document.createElement( 'div' );
 					editingAreaB = document.createElement( 'div' );
@@ -1205,7 +1410,7 @@ describe( 'EditorUI', () => {
 				init() {
 					super.init();
 
-					this._initMenuBar( this.view.menuBarView );
+					this.initMenuBar( this.view.menuBarView );
 				}
 			}
 

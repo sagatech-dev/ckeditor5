@@ -1,6 +1,7 @@
 ---
 menu-title: Lists editing behavior
 meta-title: Lists editing behavior | CKEditor 5 Documentation
+meta-description: Easily edit and customize lists in CKEditor 5 with intuitive tools for nesting, reordering, and formatting list items.
 category: features-lists
 order: 40
 modified_at: 2024-04-01
@@ -28,11 +29,13 @@ Press <kbd>Enter</kbd> to create a new list item. Press <kbd>Tab</kbd> to nest t
 
 When working with simple content or in small editing areas, you might not need the support for multi-block lists. You can use the {@link module:list/listconfig~ListConfig#multiBlock `config.list.multiBlock`} configuration setting to turn off the block list functionality. When you set this option to `false`, users can only insert text into list items. They will not be able to nest content blocks &ndash; like paragraphs or tables &ndash; inside a list item. We sometimes refer to this setup as "simple lists."
 
+<code-switcher>
 ```js
 import { ClassicEditor, List } from 'ckeditor5';
 
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
+		licenseKey: '<YOUR_LICENSE_KEY>', // Or 'GPL'.
 		plugins: [ List, /* ... */ ],
 		toolbar: [ 'bulletedList', 'numberedList', /* ... */ ],
 		list: {
@@ -42,6 +45,7 @@ ClassicEditor
 	.then( /* ... */ )
 	.catch( /* ... */ );
 ```
+</code-switcher>
 
 ## Merging adjacent lists
 
@@ -51,22 +55,25 @@ Sometimes this can be an undesirable behavior. For example, two adjacent numbere
 
 To prevent this behavior, enable the {@link module:list/list/adjacentlistssupport~AdjacentListsSupport `AdjacentListsSupport`} plugin.
 
+<code-switcher>
 ```js
 import { ClassicEditor, List, AdjacentListsSupport } from 'ckeditor5';
 
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
+		licenseKey: '<YOUR_LICENSE_KEY>', // Or 'GPL'.
 		plugins: [ List, AdjacentListsSupport, /* ... */ ]
 	} )
 	.then( /* ... */ )
 	.catch( /* ... */ );
 ```
+</code-switcher>
 
 This feature only works for pasted contents or on data load, it {@link updating/update-to-41#changes-to-list-merging does not support entering adjacent lists via the editor UI}. If you are interested in this functionality, refer to [this issue on GitHub](https://github.com/ckeditor/ckeditor5/issues/14478).
 
 ## Indenting lists
 
-Besides controlling {@link features/indent text block indentation}, the indent {@icon @ckeditor/ckeditor5-core/theme/icons/indent.svg Indent} and outdent {@icon @ckeditor/ckeditor5-core/theme/icons/outdent.svg Outdent} buttons allow for indenting list items (nesting them).
+Besides controlling {@link features/indent text block indentation}, the indent {@icon @ckeditor/ckeditor5-icons/theme/icons/indent.svg Indent} and outdent {@icon @ckeditor/ckeditor5-icons/theme/icons/outdent.svg Outdent} buttons allow for indenting list items (nesting them).
 
 This mechanism is transparent to the user. From the code perspective, the buttons are implemented by the {@link module:indent/indent~Indent} plugin. Neither these buttons nor the respective commands implement any functionality by default.
 

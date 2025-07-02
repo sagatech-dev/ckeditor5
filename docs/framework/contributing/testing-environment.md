@@ -1,6 +1,7 @@
 ---
 category: framework-contributing
 meta-title: Testing environment | CKEditor 5 Framework Documentation
+meta-description: Test CKEditor 5 using the official testing environment. Run unit and manual tests effectively.
 order: 30
 modified_at: 2022-09-07
 ---
@@ -31,7 +32,6 @@ It accepts the following arguments that must be passed after the `--` option:
 * `--verbose` (alias `-v`) &ndash; Allows switching on webpack logs.
 * `--files` &ndash; Specifies test files to run. See the [Rules for using the `--files` option](#rules-for-using-the-files-option) section.
 * `--browsers` &ndash; Browsers that will be used to run the tests. Defaults to `Chrome`.
-* `--debug` (alias `-d`) &ndash; Allows specifying custom debug flags. For example, the `--debug engine` option uncomments the `// @if CK_DEBUG_ENGINE //` lines in the code. By default `--debug` is set to `true` even if you did not specify it. This enables the base set of debug logs (`// @if CK_DEBUG //`) which should always be enabled in the testing environment. You can completely turn off the debug mode by setting the `--debug false` option.
 * `--port` &ndash; Specifies the port for the server to use. Defaults to `9876`.
 * `--identity-file="/path/to/file.js"` (alias `-i`) &ndash; Path to the file containing the license key(s) for closed–source features.
 
@@ -162,12 +162,11 @@ An example HTML file:
 An example JavaScript file:
 
 ```js
-/* globals console, window, document */
-
 import { ClassicEditor, Essentials, Paragraph } from 'ckeditor5';
 
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
+		licenseKey: '<YOUR_LICENSE_KEY>', // Or 'GPL'.
 		plugins: [ Essentials, Paragraph ]
 	} )
 	.then( editor => {
@@ -224,8 +223,8 @@ The `--files` (alias `-f`) option is used by both the manual and automated tests
 		<td>Run all tests of the <a href="https://github.com/ckeditor/ckeditor5/tree/master/packages/ckeditor5-core/tests"><code>ckeditor5-core</code></a> package.</td>
 	</tr>
 	<tr>
-		<td><code>build-*</code></td>
-		<td>Run all tests of the <code>build-*</code> packages. (<code>ckeditor5-build-classic</code>, <code>ckeditor5-build-balloon</code> etc.)</td>
+		<td><code>editor-*</code></td>
+		<td>Run all tests of the <code>editor-*</code> packages. (<code>ckeditor5-editor-classic</code>, <code>ckeditor5-editor-balloon</code> etc.)</td>
 	</tr>
 	<tr>
 		<td><code>!core</code></td>

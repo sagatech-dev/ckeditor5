@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* globals Range, DocumentFragment, HTMLElement, Comment, document, Text, console */
 
 import ViewText from '../../../src/view/text.js';
 import ViewElement from '../../../src/view/element.js';
@@ -743,6 +741,8 @@ describe( 'DomConverter', () => {
 				return html.replace( /&nbsp;/g, '_' );
 			}
 
+			/* eslint-disable @stylistic/no-multi-spaces */
+
 			// At the beginning.
 			testConvert( ' x', '_x' );
 			testConvert( '  x', '_ x' );
@@ -888,6 +888,8 @@ describe( 'DomConverter', () => {
 			testConvert( [ '  ', '   ' ], '__ __' );
 			testConvert( [ '   ', '  ' ], '_ _ _' );
 			testConvert( [ '   ', '   ' ], '_ _ __' );
+
+			/* eslint-enable @stylistic/no-multi-spaces */
 
 			it( 'not in preformatted blocks', () => {
 				const viewPre = new ViewContainerElement( viewDocument, 'pre', null, [
@@ -1469,6 +1471,40 @@ describe( 'DomConverter', () => {
 
 			expect( domPosition.offset ).to.equal( INLINE_FILLER_LENGTH + 2 );
 			expect( domPosition.parent ).to.equal( domFoo );
+		} );
+
+		it( 'should convert the position in the text even if offset is after the text', () => {
+			const domFoo = document.createTextNode( 'foo' );
+			const domP = createElement( document, 'p', null, domFoo );
+			const { view: viewP } = parse( '<container:p>f{}oo</container:p>' );
+
+			converter.bindElements( domP, viewP );
+
+			const viewPosition = new ViewPosition( viewP.getChild( 0 ), 40 ); // This offset is after the text.
+			const domPosition = converter.viewPositionToDom( viewPosition );
+
+			expect( domPosition.offset ).to.equal( 3 );
+			expect( domPosition.parent ).to.equal( domFoo );
+		} );
+
+		it( 'should not crash for position in text on not yet updated DOM tree', () => {
+			// Note this is a case when renderer is verifying whether the selection is inside an inline filler,
+			// so the DOM tree is not yet updated.
+			const domFiller = document.createTextNode( INLINE_FILLER );
+			const domFoo = document.createTextNode( 'foo' );
+			const domSpan = createElement( document, 'span', null, domFoo );
+			const domStrong = createElement( document, 'strong', null, [ domFiller, domSpan ] );
+			const domP = createElement( document, 'p', null, domStrong );
+			const { view: viewP } = parse( '<container:p>{}foo</container:p>' );
+
+			converter.bindElements( domP, viewP );
+
+			const viewPosition = new ViewPosition( viewP.getChild( 0 ), 0 );
+			const domPosition = converter.viewPositionToDom( viewPosition );
+
+			expect( domPosition.offset ).to.equal( 0 );
+			expect( domPosition.parent ).to.equal( domStrong );
+			// This should be in a text node but since DOM is not yet updated, it is in the strong element.
 		} );
 
 		it( 'should move the position to the text node if the position is where inline filler is', () => {

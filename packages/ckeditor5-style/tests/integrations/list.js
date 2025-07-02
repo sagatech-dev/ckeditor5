@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* global document */
 
 import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
 import Heading from '@ckeditor/ckeditor5-heading/src/heading.js';
@@ -14,6 +12,7 @@ import ImageCaption from '@ckeditor/ckeditor5-image/src/imagecaption.js';
 import BlockQuote from '@ckeditor/ckeditor5-block-quote/src/blockquote.js';
 import List from '@ckeditor/ckeditor5-list/src/list.js';
 import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
+import ListStyleSupport from '../../src/integrations/list.js';
 
 import Style from '../../src/style.js';
 
@@ -50,6 +49,14 @@ describe( 'ListStyleSupport', () => {
 	afterEach( async () => {
 		editorElement.remove();
 		await editor.destroy();
+	} );
+
+	it( 'should have `isOfficialPlugin` static flag set to `true`', () => {
+		expect( ListStyleSupport.isOfficialPlugin ).to.be.true;
+	} );
+
+	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
+		expect( ListStyleSupport.isPremiumPlugin ).to.be.false;
 	} );
 
 	describe( 'enabled styles', () => {

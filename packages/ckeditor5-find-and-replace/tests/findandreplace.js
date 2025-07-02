@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* global document, window */
 
 import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor.js';
 import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
@@ -64,6 +62,14 @@ describe( 'FindAndReplace', () => {
 
 	it( 'should be named', () => {
 		expect( FindAndReplace.pluginName ).to.equal( 'FindAndReplace' );
+	} );
+
+	it( 'should have `isOfficialPlugin` static flag set to `true`', () => {
+		expect( FindAndReplace.isOfficialPlugin ).to.be.true;
+	} );
+
+	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
+		expect( FindAndReplace.isPremiumPlugin ).to.be.false;
 	} );
 
 	it( 'should require other plugins', () => {

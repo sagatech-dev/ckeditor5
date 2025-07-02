@@ -1,13 +1,13 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
+import { IconMedia } from 'ckeditor5/src/icons.js';
 import ClassicTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
 import MediaEmbed from '../src/mediaembed.js';
 import MediaEmbedUI from '../src/mediaembedui.js';
 import global from '@ckeditor/ckeditor5-utils/src/dom/global.js';
-import mediaIcon from '../theme/icons/media.svg';
 import { ButtonView, DialogViewPosition, MenuBarMenuListItemButtonView } from '@ckeditor/ckeditor5-ui';
 
 describe( 'MediaEmbedUI', () => {
@@ -46,6 +46,14 @@ describe( 'MediaEmbedUI', () => {
 		expect( MediaEmbedUI.pluginName ).to.equal( 'MediaEmbedUI' );
 	} );
 
+	it( 'should have `isOfficialPlugin` static flag set to `true`', () => {
+		expect( MediaEmbedUI.isOfficialPlugin ).to.be.true;
+	} );
+
+	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
+		expect( MediaEmbedUI.isPremiumPlugin ).to.be.false;
+	} );
+
 	it( 'should allow creating two instances', () => {
 		let secondInstance;
 
@@ -72,18 +80,19 @@ describe( 'MediaEmbedUI', () => {
 	} );
 
 	describe( 'dialog', () => {
-		let form, dialog;
+		let form, dialog, mediaEmbedCommand;
 
 		beforeEach( () => {
 			button.fire( 'execute' );
 			dialog = editor.plugins.get( 'Dialog' );
 			form = editor.plugins.get( 'MediaEmbedUI' )._formView;
+			mediaEmbedCommand = editor.commands.get( 'mediaEmbed' );
 		} );
 
 		it( 'has two action buttons', () => {
 			expect( dialog.view.actionsView.children ).to.have.length( 2 );
 			expect( dialog.view.actionsView.children.get( 0 ).label ).to.equal( 'Cancel' );
-			expect( dialog.view.actionsView.children.get( 1 ).label ).to.equal( 'Accept' );
+			expect( dialog.view.actionsView.children.get( 1 ).label ).to.equal( 'Insert' );
 		} );
 
 		it( 'should be open as modal', () => {
@@ -92,6 +101,31 @@ describe( 'MediaEmbedUI', () => {
 
 		it( 'should be open at screen center', () => {
 			expect( dialog.view.position ).to.be.equal( DialogViewPosition.SCREEN_CENTER );
+		} );
+
+		it( 'should have a title', () => {
+			const sinonSpy = sinon.spy( dialog, 'show' );
+
+			dialog.hide();
+			button.fire( 'execute' );
+
+			expect( sinonSpy ).to.have.been.calledWithMatch( { title: 'Media embed' } );
+		} );
+
+		it( 'should show save button if media is selected', () => {
+			dialog.hide();
+			mediaEmbedCommand.value = 'http://example.org';
+			button.fire( 'execute' );
+
+			expect( dialog.view.actionsView.children.get( 1 ).label ).to.equal( 'Save' );
+		} );
+
+		it( 'should show insert button if media is selected', () => {
+			dialog.hide();
+			mediaEmbedCommand.value = undefined;
+			button.fire( 'execute' );
+
+			expect( dialog.view.actionsView.children.get( 1 ).label ).to.equal( 'Insert' );
 		} );
 
 		testSubmit( 'Accept button', () => {
@@ -212,7 +246,7 @@ describe( 'MediaEmbedUI', () => {
 		} );
 
 		it( 'should set an #icon of the #buttonView', () => {
-			expect( button.icon ).to.equal( mediaIcon );
+			expect( button.icon ).to.equal( IconMedia );
 		} );
 
 		it( 'should open media embed dialog', () => {

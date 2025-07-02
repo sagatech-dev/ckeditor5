@@ -1,11 +1,9 @@
 ---
 menu-title: Drag and drop
 meta-title: Drag and drop | CKEditor 5 Documentation
-meta-description: Learn all about using the drag and drop mechanism to manage content and uploads in CKEditor 5
+meta-description: Learn all about using the drag and drop mechanism to manage content and uploads in CKEditor 5.
 category: features
 ---
-
-{@snippet features/build-drag-drop-source}
 
 # Drag and drop
 
@@ -37,7 +35,7 @@ The drag and drop functions include:
 
 * Selection of the text, elements, multiple blocks, and moving these around.
 * Placement of blocks inside other blocks such as tables, blockquotes, etc.
-* The braille dots panel icon {@icon @ckeditor/ckeditor5-core/theme/icons/drag-indicator.svg Drag indicator}  in the [balloon block editor](#balloon-block-editor-demo) now behaves as a drag handle.
+* The braille dots panel icon {@icon @ckeditor/ckeditor5-icons/theme/icons/drag-indicator.svg Drag indicator}  in the [balloon block editor](#balloon-block-editor-demo) now behaves as a drag handle.
 
 ### Classic editor demo
 
@@ -47,7 +45,7 @@ Select a block or blocks, and drag them across the document. You can place block
 
 ### Balloon block editor demo
 
-In the balloon block editor, you can also drag content blocks using the drag handle. Select or focus on the block, and then drag the block with the braille dots panel icon {@icon @ckeditor/ckeditor5-core/theme/icons/drag-indicator.svg Drag indicator}.
+In the balloon block editor, you can also drag content blocks using the drag handle. Select or focus on the block, and then drag the block with the braille dots panel icon {@icon @ckeditor/ckeditor5-icons/theme/icons/drag-indicator.svg Drag indicator}.
 
 {@snippet features/block-balloon-drag-drop}
 
@@ -59,18 +57,21 @@ In the balloon block editor, you can also drag content blocks using the drag han
 	Starting with {@link updating/update-to-42 version 42.0.0}, we changed the format of import paths. This guide uses the new, shorter format. Refer to the {@link getting-started/legacy-getting-started/legacy-imports Packages in the legacy setup} guide if you use an older version of CKEditor&nbsp;5.
 </info-box>
 
-After {@link getting-started/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
+After {@link getting-started/integrations-cdn/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
 
+<code-switcher>
 ```js
 import { ClassicEditor, Clipboard } from 'ckeditor5';
 
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
+		licenseKey: '<YOUR_LICENSE_KEY>', // Or 'GPL'.
 		plugins: [ Clipboard, Bold, /* ... */ ],
 	})
 	.then( /* ... */ )
 	.catch( /* ... */ );
 ```
+</code-switcher>
 
 The {@link module:clipboard/dragdrop~DragDrop `DragDrop`} plugin will activate along with the clipboard plugin.
 

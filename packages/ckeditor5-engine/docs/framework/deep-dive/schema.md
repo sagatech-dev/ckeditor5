@@ -2,6 +2,7 @@
 category: framework-deep-dive
 classes: schema-deep-dive
 meta-title: Schema | CKEditor 5 Framework Documentation
+meta-description: Explore the CKEditor 5 schema system, defining document structure, rules, and how to extend and customize content models.
 ---
 
 # Schema
@@ -109,7 +110,7 @@ schema.register( 'extendedParent', { inheritAllFrom: 'baseParent', disallowChild
 
 In this case, `extendedChild` will be allowed in `baseParent` (thanks to inheriting from `baseChild`) and in `extendedParent` (as it inherits `baseParent`).
 
-But `baseChild` will be allowed only in `baseParent`. Although `extendedParent` inherits all rules from `baseParent` it specifically disallows `baseChild` as the part of its definition.
+However, `baseChild` will be allowed only in `baseParent`. Although `extendedParent` inherits all rules from `baseParent`, it specifically disallows `baseChild` as part of its definition.
 
 Below is a different example, where instead `baseChild` is extended with `disallowIn` rule:
 
@@ -122,7 +123,7 @@ schema.register( 'extendedChild', { inheritAllFrom: 'baseChild' } );
 schema.extend( 'baseChild', { disallowIn: 'extendedParent' } );
 ```
 
-This changes how schema rules are resolved. `baseChild` will still be disallowed in `extendedParent` as before. But now, `extendedChild` will be disallowed in `extendedParent` as well. That's because it will inherit this rule from `baseChild`, and there is no other rule that would allow `extendedChild` in `extendedParent`. 
+This changes how schema rules are resolved. `baseChild` will still be disallowed in `extendedParent` as before. But now, `extendedChild` will be disallowed in `extendedParent` as well. That is because it will inherit this rule from `baseChild`, and there is no other rule that would allow `extendedChild` in `extendedParent`. 
 
 Of course, you can mix `allowIn` with `disallowChildren` as well as `allowChildren` with `disallowIn`.
 
@@ -248,6 +249,15 @@ Here is a table listing various model elements and their properties registered i
 			<td class="value_negative"><code>false</code></td>
 		</tr>
 		<tr>
+			<td><code>bookmark</code></td>
+			<td class="value_negative"><code>false</code></td>
+			<td class="value_positive_inherited"><code>true</code><a href="#inherited1"><sup>[1]</sup></a></td>
+			<td class="value_positive"><code>true</code></td>
+			<td class="value_positive"><code>true</code></td>
+			<td class="value_positive_inherited"><code>true</code><a href="#inherited2"><sup>[2]</sup></a></td>
+			<td class="value_positive_inherited"><code>true</code><a href="#inherited3"><sup>[3]</sup></a></td>
+		</tr>
+		<tr>
 			<td><code>caption</code></td>
 			<td class="value_negative"><code>false</code></td>
 			<td class="value_positive"><code>true</code></td>
@@ -338,6 +348,24 @@ Here is a table listing various model elements and their properties registered i
 			<td class="value_positive_inherited"><code>true</code><a href="#inherited3"><sup>[3]</sup></a></td>
 		</tr>
 		<tr>
+			<td><code>mergeField</code></td>
+			<td class="value_negative"><code>false</code></td>
+			<td class="value_positive_inherited"><code>true</code><a href="#inherited1"><sup>[1]</sup></a></td>
+			<td class="value_positive"><code>true</code></td>
+			<td class="value_positive"><code>true</code></td>
+			<td class="value_positive_inherited"><code>true</code><a href="#inherited2"><sup>[2]</sup></a></td>
+			<td class="value_positive_inherited"><code>true</code><a href="#inherited3"><sup>[3]</sup></a></td>
+		</tr>
+		<tr>
+			<td><code>mergeFieldBlock</code></td>
+			<td class="value_positive"><code>true</code></td>
+			<td class="value_positive_inherited"><code>true</code><a href="#inherited1"><sup>[1]</sup></a></td>
+			<td class="value_positive"><code>true</code></td>
+			<td class="value_negative"><code>false</code></td>
+			<td class="value_positive_inherited"><code>true</code><a href="#inherited2"><sup>[2]</sup></a></td>
+			<td class="value_positive_inherited"><code>true</code><a href="#inherited3"><sup>[3]</sup></a></td>
+		</tr>
+		<tr>
 			<td><code>pageBreak</code></td>
 			<td class="value_positive"><code>true</code></td>
 			<td class="value_positive_inherited"><code>true</code><a href="#inherited1"><sup>[1]</sup></a></td>
@@ -354,6 +382,15 @@ Here is a table listing various model elements and their properties registered i
 			<td class="value_negative"><code>false</code></td>
 			<td class="value_negative"><code>false</code></td>
 			<td class="value_negative"><code>false</code></td>
+		</tr>
+		<tr>
+			<td><code>rawHtml</code></td>
+			<td class="value_positive"><code>true</code></td>
+			<td class="value_positive_inherited"><code>true</code><a href="#inherited1"><sup>[1]</sup></a></td>
+			<td class="value_positive"><code>true</code></td>
+			<td class="value_negative"><code>false</code></td>
+			<td class="value_positive_inherited"><code>true</code><a href="#inherited2"><sup>[2]</sup></a></td>
+			<td class="value_positive_inherited"><code>true</code><a href="#inherited3"><sup>[3]</sup></a></td>
 		</tr>
 		<tr>
 			<td><code>softBreak</code></td>
@@ -390,6 +427,33 @@ Here is a table listing various model elements and their properties registered i
 			<td class="value_negative"><code>false</code></td>
 			<td class="value_positive"><code>true</code></td>
 			<td class="value_negative"><code>false</code></td>
+		</tr>
+		<tr>
+			<td><code>tableColumn</code></td>
+			<td class="value_negative"><code>false</code></td>
+			<td class="value_positive"><code>true</code></td>
+			<td class="value_negative"><code>false</code></td>
+			<td class="value_negative"><code>false</code></td>
+			<td class="value_positive"><code>false</code></td>
+			<td class="value_negative"><code>false</code></td>
+		</tr>
+		<tr>
+			<td><code>tableColumnGroup</code></td>
+			<td class="value_negative"><code>false</code></td>
+			<td class="value_positive"><code>true</code></td>
+			<td class="value_negative"><code>false</code></td>
+			<td class="value_negative"><code>false</code></td>
+			<td class="value_positive"><code>false</code></td>
+			<td class="value_negative"><code>false</code></td>
+		</tr>
+		<tr>
+			<td><code>tableOfContents</code></td>
+			<td class="value_positive"><code>true</code></td>
+			<td class="value_positive_inherited"><code>true</code><a href="#inherited1"><sup>[1]</sup></a></td>
+			<td class="value_positive"><code>true</code></td>
+			<td class="value_negative"><code>false</code></td>
+			<td class="value_positive_inherited"><code>true</code><a href="#inherited2"><sup>[2]</sup></a></td>
+			<td class="value_positive_inherited"><code>true</code><a href="#inherited3"><sup>[3]</sup></a></td>
 		</tr>
 	</tbody>
 </table>
@@ -687,7 +751,7 @@ Note that the callbacks take precedence over the rules defined through the decla
 
 ### Child checks (structure checks)
 
-Using {@link module:engine/model/schema~Schema#addChildCheck `Schema#addChildCheck()`} you can provide function callbacks in order to implement specific advanced rules for checking the model structure.
+Using {@link module:engine/model/schema~Schema#addChildCheck `Schema#addChildCheck()`} you can provide function callbacks to implement specific advanced rules for checking the model structure.
 
 You can provide callbacks that are fired only when a specific child is checked, or generic callbacks fired for all checks performed by the schema.
 
@@ -713,7 +777,7 @@ Note that a callback may return `true`, `false`, or no value (`undefined`). If `
 
 In some cases, you may need to define a generic listener that will be fired on every schema check.
 
-For instance, to disallow all block objects (e.g. tables) inside a block quotes, you can define following callback:
+For instance, to disallow all block objects (for example tables) inside a block quotes, you can define following callback:
 
 ```js
 schema.addChildCheck( ( context, childDefinition ) => {

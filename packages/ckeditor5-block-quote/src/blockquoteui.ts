@@ -1,13 +1,14 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
  * @module block-quote/blockquoteui
  */
 
-import { Plugin, icons } from 'ckeditor5/src/core.js';
+import { Plugin } from 'ckeditor5/src/core.js';
+import { IconQuote } from 'ckeditor5/src/icons.js';
 import { ButtonView, MenuBarMenuListItemButtonView } from 'ckeditor5/src/ui.js';
 
 import '../theme/blockquote.css';
@@ -25,6 +26,13 @@ export default class BlockQuoteUI extends Plugin {
 	 */
 	public static get pluginName() {
 		return 'BlockQuoteUI' as const;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public static override get isOfficialPlugin(): true {
+		return true;
 	}
 
 	/**
@@ -66,7 +74,7 @@ export default class BlockQuoteUI extends Plugin {
 
 		view.set( {
 			label: t( 'Block quote' ),
-			icon: icons.quote,
+			icon: IconQuote,
 			isToggleable: true
 		} );
 

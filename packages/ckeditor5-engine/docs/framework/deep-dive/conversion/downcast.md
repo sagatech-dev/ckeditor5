@@ -2,6 +2,7 @@
 category: framework-deep-dive-conversion
 menu-title: Model to view (downcast)
 meta-title: Downcast conversion - model to view | CKEditor 5 Framework Documentation
+meta-description: Understand downcasting in CKEditor 5. It converts model data into view elements for proper content rendering and editing experience.
 order: 20
 since: 33.0.0
 modified_at: 2022-03-02
@@ -18,8 +19,6 @@ The process of converting the **model** to the **view** is called a **downcast**
 The downcast process happens every time a model node or attribute needs to be converted into a view node or attribute.
 
 The editor engine runs the conversion process and uses converters registered by the plugins.
-
-{@snippet framework/mini-inspector}
 
 ## Registering a converter
 
@@ -80,8 +79,6 @@ editor.conversion
 		}
 	} );
 ```
-
-{@snippet framework/mini-inspector-paragraph}
 
 ## Converting text attributes
 

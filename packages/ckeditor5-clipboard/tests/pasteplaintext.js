@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 import VirtualTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/virtualtesteditor.js';
@@ -10,8 +10,6 @@ import { getCode } from '@ckeditor/ckeditor5-utils/src/keyboard.js';
 import { getData as getModelData, setData as setModelData } from '@ckeditor/ckeditor5-engine/src/dev-utils/model.js';
 
 import PastePlainText from '../src/pasteplaintext.js';
-
-/* global document */
 
 // https://github.com/ckeditor/ckeditor5/issues/1006
 describe( 'PastePlainText', () => {
@@ -48,6 +46,18 @@ describe( 'PastePlainText', () => {
 					view: 'br'
 				} );
 			} );
+	} );
+
+	afterEach( async () => {
+		await editor.destroy();
+	} );
+
+	it( 'should have `isOfficialPlugin` static flag set to `true`', () => {
+		expect( PastePlainText.isOfficialPlugin ).to.be.true;
+	} );
+
+	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
+		expect( PastePlainText.isPremiumPlugin ).to.be.false;
 	} );
 
 	it( 'should inherit selection attributes (collapsed selection)', () => {

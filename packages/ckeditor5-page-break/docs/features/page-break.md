@@ -2,6 +2,7 @@
 category: features
 menu-title: Page break
 meta-title: Page break | CKEditor 5 Documentation
+meta-description: Insert page breaks in CKEditor 5 to control content flow and ensure proper pagination in printed or exported documents.
 ---
 
 # Page break
@@ -10,7 +11,7 @@ The page break feature lets you insert page breaks into your content. This gives
 
 ## Demo
 
-Use the insert page break toolbar button {@icon @ckeditor/ckeditor5-page-break/theme/icons/pagebreak.svg Insert page break} to see the feature in action. Use the "Open print preview" button below the editor to preview the content.
+Use the insert page break toolbar button {@icon @ckeditor/ckeditor5-icons/theme/icons/page-break.svg Insert page break} to see the feature in action. Use the "Open print preview" button below the editor to preview the content.
 
 {@snippet features/page-break}
 
@@ -26,19 +27,22 @@ Use the insert page break toolbar button {@icon @ckeditor/ckeditor5-page-break/t
 	Starting with {@link updating/update-to-42 version 42.0.0}, we changed the format of import paths. This guide uses the new, shorter format. Refer to the {@link getting-started/legacy-getting-started/legacy-imports Packages in the legacy setup} guide if you use an older version of CKEditor&nbsp;5.
 </info-box>
 
-After {@link getting-started/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
+After {@link getting-started/integrations-cdn/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
 
+<code-switcher>
 ```js
 import { ClassicEditor, PageBreak } from 'ckeditor5';
 
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
+		licenseKey: '<YOUR_LICENSE_KEY>', // Or 'GPL'.
 		plugins: [ PageBreak, /* ... */ ],
 		toolbar: [ 'pageBreak', /* ... */ ],
 	} )
 	.then( /* ... */ )
 	.catch( /* ... */ );
 ```
+</code-switcher>
 
 ## Related features
 

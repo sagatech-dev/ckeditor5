@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 import Model from '../../../src/model/model.js';
@@ -13,8 +13,6 @@ import Position from '../../../src/model/position.js';
 import { setData, getData, parse, stringify } from '../../../src/dev-utils/model.js';
 import Range from '../../../src/model/range.js';
 import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
-
-/* global console */
 
 describe( 'DataController utils', () => {
 	let model, doc, root;

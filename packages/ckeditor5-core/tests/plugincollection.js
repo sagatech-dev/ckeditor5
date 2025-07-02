@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* globals setTimeout */
 
 import Editor from '../src/editor/editor.js';
 import PluginCollection from '../src/plugincollection.js';
@@ -69,7 +67,9 @@ describe( 'PluginCollection', () => {
 		PluginFoo.requires = [];
 	} );
 
-	afterEach( () => {
+	afterEach( async () => {
+		editor.state = 'ready';
+		await editor.destroy();
 		sinon.restore();
 	} );
 

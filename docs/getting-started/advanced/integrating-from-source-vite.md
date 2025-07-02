@@ -8,7 +8,7 @@ modified_at: 2023-02-06
 # (Legacy) Integrating from source using Vite
 
 <info-box warning>
-	⚠️  We changed installation methods and this legacy guide is kept for users' convenience. If you want to learn more about these changes, please refer to the {@link updating/nim-migration/migration-to-new-installation-methods Migrating to new installation methods} guide.
+	⚠️ We changed installation methods and kept this legacy guide for users’ convenience. As of April 2025, integrations based on predefined builds are **no longer supported**. Please refer to the {@link getting-started/index#ckeditor-5-framework-integrations Quick Start} guide to choose one of the modern installation and integration methods available and {@link updating/nim-migration/migration-to-new-installation-methods migrate to new installation methods}.
 </info-box>
 
 This scenario allows you to fully control the building process of CKEditor&nbsp;5. This means that you will not actually use the builds anymore, but instead build CKEditor from source directly into your project. This integration method gives you full control over which features will be included and how Vite will be configured.
@@ -18,7 +18,7 @@ This scenario allows you to fully control the building process of CKEditor&nbsp;
 First of all, you need to initialize a Vite project. You can use an official scaffolding tool for this purpose.
 
 <info-box>
-	Vite requires Node.js version 14.18+, 16+. However, some templates require a higher Node.js version to work, please upgrade if your package manager warns about it.
+	Vite requires Node.js version 18+, 20+, 22+. However, some templates require a higher Node.js version to work, please upgrade if your package manager warns about it.
 </info-box>
 
 The following command will initialize a basic Vite template inside the `ckeditor5-vite-example` folder.
@@ -44,7 +44,7 @@ After initializing the project, you can start installing packages. Fundamentally
 * editor plugins
 * editor theme
 
-This example will use Classic Editor as an editor base and the default CKEditor&nbsp;5 theme, lark. In terms of plugins, you can use whatever you want. If you need inspiration, you can base your integration on one of the existing builds. There is a list of packages in the [classic build's](https://github.com/ckeditor/ckeditor5/blob/master/packages/ckeditor5-build-classic/package.json) `package.json` file. All packages (excluding `@ckeditor/ckeditor5-dev-*`) must have the same version as the base editor package.
+This example will use Classic Editor as an editor base and the default CKEditor&nbsp;5 theme, lark. In terms of plugins, you can use whatever you want. If you need inspiration, you can base your integration on one of the existing builds. There was a list of packages in the classic build's `package.json` file. All packages (excluding `@ckeditor/ckeditor5-dev-*`) must have the same version as the base editor package.
 
 You can install packages individually like `npm install @ckeditor/ckeditor5-editor-classic`, or copy dependencies from the build repository and type `npm install`. An example list of plugins may look like this:
 

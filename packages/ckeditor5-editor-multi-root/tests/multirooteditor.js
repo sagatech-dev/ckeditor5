@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* globals document, console */
 
 import MultiRootEditor from '../src/multirooteditor.js';
 import MultiRootEditorUI from '../src/multirooteditorui.js';
@@ -47,6 +45,10 @@ describe( 'MultiRootEditor', () => {
 
 		it( 'uses HTMLDataProcessor', () => {
 			expect( editor.data.processor ).to.be.instanceof( HtmlDataProcessor );
+		} );
+
+		it( 'it\'s possible to extract editor name from editor instance', () => {
+			expect( Object.getPrototypeOf( editor ).constructor.editorName ).to.be.equal( 'MultiRootEditor' );
 		} );
 
 		it( 'has a Data Interface', () => {
@@ -174,7 +176,7 @@ describe( 'MultiRootEditor', () => {
 				expect( editor.getData( { rootName: 'foo' } ) ).to.equal( editorData.foo );
 				expect( editor.getData( { rootName: 'bar' } ) ).to.equal( editorData.bar );
 
-				editor.destroy();
+				return editor.destroy();
 			} );
 		} );
 
@@ -189,15 +191,12 @@ describe( 'MultiRootEditor', () => {
 				expect( editor.getData( { rootName: 'foo' } ) ).to.equal( '' );
 				expect( editor.getData( { rootName: 'bar' } ) ).to.equal( '' );
 
-				editor.destroy();
+				return editor.destroy();
 			} );
 		} );
 
 		it( 'initializes the editor if no roots are specified', done => {
-			MultiRootEditor.create( {} ).then( editor => {
-				editor.destroy();
-				done();
-			} );
+			MultiRootEditor.create( {} ).then( editor => editor.destroy() ).then( done );
 		} );
 
 		it( 'should throw when trying to create the editor using the same source element more than once', done => {

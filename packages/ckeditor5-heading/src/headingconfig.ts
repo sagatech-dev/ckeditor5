@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
@@ -106,6 +106,11 @@ export interface HeadingElementOption {
 	 * An array with all matched elements that the view-to-model conversion should also accept.
 	 */
 	upcastAlso?: ArrayOrItem<ViewElementDefinition | MatcherPattern>;
+
+	/**
+	 * The priority with which the converter will be run. Possible values: 'low', 'normal', 'high'.
+	 */
+	converterPriority?: 'low' | 'normal' | 'high';
 }
 
 export interface HeadingParagraphOption {

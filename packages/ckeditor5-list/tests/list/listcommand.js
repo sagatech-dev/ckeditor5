@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 import ListCommand from '../../src/list/listcommand.js';
@@ -807,6 +807,7 @@ describe( 'ListCommand', () => {
 					} );
 
 					it( 'should strip the list attributes from the selected items and decrease indent of nested list', () => {
+						/* eslint-disable @stylistic/no-multi-spaces */
 						setData( model, modelList( [
 							'0',
 							'* 1',
@@ -824,6 +825,7 @@ describe( 'ListCommand', () => {
 							'  * 13',
 							'    * 14'
 						] ) );
+						/* eslint-enable @stylistic/no-multi-spaces */
 
 						command.execute();
 
@@ -1710,6 +1712,7 @@ describe( 'ListCommand', () => {
 					} );
 
 					it( 'should strip the list attributes from the selected items and decrease indent of nested list', () => {
+						/* eslint-disable @stylistic/no-multi-spaces */
 						setData( model, modelList( [
 							'0',
 							'# 1',
@@ -1727,6 +1730,7 @@ describe( 'ListCommand', () => {
 							'  # 13',
 							'    # 14'
 						] ) );
+						/* eslint-enable @stylistic/no-multi-spaces */
 
 						command.execute();
 

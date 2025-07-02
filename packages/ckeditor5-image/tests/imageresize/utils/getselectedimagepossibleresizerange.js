@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor.js';
@@ -12,8 +12,6 @@ import ImageCaptionEditing from '../../../src/imagecaption/imagecaptionediting.j
 import Image from '../../../src/image.js';
 import ImageStyle from '../../../src/imagestyle.js';
 import { getSelectedImagePossibleResizeRange } from '../../../src/imageresize/utils/getselectedimagepossibleresizerange.js';
-
-/* eslint-disable no-undef */
 
 describe( 'getSelectedImagePossibleResizeRange', () => {
 	let editor, model, editorElement;

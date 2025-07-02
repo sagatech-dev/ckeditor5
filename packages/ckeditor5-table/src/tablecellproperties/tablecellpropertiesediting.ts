@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
@@ -14,10 +14,12 @@ import {
 	addBackgroundRules,
 	type Schema,
 	type Conversion,
-	type ViewElement
+	type ViewElement,
+	type UpcastConversionApi,
+	type UpcastConversionData
 } from 'ckeditor5/src/engine.js';
 
-import { downcastAttributeToStyle, upcastBorderStyles } from './../converters/tableproperties.js';
+import { downcastAttributeToStyle, getDefaultValueAdjusted, upcastBorderStyles } from '../converters/tableproperties.js';
 import TableEditing from './../tableediting.js';
 import TableCellWidthEditing from '../tablecellwidth/tablecellwidthediting.js';
 import TableCellPaddingCommand from './commands/tablecellpaddingcommand.js';
@@ -59,6 +61,13 @@ export default class TableCellPropertiesEditing extends Plugin {
 	 */
 	public static get pluginName() {
 		return 'TableCellPropertiesEditing' as const;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public static override get isOfficialPlugin(): true {
+		return true;
 	}
 
 	/**
@@ -200,10 +209,11 @@ function enableHorizontalAlignmentProperty( schema: Schema, conversion: Conversi
 			},
 			model: {
 				key: 'tableCellHorizontalAlignment',
-				value: ( viewElement: ViewElement ) => {
+				value: ( viewElement: ViewElement, conversionApi: UpcastConversionApi, data: UpcastConversionData<ViewElement> ) => {
+					const localDefaultValue = getDefaultValueAdjusted( defaultValue, 'left', data );
 					const align = viewElement.getStyle( 'text-align' );
 
-					return align === defaultValue ? null : align;
+					return align === localDefaultValue ? null : align;
 				}
 			}
 		} )
@@ -217,10 +227,11 @@ function enableHorizontalAlignmentProperty( schema: Schema, conversion: Conversi
 			},
 			model: {
 				key: 'tableCellHorizontalAlignment',
-				value: ( viewElement: ViewElement ) => {
+				value: ( viewElement: ViewElement, conversionApi: UpcastConversionApi, data: UpcastConversionData<ViewElement> ) => {
+					const localDefaultValue = getDefaultValueAdjusted( defaultValue, 'left', data );
 					const align = viewElement.getAttribute( 'align' );
 
-					return align === defaultValue ? null : align;
+					return align === localDefaultValue ? null : align;
 				}
 			}
 		} );
@@ -261,10 +272,11 @@ function enableVerticalAlignmentProperty( schema: Schema, conversion: Conversion
 			},
 			model: {
 				key: 'tableCellVerticalAlignment',
-				value: ( viewElement: ViewElement ) => {
+				value: ( viewElement: ViewElement, conversionApi: UpcastConversionApi, data: UpcastConversionData<ViewElement> ) => {
+					const localDefaultValue = getDefaultValueAdjusted( defaultValue, 'middle', data );
 					const align = viewElement.getStyle( 'vertical-align' );
 
-					return align === defaultValue ? null : align;
+					return align === localDefaultValue ? null : align;
 				}
 			}
 		} )
@@ -278,10 +290,11 @@ function enableVerticalAlignmentProperty( schema: Schema, conversion: Conversion
 			},
 			model: {
 				key: 'tableCellVerticalAlignment',
-				value: ( viewElement: ViewElement ) => {
+				value: ( viewElement: ViewElement, conversionApi: UpcastConversionApi, data: UpcastConversionData<ViewElement> ) => {
+					const localDefaultValue = getDefaultValueAdjusted( defaultValue, 'middle', data );
 					const valign = viewElement.getAttribute( 'valign' );
 
-					return valign === defaultValue ? null : valign;
+					return valign === localDefaultValue ? null : valign;
 				}
 			}
 		} );

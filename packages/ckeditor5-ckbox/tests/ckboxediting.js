@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* globals window */
 
 import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
 import LinkEditing from '@ckeditor/ckeditor5-link/src/linkediting.js';
@@ -38,6 +36,8 @@ describe( 'CKBoxEditing', () => {
 	beforeEach( async () => {
 		TokenMock.initialToken = 'ckbox-token';
 
+		sinon.stub( CKBoxUtils.prototype, '_authorizePrivateCategoriesAccess' ).resolves();
+
 		originalCKBox = window.CKBox;
 		window.CKBox = {};
 
@@ -59,6 +59,14 @@ describe( 'CKBoxEditing', () => {
 
 	it( 'should have proper name', () => {
 		expect( CKBoxEditing.pluginName ).to.equal( 'CKBoxEditing' );
+	} );
+
+	it( 'should have `isOfficialPlugin` static flag set to `true`', () => {
+		expect( CKBoxEditing.isOfficialPlugin ).to.be.true;
+	} );
+
+	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
+		expect( CKBoxEditing.isPremiumPlugin ).to.be.false;
 	} );
 
 	it( 'should be loaded', () => {
@@ -1870,6 +1878,8 @@ describe( 'CKBoxEditing', () => {
 
 			expect( uploadImageCommand.isEnabled ).to.be.true;
 			expect( uploadImageCommand.isAccessAllowed ).to.be.true;
+
+			await editor.destroy();
 		} );
 
 		it( 'should disable image upload command if access not allowed', async () => {
@@ -1894,6 +1904,8 @@ describe( 'CKBoxEditing', () => {
 
 			expect( uploadImageCommand.isEnabled ).to.be.false;
 			expect( uploadImageCommand.isAccessAllowed ).to.be.false;
+
+			await editor.destroy();
 		} );
 
 		it( 'should not disable image upload command if access allowed ( CKBox loaded first )', async () => {
@@ -1918,6 +1930,8 @@ describe( 'CKBoxEditing', () => {
 
 			expect( uploadImageCommand.isEnabled ).to.be.true;
 			expect( uploadImageCommand.isAccessAllowed ).to.be.true;
+
+			await editor.destroy();
 		} );
 
 		it( 'should disable image upload command if access not allowed ( CKBox loaded first )', async () => {
@@ -1942,6 +1956,8 @@ describe( 'CKBoxEditing', () => {
 
 			expect( uploadImageCommand.isEnabled ).to.be.false;
 			expect( uploadImageCommand.isAccessAllowed ).to.be.false;
+
+			await editor.destroy();
 		} );
 	} );
 } );

@@ -1,11 +1,10 @@
 ---
 menu-title: Paste from Google Docs
 meta-title: Paste from Google Docs | CKEditor 5 Documentation
+meta-description: CKEditor 5 lets you handle content that you paste from Google Docs.
 category: features-pasting
 order: 20
 ---
-
-{@snippet features/build-paste-from-office-source}
 
 # Pasting content from Google Docs
 
@@ -47,18 +46,21 @@ This means that if you did not enable, for instance, {@link features/font font f
 	Starting with {@link updating/update-to-42 version 42.0.0}, we changed the format of import paths. This guide uses the new, shorter format. Refer to the {@link getting-started/legacy-getting-started/legacy-imports Packages in the legacy setup} guide if you use an older version of CKEditor&nbsp;5.
 </info-box>
 
-After {@link getting-started/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
+After {@link getting-started/integrations-cdn/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
 
+<code-switcher>
 ```js
 import { ClassicEditor, PasteFromOffice } from 'ckeditor5';
 
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
+		licenseKey: '<YOUR_LICENSE_KEY>', // Or 'GPL'.
 		plugins: [ PasteFromOffice, /* ... */ ]
 	} )
 	.then( /* ... */ )
 	.catch( /* ... */ );
 ```
+</code-switcher>
 
 ## Support for other applications
 
@@ -81,7 +83,7 @@ Feel free to open a [new feature request](https://github.com/ckeditor/ckeditor5/
 CKEditor&nbsp;5 supports a wider range of paste features, including:
 * {@link features/paste-plain-text Paste plain text} &ndash; Paste text without formatting that will inherit the style of the content it was pasted into.
 * {@link features/paste-from-office Paste from Office} &ndash; Paste content from Microsoft Word and keep the original structure and formatting.
-* {@link features/paste-from-office-enhanced paste from Office enhanced} &ndash; Paste from Office enhanced is a premium version of the plugin that offers far greater capabilities.
+* {@link features/paste-from-office-enhanced Enhanced paste from Office} &ndash; Enhanced paste from Office is a premium version of the plugin that offers far greater capabilities.
 * {@link features/import-word Import from Word} &ndash; Convert Word files directly into HTML content.
 * {@link features/paste-markdown Paste Markdown} &ndash; Paste Markdown-formatted content straight into the editor.
 

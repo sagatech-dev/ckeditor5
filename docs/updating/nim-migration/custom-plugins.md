@@ -2,7 +2,7 @@
 category: nim-migration
 order: 60
 menu-title: Migrating custom plugins
-meta-title: Migrating custom plugins to new installation methods | CKEditor 5 documentation
+meta-title: Migrating custom plugins to new installation methods | CKEditor 5 Documentation
 meta-description: Learn how to upgrade custom plugins to the new installation methods.
 modified_at: 2024-06-25
 ---
@@ -44,7 +44,7 @@ The main changes we have introduced in the new package generator are:
 
 ### Add missing file extensions in imports
 
-Next, as required by the JavaScript modules (ESM), you must add the missing file extensions to all files in the `src`, `tests`, and `sample` folders during import. 
+Next, as required by the JavaScript modules (ESM), you must add the missing file extensions to all files in the `src`, `tests`, and `sample` folders during import.
 
 ```diff
 - import { Plugin } from 'ckeditor5/src/core';
@@ -98,14 +98,14 @@ The same rule applies to the `theme` folder in the `@ckeditor/ckeditor5-*` packa
 
 ```js
 // ❌
-import undo from '@ckeditor/ckeditor5-core/theme/icons/undo.svg';
+import undo from '@ckeditor/ckeditor5-icons/theme/undo.svg';
 
 console.log( undo );
 
 // ✅
-import { icons } from '@ckeditor/ckeditor5-core';
+import { IconUndo } from '@ckeditor/ckeditor5-icons';
 
-console.log( icons.undo );
+console.log( IconUndo );
 ```
 
 If you run the following command, the `ckeditor5-rules/allow-imports-only-from-main-package-entry-point` eslint rule will list all the places where you need to update the imports.

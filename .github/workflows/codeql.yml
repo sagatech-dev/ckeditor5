@@ -34,8 +34,8 @@ jobs:
           config: |
             paths-ignore:
               - tests
-              - 'packages/*/tests'
               - scripts
+              - 'packages/*/tests'
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:

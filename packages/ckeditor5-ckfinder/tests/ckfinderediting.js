@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 import Command from '@ckeditor/ckeditor5-core/src/command.js';
@@ -44,6 +44,14 @@ describe( 'CKFinderEditing', () => {
 		return editor.destroy();
 	} );
 
+	it( 'should have `isOfficialPlugin` static flag set to `true`', () => {
+		expect( CKFinderEditing.isOfficialPlugin ).to.be.true;
+	} );
+
+	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
+		expect( CKFinderEditing.isPremiumPlugin ).to.be.false;
+	} );
+
 	it( 'should be loaded', () => {
 		expect( editor.plugins.get( CKFinderEditing ) ).to.be.instanceOf( CKFinderEditing );
 	} );
@@ -79,7 +87,7 @@ describe( 'CKFinderEditing', () => {
 			} );
 
 			await editor.destroy();
-		} catch ( e ) {
+		} catch {
 			expect.fail( 'Error should not be thrown.' );
 		}
 	} );
@@ -91,7 +99,7 @@ describe( 'CKFinderEditing', () => {
 			} );
 
 			await editor.destroy();
-		} catch ( e ) {
+		} catch {
 			expect.fail( 'Error should not be thrown.' );
 		}
 	} );

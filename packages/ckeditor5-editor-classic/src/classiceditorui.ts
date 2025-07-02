@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
@@ -118,7 +118,7 @@ export default class ClassicEditorUI extends EditorUI {
 		this._initToolbar();
 
 		if ( view.menuBarView ) {
-			this._initMenuBar( view.menuBarView );
+			this.initMenuBar( view.menuBarView );
 		}
 
 		this._initDialogPluginIntegration();
@@ -137,7 +137,11 @@ export default class ClassicEditorUI extends EditorUI {
 		const editingView = this.editor.editing.view;
 
 		this._elementReplacer.restore();
-		editingView.detachDomRoot( view.editable.name! );
+
+		if ( editingView.getDomRoot( view.editable.name! ) ) {
+			editingView.detachDomRoot( view.editable.name! );
+		}
+
 		view.destroy();
 	}
 
@@ -150,7 +154,7 @@ export default class ClassicEditorUI extends EditorUI {
 		// Set–up the sticky panel with toolbar.
 		view.stickyPanel.bind( 'isActive' ).to( this.focusTracker, 'isFocused' );
 		view.stickyPanel.limiterElement = view.element;
-		view.stickyPanel.bind( 'viewportTopOffset' ).to( this, 'viewportOffset', ( { top } ) => top || 0 );
+		view.stickyPanel.bind( 'viewportTopOffset' ).to( this, 'viewportOffset', ( { visualTop } ) => visualTop || 0 );
 
 		view.toolbar.fillFromConfig( this._toolbarConfig, this.componentFactory );
 
@@ -305,7 +309,9 @@ export default class ClassicEditorUI extends EditorUI {
 
 			dialogView.on<DialogViewMoveToEvent>( 'moveTo', ( evt, data ) => {
 				// Engage only when the panel is sticky, and the dialog is using one of default positions.
-				if ( !stickyPanel.isSticky || dialogView.wasMoved ) {
+				// Ignore modals because they are displayed on top of the page (and overlay) and they do not collide with anything
+				// See (https://github.com/ckeditor/ckeditor5/issues/17339).
+				if ( !stickyPanel.isSticky || dialogView.wasMoved || dialogView.isModal ) {
 					return;
 				}
 
@@ -318,4 +324,3 @@ export default class ClassicEditorUI extends EditorUI {
 		}, { priority: 'low' } );
 	}
 }
-

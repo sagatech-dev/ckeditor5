@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* globals console:false, document, window */
 
 import MultiRootEditor from '../../src/multirooteditor.js';
 import Heading from '@ckeditor/ckeditor5-heading/src/heading.js';
@@ -46,7 +44,7 @@ function initEditor() {
 				]
 			},
 			ckfinder: {
-				// eslint-disable-next-line max-len
+				// eslint-disable-next-line @stylistic/max-len
 				uploadUrl: 'https://ckeditor.com/apps/ckfinder/3.5.0/core/connector/php/connector.php?command=QuickUpload&type=Files&responseType=json'
 			}
 		} )

@@ -1,8 +1,9 @@
 ---
 menu-title: Styling tables
 meta-title: Table and cell styling tools | CKEditor 5 Documentation
+meta-description: Style tables in CKEditor 5 with custom classes, alignment, and formatting options to match your document’s design and improve readability.
 category: tables
-order: 30
+order: 20
 modified_at: 2022-05-19
 ---
 
@@ -14,7 +15,7 @@ CKEditor&nbsp;5 comes with some additional tools that help you change the look o
 
 ## Demo
 
-Put the caret anywhere inside the table to open the table toolbar. Click the table properties button {@icon @ckeditor/ckeditor5-table/theme/icons/table-properties.svg Table properties} in the toolbar. A pop–up will open with options to shape the look of the entire table. The cell properties button {@icon @ckeditor/ckeditor5-table/theme/icons/table-cell-properties.svg Cell properties} gives you access to styling options for individual table cells.
+Put the caret anywhere inside the table to open the table toolbar. Click the table properties button {@icon @ckeditor/ckeditor5-icons/theme/icons/table-properties.svg Table properties} in the toolbar. A pop–up will open with options to shape the look of the entire table. The cell properties button {@icon @ckeditor/ckeditor5-icons/theme/icons/table-cell-properties.svg Cell properties} gives you access to styling options for individual table cells.
 
 [Learn more](#configuring-styling-tools) about configuring color palettes in the table styling pop–up interfaces.
 
@@ -32,13 +33,15 @@ Put the caret anywhere inside the table to open the table toolbar. Click the tab
 	Starting with {@link updating/update-to-42 version 42.0.0}, we changed the format of import paths. This guide uses the new, shorter format. Refer to the {@link getting-started/legacy-getting-started/legacy-imports Packages in the legacy setup} guide if you use an older version of CKEditor&nbsp;5.
 </info-box>
 
-After {@link getting-started/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
+After {@link getting-started/integrations-cdn/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
 
+<code-switcher>
 ```js
 import { ClassicEditor, Table, TableCellProperties, TableProperties, TableToolbar } from 'ckeditor5';
 
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
+		licenseKey: '<YOUR_LICENSE_KEY>', // Or 'GPL'.
 		plugins: [ Table, TableToolbar, TableProperties, TableCellProperties, /* ... */ ],
 		toolbar: [ 'insertTable', /* ... */ ],
 		table: {
@@ -49,26 +52,25 @@ ClassicEditor
 
 			tableProperties: {
 				// The configuration of the TableProperties plugin.
-				// ...
 			},
 
 			tableCellProperties: {
 				// The configuration of the TableCellProperties plugin.
-				// ...
 			}
 		}
 	} )
 	.then( /* ... */ )
 	.catch( /* ... */ );
 ```
+</code-switcher>
 
 ## Configuring styling tools
 
-Table and cell styling tools let you create tables with colorful backgrounds and borders. These colors can be picked using color palettes in the table properties {@icon @ckeditor/ckeditor5-table/theme/icons/table-properties.svg Table properties} and cell properties {@icon @ckeditor/ckeditor5-table/theme/icons/table-cell-properties.svg Cell properties} pop-ups. To help users choose the right colors for the content, you can pre-configure such color palettes, like in the editor below:
+Table and cell styling tools let you create tables with colorful backgrounds and borders. These colors can be picked using color palettes in the table properties {@icon @ckeditor/ckeditor5-icons/theme/icons/table-properties.svg Table properties} and cell properties {@icon @ckeditor/ckeditor5-icons/theme/icons/table-cell-properties.svg Cell properties} pop-ups. To help users choose the right colors for the content, you can pre-configure such color palettes, like in the editor below:
 
 {@snippet features/table-styling-colors}
 
-With the selection inside any table cell, use the table properties {@icon @ckeditor/ckeditor5-table/theme/icons/table-properties.svg Table properties} and cell properties {@icon @ckeditor/ckeditor5-table/theme/icons/table-cell-properties.svg Cell properties} buttons in the toolbar to check available styling and color options.
+With the selection inside any table cell, use the table properties {@icon @ckeditor/ckeditor5-icons/theme/icons/table-properties.svg Table properties} and cell properties {@icon @ckeditor/ckeditor5-icons/theme/icons/table-cell-properties.svg Cell properties} buttons in the toolbar to check available styling and color options.
 
 ### Customizing color palettes
 
@@ -118,8 +120,7 @@ const customColorPalette = [
 
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
-		plugins: [ Table, TableToolbar, TableProperties, TableCellProperties, Bold, /* ... */ ],
-		toolbar: [ 'insertTable', /* ... */ ],
+		// ... Other configuration options ...
 		table: {
 			contentToolbar: [
 				'tableColumn', 'tableRow', 'mergeTableCells',
@@ -190,14 +191,14 @@ const tableConfig = {
 				width: '550px',
 				height: '450px'
 			},
-			// The default styles for table cells in the editor.
-			// They should be synchronized with the content styles.
+		},
+		// The default styles for table cells in the editor.
+		// They should be synchronized with the content styles.
 		tableCellProperties: {
 			defaultProperties: {
 				horizontalAlignment: 'center',
 				verticalAlignment: 'bottom',
 				padding: '10px'
-			}
 			}
 		}
 	}

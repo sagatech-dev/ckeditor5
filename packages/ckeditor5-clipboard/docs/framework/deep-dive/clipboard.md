@@ -1,6 +1,7 @@
 ---
 category: framework-deep-dive
 meta-title: Clipboard | CKEditor 5 Framework Documentation
+meta-description: Explore how the CKEditor 5 clipboard pipeline works, including input/output processing, integration, and customization techniques.
 ---
 
 # Clipboard
@@ -124,7 +125,7 @@ editor.plugins.get( 'ClipboardPipeline' ).on( 'contentInsertion', ( evt, data ) 
 
 ### Paste as plain text plugin example
 
-You can use the knowledge from the earlier sections to create a complete plugin. A perfect example to follow is our `[PastePlainText](https://github.com/ckeditor/ckeditor5/blob/master/packages/ckeditor5-clipboard/src/pasteplaintext.ts)` which pastes plain text when <kbd>Shift</kbd> is pressed. If you are not familiar with creating plugins in CKEditor&nbsp;5, start by reading the {@link tutorials/crash-course/editor Creating a simple plugin} guide.
+You can use the knowledge from the earlier sections to create a complete plugin. A perfect example to follow is our [`PastePlainText`](https://github.com/ckeditor/ckeditor5/blob/master/packages/ckeditor5-clipboard/src/pasteplaintext.ts) which pastes plain text when <kbd>Shift</kbd> is pressed. If you are not familiar with creating plugins in CKEditor&nbsp;5, start by reading the {@link tutorials/crash-course/editor Creating a simple plugin} guide.
 
 
 ## Output pipeline

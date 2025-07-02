@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
@@ -41,7 +41,7 @@ export default class Schema extends /* #__PURE__ */ ObservableMixin() {
 	/**
 	 * A dictionary containing attribute properties.
 	 */
-	private readonly _attributeProperties: Record<string, AttributeProperties> = {};
+	private readonly _attributeProperties: Record<string, AttributeProperties> = Object.create( null );
 
 	/**
 	 * Stores additional callbacks registered for schema items, which are evaluated when {@link ~Schema#checkChild} is called.
@@ -722,7 +722,7 @@ export default class Schema extends /* #__PURE__ */ ObservableMixin() {
 	 * @param attributeName A name of the attribute.
 	 */
 	public getAttributeProperties( attributeName: string ): AttributeProperties {
-		return this._attributeProperties[ attributeName ] || {};
+		return this._attributeProperties[ attributeName ] || Object.create( null );
 	}
 
 	/**

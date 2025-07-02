@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* globals window */
 
 /**
  * @module ckbox/ckboxediting
@@ -45,6 +43,13 @@ export default class CKBoxEditing extends Plugin {
 	 */
 	public static get pluginName() {
 		return 'CKBoxEditing' as const;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public static override get isOfficialPlugin(): true {
+		return true;
 	}
 
 	/**
@@ -144,7 +149,7 @@ export default class CKBoxEditing extends Plugin {
 			 * Please make sure your editor configuration is correct.
 			 *
 			 * @error ckbox-plugin-image-feature-missing
-			 * @param {module:core/editor/editor~Editor} editor
+			 * @param {module:core/editor/editor~Editor} editor The editor instance.
 			 */
 			logError( 'ckbox-plugin-image-feature-missing', editor );
 		}

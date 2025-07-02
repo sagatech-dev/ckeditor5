@@ -1,17 +1,17 @@
 ---
 menu-title: Drupal
-meta-title: Real-time editing in Drupal | CKEditor 5 documentation
+meta-title: CKEditor 5 real-time editing in Drupal | CKEditor 5 Documentation
 meta-description: Learn how to set up real-time collaboration in the Drupal editing platform with the CKEditor 5 Premium Features module.
 category: installation
 order: 100
 modified_at: 2023-10-06
 ---
 
-# Real-time editing in Drupal
+# CKEditor&nbsp;5 real-time editing in Drupal
 
 Drupal is a free and open-source web content management system (CMS) written in PHP. CKEditor&nbsp;5 WYSIWYG rich text editor is the default editor module for Drupal. The [CKEditor&nbsp;5 Premium Features module](https://www.drupal.org/project/ckeditor5_premium_features) provides instant integration of the real-time collaboration features with the editing platform.
 
-Currently, the module includes a full set of {@link features/collaboration collaboration tools}, namely comments, track changes, and revision history. It also provides the {@link features/productivity-pack Productivity Pack} &ndash; a set of essential formatting and navigation features &nbsp; as well as document import and export plugins.
+Currently, the module includes a full set of {@link features/collaboration collaboration tools}, namely comments, track changes, and revision history. It also provides a set of essential formatting and navigation features &nbsp; as well as document import and export plugins.
 
 ## Real-time collaboration in Drupal with CKEditor 5
 
@@ -41,13 +41,13 @@ You can use all the collaboration features **for {@link features/collaboration#a
 
 Apart from the real-time collaboration tools, the module provides various other plugins. The {@link features/format-painter format painter} feature lets users consistently style the edited text, while the {@link features/mentions mentions} feature allows you to tag other users in comments. Meanwhile, {@link features/slash-commands slash commands} let you create, insert, and format rich content on the go by typing the `/` character and choosing from many predefined actions, such as text formatting, and inserting headings, tables, or lists.
 
-### Full-screen mode
+### Fullscreen mode
 
-The full screen mode is a free-to-use plugin that maximizes the editing area. It is especially useful when using features like {@link features/document-outline document outline} or {@link features/comments comments} that take up extra space around the editor.
+The fullscreen mode is a free-to-use plugin that maximizes the editing area. It is especially useful when using features like {@link features/document-outline document outline} or {@link features/comments comments} that take up extra space around the editor.
 
 ### Document converters
 
-The module includes the {@link features/paste-from-office-enhanced paste from Office enhanced} feature which makes pasting advanced rich-text content easy and reliable. Users can also use the {@link features/import-word import from Word} feature to import entire documents into the editor. Once the work is done or needs to be sent to another editor, handy one-click {@link features/export-pdf export to PDF} and {@link features/export-word export to Word} features offer portability and cross-platform interoperability.
+The module includes the {@link features/paste-from-office-enhanced enhanced Paste from Office} feature which makes pasting advanced rich-text content easy and reliable. Users can also use the {@link features/import-word import from Word} feature to import entire documents into the editor. Once the work is done or needs to be sent to another editor, handy one-click {@link features/export-pdf export to PDF} and {@link features/export-word export to Word} features offer portability and cross-platform interoperability.
 
 ### Templates
 
@@ -68,12 +68,12 @@ The [CKEditor&nbsp;5 Plugin Pack](https://www.drupal.org/project/ckeditor5_plugi
 * {@link features/word-count Word count}
 * Free version of {@link features/spelling-and-grammar-checking WProofreader} &ndash; limitation of the free version are listed [on this page](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-documentation/ckeditor-5-plugin-pack/wproofreader-free-vs-premium-feature-comparison)
 
-Plugin Pack also makes it possible to use some of the premium features for free. 
+Plugin Pack also makes it possible to use some of the premium features for free.
 
 Currently available premium features:
 
 * {@link features/template Templates}
-* Full-screen mode
+* Fullscreen mode
 
 Detailed descriptions of each plugin can be found on the [CKEditor&nbsp;5 Plugin Pack module page](https://www.drupal.org/project/ckeditor5_plugin_pack)
 
@@ -95,3 +95,9 @@ Detailed descriptions of each plugin can be found on the [CKEditor&nbsp;5 Plugin
 Refer to the [Adding CKEditor&ndash;5 Premium Features module to Drupal 10](https://www.drupal.org/docs/contributed-modules/ckeditor-5-premium-features/how-to-install-and-set-up-the-module) guide in the Drupal documentation for details on how to install and set up the Premium Features module.
 
 Refer to the [Adding CKEditor 5 Plugin Pack module to Drupal 10](https://www.drupal.org/docs/extending-drupal/contributed-modules/contributed-module-documentation/ckeditor-5-plugin-pack/how-to-install-and-set-up-the-module) guide in the Drupal documentation for details on how to install and set up the Plugin Pack module.
+
+## Next steps
+
+* See how to manipulate the editor's data in the {@link getting-started/setup/getting-and-setting-data Getting and setting data} guide.
+* Refer to further guides in the {@link getting-started/setup/configuration setup section} to see how to customize your editor further.
+* Check the {@link features/index features category} to learn more about individual features.

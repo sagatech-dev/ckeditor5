@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* global document, window, Event */
 
 import ClassicTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
 import MultiRootEditor from '@ckeditor/ckeditor5-editor-multi-root/src/multirooteditor.js';
@@ -30,12 +28,10 @@ import { setData } from '@ckeditor/ckeditor5-engine/src/dev-utils/model.js';
 import { keyCodes } from '@ckeditor/ckeditor5-utils/src/keyboard.js';
 import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
 
-import { icons } from '@ckeditor/ckeditor5-core';
+import { IconPilcrow, IconDragIndicator } from '@ckeditor/ckeditor5-icons';
 
 import Rect from '@ckeditor/ckeditor5-utils/src/dom/rect.js';
 import env from '@ckeditor/ckeditor5-utils/src/env.js';
-
-const { dragIndicator, pilcrow } = icons;
 
 describe( 'BlockToolbar', () => {
 	let editor, element, blockToolbar;
@@ -90,6 +86,14 @@ describe( 'BlockToolbar', () => {
 
 	it( 'should have pluginName property', () => {
 		expect( BlockToolbar.pluginName ).to.equal( 'BlockToolbar' );
+	} );
+
+	it( 'should have `isOfficialPlugin` static flag set to `true`', () => {
+		expect( BlockToolbar.isOfficialPlugin ).to.be.true;
+	} );
+
+	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
+		expect( BlockToolbar.isPremiumPlugin ).to.be.false;
 	} );
 
 	it( 'should not throw when empty config is provided', async () => {
@@ -273,7 +277,7 @@ describe( 'BlockToolbar', () => {
 			} );
 
 			it( 'should have default SVG icon', () => {
-				expect( blockToolbar.buttonView.icon ).to.be.equal( dragIndicator );
+				expect( blockToolbar.buttonView.icon ).to.be.equal( IconDragIndicator );
 			} );
 
 			it( 'should set predefined SVG icon provided in config', () => {
@@ -286,7 +290,7 @@ describe( 'BlockToolbar', () => {
 				} ).then( editor => {
 					const blockToolbar = editor.plugins.get( BlockToolbar );
 
-					expect( blockToolbar.buttonView.icon ).to.be.equal( pilcrow );
+					expect( blockToolbar.buttonView.icon ).to.be.equal( IconPilcrow );
 
 					element.remove();
 
@@ -913,6 +917,29 @@ describe( 'BlockToolbar', () => {
 			clock.tick( 100 );
 
 			expect( spy ).to.be.calledOnce;
+		} );
+
+		it( 'should not _call _clipButtonToViewport when event target is not editable ancestor', () => {
+			const spy = sinon.spy( blockToolbar, '_clipButtonToViewport' );
+
+			buttonView.isVisible = true;
+
+			document.body.dispatchEvent( new Event( 'scroll' ) );
+			clock.tick( 100 );
+			expect( spy ).to.be.called;
+
+			spy.resetHistory();
+
+			// Create a fake parent element and dispatch scroll event on it.
+			// It's not a button ancestor so _clipButtonToViewport should not be called.
+			const evt = new Event( 'scroll' );
+			const fakeParent = document.createElement( 'div' );
+
+			sinon.stub( evt, 'target' ).value( fakeParent );
+			document.body.dispatchEvent( evt );
+			clock.tick( 100 );
+			fakeParent.remove();
+			expect( spy ).not.to.be.called;
 		} );
 	} );
 

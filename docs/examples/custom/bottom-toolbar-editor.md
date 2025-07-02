@@ -4,6 +4,7 @@ order: 70
 classes: main__content--no-toc
 toc: false
 meta-title: Bottom toolbar with button grouping example | CKEditor 5 Documentation
+meta-description: Learn how to implement a custom editor with a bottom toolbar and button grouping for improved user experience.
 menu-title: Bottom toolbar with button grouping
 modified_at: 2021-12-09
 ---
@@ -59,10 +60,13 @@ import {
 	DropdownButtonView,
 	DropdownPanelView,
 	DropdownView,
-	ToolbarView
+	ToolbarView,
+	IconFontColor,
+	registerIcon
 } from 'ckeditor5';
 import { EasyImage } from 'ckeditor5-premium-features';
-import fontColorIcon from '@ckeditor/ckeditor5-font/theme/icons/font-color.svg';
+
+const fontColorIcon =/* #__PURE__ */ registerIcon( 'fontColor', IconFontColor );
 
 class FormattingOptions extends Plugin {
 	/**
@@ -143,7 +147,7 @@ class FormattingOptions extends Plugin {
 			// Using the font color icon to visually represent the formatting.
 			buttonView.set( {
 				tooltip: t( 'Formatting options' ),
-				icon: fontColorIcon
+				icon: fontColorIcon()
 			} );
 
 			dropdownView.panelView.children.add( toolbarView );
@@ -160,6 +164,7 @@ class FormattingOptions extends Plugin {
 
 DecoupledEditor
 	.create( document.querySelector( '#editor-content' ), {
+		licenseKey: 'GPL', // Or '<YOUR_LICENSE_KEY>'.
 		plugins: [
 			Alignment,
 			Autoformat,
@@ -261,7 +266,6 @@ DecoupledEditor
 			// Provide correct configuration values to use it.
 			tokenUrl: 'https://example.com/cs-token-endpoint',
 			uploadUrl: 'https://your-organization-id.cke-cs.com/easyimage/upload/'
-			// Read more about Easy Image - https://ckeditor.com/docs/ckeditor5/latest/features/images/image-upload/easy-image.html.
 			// For other image upload methods see the guide - https://ckeditor.com/docs/ckeditor5/latest/features/images/image-upload/image-upload.html.
 		},
 	} )

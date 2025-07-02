@@ -1,9 +1,8 @@
 ---
 category: features
 meta-title: Editor placeholder | CKEditor 5 Documentation
+meta-description: Learn how to configure and style CKEditor 5 placeholder text—set via textarea or config, customize with CSS, and update it dynamically in your editor.
 ---
-
-{@snippet features/placeholder-build}
 
 # Editor placeholder
 
@@ -31,11 +30,13 @@ Set the `placeholder` attribute on a `<textarea>` element passed to the `Editor.
 <textarea id="editor" placeholder="Type the content here!"></textarea>
 ```
 
+<code-switcher>
 ```js
 import { ClassicEditor, Essentials } from 'ckeditor5';
 
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
+		licenseKey: '<YOUR_LICENSE_KEY>', // Or 'GPL'.
 		plugins: [ Essentials, /* ... */ ],
 	} )
 	.then( editor => {
@@ -45,6 +46,7 @@ ClassicEditor
 		console.error( error );
 	} );
 ```
+</code-switcher>
 
 ### Using the editor configuration
 
@@ -55,11 +57,9 @@ You can use the {@link module:core/editor/editorconfig~EditorConfig#placeholder 
 * to override the `placeholder` text of a `<textarea>`, if one was passed into `Editor.create()` but the placeholder text should be different.
 
 ```js
-import { ClassicEditor, Essentials } from 'ckeditor5';
-
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
-		plugins: [ Essentials, /* ... */ ],
+		// ... Other configuration options ...
 		placeholder: 'Type the content here!'
 	} )
 	.then( editor => {

@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 @import "../../../../mixins/_rounded.css";
@@ -10,7 +10,7 @@
 	--ck-dropdown-menu-menu-panel-max-width: 75vw;
 }
 
-.ck.ck-dropdown-menu__nested-menu__panel {
+.ck.ck-balloon-panel.ck-dropdown-menu__nested-menu__panel {
 	@mixin ck-drop-shadow;
 
 	background: var(--ck-color-dropdown-panel-background);

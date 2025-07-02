@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
@@ -103,6 +103,13 @@ export default class FileRepository extends Plugin {
 	/**
 	 * @inheritDoc
 	 */
+	public static override get isOfficialPlugin(): true {
+		return true;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
 	public static get requires() {
 		return [ PendingActions ] as const;
 	}
@@ -148,8 +155,8 @@ export default class FileRepository extends Plugin {
 			 * This warning shows up when {@link module:upload/filerepository~FileRepository} is being used
 			 * without {@link module:upload/filerepository~FileRepository#createUploadAdapter defining an upload adapter}.
 			 *
-			 * **If you see this warning when using one of the {@glink getting-started/legacy/installation-methods/predefined-builds
-			 * CKEditor 5 Builds}**
+			 * **If you see this warning when using one of the now deprecated
+			 * {@glink getting-started/legacy/installation-methods/predefined-builds CKEditor 5 Builds}**
 			 * it means that you did not configure any of the upload adapters available by default in those builds.
 			 *
 			 * Predefined builds are a deprecated solution and we strongly advise

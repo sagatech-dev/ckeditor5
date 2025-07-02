@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
@@ -46,7 +46,7 @@ import {
 import { injectUiElementHandling } from './uielement.js';
 import { injectQuirksHandling } from './filler.js';
 
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep } from 'es-toolkit/compat';
 
 type IfTrue<T> = T extends true ? true : never;
 type DomRange = globalThis.Range;
@@ -394,7 +394,7 @@ export default class View extends /* #__PURE__ */ ObservableMixin() {
 	}
 
 	public getObserver<T extends ObserverConstructor>( ObserverConstructor: T ):
-		T extends AlwaysRegisteredObservers ? InstanceType<T> : InstanceType<T> | undefined;
+	T extends AlwaysRegisteredObservers ? InstanceType<T> : InstanceType<T> | undefined;
 
 	/**
 	 * Returns observer of the given type or `undefined` if such observer has not been added yet.

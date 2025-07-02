@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
@@ -8,9 +8,8 @@
  */
 
 import { Plugin } from 'ckeditor5/src/core.js';
+import { IconContentUnlock } from 'ckeditor5/src/icons.js';
 import { ButtonView, MenuBarMenuListItemButtonView } from 'ckeditor5/src/ui.js';
-
-import unlockIcon from '../theme/icons/contentunlock.svg';
 
 /**
  * The standard editing mode UI feature.
@@ -23,6 +22,13 @@ export default class StandardEditingModeUI extends Plugin {
 	 */
 	public static get pluginName() {
 		return 'StandardEditingModeUI' as const;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public static override get isOfficialPlugin(): true {
+		return true;
 	}
 
 	/**
@@ -57,7 +63,7 @@ export default class StandardEditingModeUI extends Plugin {
 		const view = new ButtonClass( locale ) as InstanceType<T>;
 		const t = locale.t;
 
-		view.icon = unlockIcon;
+		view.icon = IconContentUnlock;
 
 		view.bind( 'isOn', 'isEnabled' ).to( command, 'value', 'isEnabled' );
 		view.bind( 'label' ).to( command, 'value', value => {

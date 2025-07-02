@@ -1,6 +1,7 @@
 ---
 menu-title: CSS frameworks
-meta-title: Compatibility with CSS frameworks | CKEditor 5 documentation
+meta-title: Compatibility with CSS frameworks with npm | CKEditor 5 Documentation
+meta-description: Install, integrate, and configure CKEditor 5 using CSS frameworks
 category: installation
 order: 90
 ---
@@ -14,6 +15,8 @@ CKEditor&nbsp;5 is compatible with most of the popular CSS frameworks. However, 
 * Framework modals use an aggressive focus management policy that breaks the input fields in the rich-text editor (for example, the link input).
 
 In this guide, you will learn how to address these integration issues and use the CKEditor&nbsp;5 WYSIWYG editor with the most popular frontend frameworks.
+
+{@snippet getting-started/use-builder}
 
 ## Compatibility with Bootstrap
 
@@ -158,7 +161,7 @@ $( '#modal-container' ).modal( {
 
 ## Compatibility with Semantic-UI
 
-CKEditor&nbsp;5 works properly with [Semantic-UI](https://semantic-ui.com/) after a small CSS tweak. To use the {@link getting-started/legacy-getting-started/predefined-builds#balloon-editor balloon editor} inside a modal, it is necessary to configure the `z-index` property of the floating editor UI to make it render over the modal:
+CKEditor&nbsp;5 works properly with [Semantic-UI](https://semantic-ui.com/). To use the balloon editor inside a modal, it is necessary to configure the `z-index` property of the floating editor UI to make it render over the modal:
 
 ```css
 /*
@@ -171,4 +174,8 @@ CKEditor&nbsp;5 works properly with [Semantic-UI](https://semantic-ui.com/) afte
 }
 ```
 
-[Check out the demo of CKEditor&nbsp;5 rich-text editor working correctly with Semantic-UI](https://codepen.io/ckeditor/pen/OrZBpV).
+## Next steps
+
+* See how to manipulate the editor's data in the {@link getting-started/setup/getting-and-setting-data Getting and setting data} guide.
+* Refer to further guides in the {@link getting-started/setup/configuration setup section} to see how to customize your editor further.
+* Check the {@link features/index features category} to learn more about individual features.

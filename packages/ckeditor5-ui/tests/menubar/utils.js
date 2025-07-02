@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* global document, Event, KeyboardEvent, MouseEvent */
 
 import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
 import {
@@ -25,8 +23,6 @@ import {
 	getMenuByLabel
 } from './_utils/utils.js';
 import { MenuBarMenuViewPanelPositioningFunctions, processMenuBarConfig } from '../../src/menubar/utils.js';
-
-/* globals console */
 
 describe( 'MenuBarView utils', () => {
 	const locale = new Locale();
@@ -1057,6 +1053,30 @@ describe( 'MenuBarView utils', () => {
 								items: [
 									{ label: 'A#1', isFocused: true }
 								]
+							}
+
+						]
+					);
+				} );
+
+				it( 'should do nothing on arrow down key if menu is disabled', () => {
+					const menuA = getMenuByLabel( menuBarView, 'A' );
+					const keyEvtData = {
+						keyCode: keyCodes.arrowdown,
+						preventDefault: sinon.spy(),
+						stopPropagation: sinon.spy()
+					};
+
+					menuA.isEnabled = false;
+
+					menuA.buttonView.focus();
+					menuA.keystrokes.press( keyEvtData );
+
+					expect( barDump( menuBarView ) ).to.deep.equal(
+						[
+							{
+								label: 'A', isOpen: false, isFocused: true,
+								items: []
 							}
 
 						]

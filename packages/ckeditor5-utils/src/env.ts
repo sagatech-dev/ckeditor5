@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* globals navigator:false */
 
 /**
  * @module utils/env
@@ -19,7 +17,7 @@ export function getUserAgent(): string {
 	// In some environments navigator API might not be available.
 	try {
 		return navigator.userAgent.toLowerCase();
-	} catch ( e ) {
+	} catch {
 		return '';
 	}
 }
@@ -219,7 +217,7 @@ export function isRegExpUnicodePropertySupported(): boolean {
 	try {
 		// Usage of regular expression literal cause error during build (ckeditor/ckeditor5-dev#534).
 		isSupported = 'ć'.search( new RegExp( '[\\p{L}]', 'u' ) ) === 0;
-	} catch ( error ) {
+	} catch {
 		// Firefox throws a SyntaxError when the group is unsupported.
 	}
 

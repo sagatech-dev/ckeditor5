@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
@@ -8,10 +8,9 @@
  */
 
 import { Plugin } from 'ckeditor5/src/core.js';
+import { IconCode } from 'ckeditor5/src/icons.js';
 import { ButtonView, MenuBarMenuListItemButtonView } from 'ckeditor5/src/ui.js';
 import { getButtonCreator } from '../utils.js';
-
-import codeIcon from '../../theme/icons/code.svg';
 
 import '../../theme/code.css';
 
@@ -31,6 +30,13 @@ export default class CodeUI extends Plugin {
 	/**
 	 * @inheritDoc
 	 */
+	public static override get isOfficialPlugin(): true {
+		return true;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
 	public init(): void {
 		const editor = this.editor;
 		const t = editor.locale.t;
@@ -38,7 +44,7 @@ export default class CodeUI extends Plugin {
 			editor,
 			commandName: CODE,
 			plugin: this,
-			icon: codeIcon,
+			icon: IconCode,
 			label: t( 'Code' )
 		} );
 

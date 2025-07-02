@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
@@ -100,13 +100,15 @@ export type { default as Differ, DiffItem, DiffItemAttribute, DiffItemInsert, Di
 export type { default as Item } from './model/item.js';
 export type { default as Node, NodeAttributes } from './model/node.js';
 export type { default as RootElement } from './model/rootelement.js';
-export type {
-	default as Schema,
-	SchemaAttributeCheckCallback,
-	SchemaChildCheckCallback,
-	AttributeProperties,
-	SchemaItemDefinition,
-	SchemaContext
+export {
+	SchemaContext,
+	type default as Schema,
+	type SchemaAttributeCheckCallback,
+	type SchemaChildCheckCallback,
+	type AttributeProperties,
+	type SchemaItemDefinition,
+	type SchemaCompiledItemDefinition,
+	type SchemaContextDefinition
 } from './model/schema.js';
 export type { default as Selection, Selectable } from './model/selection.js';
 export type { default as TypeCheckable } from './model/typecheckable.js';
@@ -164,6 +166,7 @@ export { default as ClickObserver } from './view/observer/clickobserver.js';
 export { default as DomEventObserver } from './view/observer/domeventobserver.js';
 export { default as MouseObserver } from './view/observer/mouseobserver.js';
 export { default as TabObserver } from './view/observer/tabobserver.js';
+export { default as TouchObserver } from './view/observer/touchobserver.js';
 
 export {
 	default as FocusObserver,
@@ -196,6 +199,11 @@ export type {
 	ViewDocumentMouseOverEvent,
 	ViewDocumentMouseOutEvent
 } from './view/observer/mouseobserver.js';
+export type {
+	ViewDocumentTouchEndEvent,
+	ViewDocumentTouchMoveEvent,
+	ViewDocumentTouchStartEvent
+} from './view/observer/touchobserver.js';
 export type { ViewDocumentTabEvent } from './view/observer/tabobserver.js';
 export type { ViewDocumentClickEvent } from './view/observer/clickobserver.js';
 export type { ViewDocumentSelectionChangeEvent } from './view/observer/selectionobserver.js';
@@ -223,3 +231,7 @@ export {
 	parse as _parseView,
 	stringify as _stringifyView
 } from './dev-utils/view.js';
+
+export {
+	tryFixingRange as _tryFixingModelRange
+} from './model/utils/selection-post-fixer.js';

@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* globals document, setTimeout, console */
 
 import DecoupledEditor from '../src/decouplededitor.js';
 import DecoupledEditorUI from '../src/decouplededitorui.js';
@@ -42,8 +40,17 @@ describe( 'DecoupledEditor', () => {
 			editor = new DecoupledEditor();
 		} );
 
+		afterEach( async () => {
+			editor.fire( 'ready' );
+			await editor.destroy();
+		} );
+
 		it( 'uses HTMLDataProcessor', () => {
 			expect( editor.data.processor ).to.be.instanceof( HtmlDataProcessor );
+		} );
+
+		it( 'it\'s possible to extract editor name from editor instance', () => {
+			expect( Object.getPrototypeOf( editor ).constructor.editorName ).to.be.equal( 'DecoupledEditor' );
 		} );
 
 		it( 'has a Data Interface', () => {
@@ -66,16 +73,19 @@ describe( 'DecoupledEditor', () => {
 			} );
 
 			describe( 'automatic toolbar items groupping', () => {
-				it( 'should be on by default', () => {
+				it( 'should be on by default', async () => {
 					const editorElement = document.createElement( 'div' );
 					const editor = new DecoupledEditor( editorElement );
 
 					expect( editor.ui.view.toolbar.options.shouldGroupWhenFull ).to.be.true;
 
 					editorElement.remove();
+
+					editor.fire( 'ready' );
+					await editor.destroy();
 				} );
 
-				it( 'can be disabled using config.toolbar.shouldNotGroupWhenFull', () => {
+				it( 'can be disabled using config.toolbar.shouldNotGroupWhenFull', async () => {
 					const editorElement = document.createElement( 'div' );
 					const editor = new DecoupledEditor( editorElement, {
 						toolbar: {
@@ -86,6 +96,9 @@ describe( 'DecoupledEditor', () => {
 					expect( editor.ui.view.toolbar.options.shouldGroupWhenFull ).to.be.false;
 
 					editorElement.remove();
+
+					editor.fire( 'ready' );
+					await editor.destroy();
 				} );
 			} );
 
@@ -201,28 +214,37 @@ describe( 'DecoupledEditor', () => {
 		} );
 
 		describe( 'config.initialData', () => {
-			it( 'if not set, is set using DOM element data', () => {
+			it( 'if not set, is set using DOM element data', async () => {
 				const editorElement = document.createElement( 'div' );
 				editorElement.innerHTML = '<p>Foo</p>';
 
 				const editor = new DecoupledEditor( editorElement );
 
 				expect( editor.config.get( 'initialData' ) ).to.equal( '<p>Foo</p>' );
+
+				editor.fire( 'ready' );
+				await editor.destroy();
 			} );
 
-			it( 'if not set, is set using data passed in constructor', () => {
+			it( 'if not set, is set using data passed in constructor', async () => {
 				const editor = new DecoupledEditor( '<p>Foo</p>' );
 
 				expect( editor.config.get( 'initialData' ) ).to.equal( '<p>Foo</p>' );
+
+				editor.fire( 'ready' );
+				await editor.destroy();
 			} );
 
-			it( 'if set, is not overwritten with DOM element data', () => {
+			it( 'if set, is not overwritten with DOM element data', async () => {
 				const editorElement = document.createElement( 'div' );
 				editorElement.innerHTML = '<p>Foo</p>';
 
 				const editor = new DecoupledEditor( editorElement, { initialData: '<p>Bar</p>' } );
 
 				expect( editor.config.get( 'initialData' ) ).to.equal( '<p>Bar</p>' );
+
+				editor.fire( 'ready' );
+				await editor.destroy();
 			} );
 
 			it( 'it should throw if config.initialData is set and initial data is passed in constructor', () => {
@@ -292,7 +314,7 @@ describe( 'DecoupledEditor', () => {
 			} ).then( editor => {
 				expect( editor.getData() ).to.equal( '<p>Hello world!</p>' );
 
-				editor.destroy();
+				return editor.destroy();
 			} );
 		} );
 
@@ -304,7 +326,7 @@ describe( 'DecoupledEditor', () => {
 			} ).then( editor => {
 				expect( editor.getData() ).to.equal( '' );
 
-				editor.destroy();
+				return editor.destroy();
 			} );
 		} );
 

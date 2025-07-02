@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
@@ -8,11 +8,11 @@
  */
 
 import { Plugin } from 'ckeditor5/src/core.js';
+import { IconMedia } from 'ckeditor5/src/icons.js';
 import { ButtonView, CssTransitionDisablerMixin, MenuBarMenuListItemButtonView, Dialog } from 'ckeditor5/src/ui.js';
 
 import MediaFormView from './ui/mediaformview.js';
 import MediaEmbedEditing from './mediaembedediting.js';
-import mediaIcon from '../theme/icons/media.svg';
 import type { LocaleTranslate } from 'ckeditor5/src/utils.js';
 import type MediaRegistry from './mediaregistry.js';
 
@@ -32,6 +32,13 @@ export default class MediaEmbedUI extends Plugin {
 	 */
 	public static get pluginName() {
 		return 'MediaEmbedUI' as const;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public static override get isOfficialPlugin(): true {
+		return true;
 	}
 
 	private _formView: MediaFormView | undefined;
@@ -71,7 +78,7 @@ export default class MediaEmbedUI extends Plugin {
 		const command = editor.commands.get( 'mediaEmbed' )!;
 		const dialogPlugin = this.editor.plugins.get( 'Dialog' );
 
-		buttonView.icon = mediaIcon;
+		buttonView.icon = IconMedia;
 
 		buttonView.bind( 'isEnabled' ).to( command, 'isEnabled' );
 
@@ -92,6 +99,8 @@ export default class MediaEmbedUI extends Plugin {
 		const command = editor.commands.get( 'mediaEmbed' )!;
 		const t = editor.locale.t;
 
+		const isMediaSelected = command.value !== undefined;
+
 		if ( !this._formView ) {
 			const registry = editor.plugins.get( MediaEmbedEditing ).registry;
 
@@ -101,7 +110,7 @@ export default class MediaEmbedUI extends Plugin {
 
 		dialog.show( {
 			id: 'mediaEmbed',
-			title: t( 'Insert media' ),
+			title: t( 'Media embed' ),
 			content: this._formView,
 			isModal: true,
 			onShow: () => {
@@ -116,7 +125,7 @@ export default class MediaEmbedUI extends Plugin {
 					onExecute: () => dialog.hide()
 				},
 				{
-					label: t( 'Accept' ),
+					label: isMediaSelected ? t( 'Save' ) : t( 'Insert' ),
 					class: 'ck-button-action',
 					withText: true,
 					onExecute: () => this._handleSubmitForm()

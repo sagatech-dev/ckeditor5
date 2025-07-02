@@ -1,14 +1,11 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-/* global document */
-
+import { IconFontFamily } from 'ckeditor5/src/icons.js';
 import FontFamilyEditing from '../../src/fontfamily/fontfamilyediting.js';
 import FontFamilyUI from '../../src/fontfamily/fontfamilyui.js';
-
-import fontFamilyIcon from '../../theme/icons/font-family.svg';
 
 import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
 import ClassicTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
@@ -56,6 +53,14 @@ describe( 'FontFamilyUI', () => {
 		return editor.destroy();
 	} );
 
+	it( 'should have `isOfficialPlugin` static flag set to `true`', () => {
+		expect( FontFamilyUI.isOfficialPlugin ).to.be.true;
+	} );
+
+	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
+		expect( FontFamilyUI.isPremiumPlugin ).to.be.false;
+	} );
+
 	describe( 'toolbar dropdown', () => {
 		let dropdown;
 
@@ -69,7 +74,7 @@ describe( 'FontFamilyUI', () => {
 
 			expect( button ).to.have.property( 'label', 'Font Family' );
 			expect( button ).to.have.property( 'tooltip', true );
-			expect( button ).to.have.property( 'icon', fontFamilyIcon );
+			expect( button ).to.have.property( 'icon', IconFontFamily );
 		} );
 
 		it( 'should add custom CSS class to dropdown', () => {
@@ -280,7 +285,7 @@ describe( 'FontFamilyUI', () => {
 			const button = subMenu.buttonView;
 
 			expect( button ).to.have.property( 'label', 'Font Family' );
-			expect( button ).to.have.property( 'icon', fontFamilyIcon );
+			expect( button ).to.have.property( 'icon', IconFontFamily );
 		} );
 
 		it( 'button has binding to isEnabled', () => {

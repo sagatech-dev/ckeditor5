@@ -3,6 +3,7 @@ category: abbreviation-plugin
 menu-title: Getting user input with a custom UI
 order: 25
 meta-title: Creating an advanced plugin tutorial pt. 2 | CKEditor 5 Documentation
+meta-description: Build a basic abbreviation plugin in CKEditor 5 to insert and manage abbreviations with accessible tooltips in your content, part 2.
 modified_at: 2022-07-15
 ---
 
@@ -10,7 +11,15 @@ modified_at: 2022-07-15
 
 In this part of the tutorial we will focus on creating a dialog, which will get the user's input.
 
-We will pick up where we left off in the first part, so make sure you {@link tutorials/abbreviation-plugin-tutorial/abbreviation-plugin-level-1 start there}, or grab our [starter files for this part](https://github.com/ckeditor/ckeditor5-tutorials-examples/tree/main/abbreviation-plugin/part-1).
+We will pick up where we left off in the first part, so make sure you {@link tutorials/abbreviation-plugin-tutorial/abbreviation-plugin-level-1 start there} or grab our starter files for this part using the commands below.
+
+```bash
+npx -y degit ckeditor/ckeditor5-tutorials-examples/abbreviation-plugin/part-1 abbreviation-plugin
+cd abbreviation-plugin
+
+npm install
+npm run dev
+```
 
 <info-box>
 	As we will mostly work on the UI, we recommend reading about our {@link framework/architecture/ui-library UI library} before you start coding.
@@ -104,7 +113,8 @@ import {
 	LabeledFieldView,
 	createLabeledInputText,
 	ButtonView,		// ADDED
-	icons			// ADDED
+	IconCheck,		// ADDED
+	IconCancel		// ADDED
 } from 'ckeditor5';
 
 export default class FormView extends View {
@@ -114,14 +124,14 @@ export default class FormView extends View {
 
 		// Create the save and cancel buttons.
 		this.saveButtonView = this._createButton(
-			'Save', icons.check, 'ck-button-save'
+			'Save', IconCheck, 'ck-button-save'
 		);
 		// Set the type to 'submit', which will trigger
 		// the submit event on entire form when clicked.
 		this.saveButtonView.type = 'submit';
 
 		this.cancelButtonView = this._createButton(
-			'Cancel', icons.cancel, 'ck-button-cancel'
+			'Cancel', IconCancel, 'ck-button-cancel'
 		);
 
 		// Previously set template.
@@ -168,11 +178,11 @@ export default class FormView extends View {
 		// ...
 
 		this.saveButtonView = this._createButton(
-			'Save', icons.check, 'ck-button-save'
+			'Save', IconCheck, 'ck-button-save'
 		);
 		this.saveButtonView.type = 'submit';
 		this.cancelButtonView = this._createButton(
-			'Cancel', icons.cancel, 'ck-button-cancel'
+			'Cancel', IconCancel, 'ck-button-cancel'
 		);
 		// Delegate ButtonView#execute to FormView#cancel.
 		this.cancelButtonView.delegate( 'execute' ).to( this, 'cancel' );

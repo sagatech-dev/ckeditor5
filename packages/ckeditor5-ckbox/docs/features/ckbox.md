@@ -2,25 +2,18 @@
 category: features-file-management
 menu-title: CKBox
 meta-title: CKBox file manager | CKEditor 5 Documentation
-meta-description: Learn all about using the CKBox file manager and service with CKEditor 5
+meta-description: Learn all about using the CKBox asset manager and service with CKEditor 5.
 modified_at: 2022-06-20
 order: 10
 badges: [ premium ]
 ---
-
-{@snippet features/build-ckbox-source}
 
 # CKBox file manager
 
 CKBox is a dedicated asset manager supporting file and image upload. The CKBox feature lets you easily upload various files and insert images and links to other files into your content. It also offers image conversion and optimization capabilities and provides a {@link features/images-responsive responsive images mechanism} for CKEditor&nbsp;5.
 
 <info-box>
-	This is a premium feature and you need a subscription to use it. You can [purchase it here](https://ckeditor.com/pricing/) for your open-source CKEditor implementation. [Contact us](https://ckeditor.com/contact/?sales=true#contact-form) if:
-	* CKEditor commercial license is needed for your application.
-	* You need the **on-premises (self-hosted)** version of the service.
-	* You have other licensing questions.
-
-	You can also sign up for the [CKEditor Premium Features 30-day free trial](https://orders.ckeditor.com/trial/premium-features) to test the feature.
+	Unlock this feature with selected CKEditor Plans. [Sign up for a free trial](https://portal.ckeditor.com/checkout?plan=free), or [select the Plan](https://ckeditor.com/pricing/) that provides access to all the premium features you need.
 </info-box>
 
 ## How CKBox enhances CKEditor&nbsp;5
@@ -30,18 +23,19 @@ As a full-fledged file manager, CKBox also replaces the basic CKEditor&nbsp;5 im
 * Enables drag & drop uploads of images and other files.
 * Transforms the _Image_ toolbar button, allowing the user to quickly upload and insert an image without opening the CKBox UI.
 * Adds a separate dedicated toolbar button to open the CKBox UI to manage and reuse uploaded files.
-* Provides {@link @ckbox features/images/editing basic editing capabilities}, like crop, resize, rotate, and flip right from the {@link features/images-overview#image-contextual-toolbar image contextual toolbar} for images served by CKBox.
+* Provides [basic editing capabilities](https://ckeditor.com/docs/ckbox/latest/features/images/editing/editing.html), like crop, resize, rotate, and flip right from the {@link features/images-overview#image-contextual-toolbar image contextual toolbar} for images served by CKBox. Also provides trash can that makes reclaiming deleted images possible.
+* Provides responsive images handling.
 * Supports workspaces that allow separating assets for different users.
 
 With CKBox you no longer need to write server-side code to upload and scale images or manage uploaded files.
 
-To find out more about CKBox, the brand-new file manager and image editor, visit the [CKBox website](https://ckeditor.com/ckbox/) and read the dedicated {@link @ckbox guides/index CKBox documentation page}.
+To find out more about CKBox, the brand-new file manager and image editor, visit the [CKBox website](https://ckeditor.com/ckbox/) and read the dedicated [CKBox documentation page](https://ckeditor.com/docs/ckbox/latest/guides/index.html).
 
 ## Demo
 
-To upload a file using CKBox, use the open file manager toolbar button {@icon @ckeditor/ckeditor5-core/theme/icons/browse-files.svg Open file manager}. You can choose more than one file at a time. Use the edit image button {@icon @ckeditor/ckeditor5-ckbox/theme/icons/ckbox-image-edit.svg} from either the main toolbar or the image contextual toolbar to edit the selected image.
+To upload a file using CKBox, use the open file manager toolbar button {@icon @ckeditor/ckeditor5-icons/theme/icons/browse-files.svg Open file manager}. You can choose more than one file at a time. Use the edit image button {@icon @ckeditor/ckeditor5-icons/theme/icons/ckbox-image-edit.svg} from either the main toolbar or the image contextual toolbar to edit the selected image.
 
-Note that the image toolbar button {@icon @ckeditor/ckeditor5-core/theme/icons/image-upload.svg Image upload} will now also upload images right into the CKBox file manager and you can {@link features/drag-drop drag and drop} them, too. You can then access the files from the management panel.
+Note that the image toolbar button {@icon @ckeditor/ckeditor5-icons/theme/icons/image-upload.svg Image upload} will now also upload images right into the CKBox file manager and you can {@link features/drag-drop drag and drop} them, too. You can then access the files from the management panel.
 
 {@snippet features/ckbox}
 
@@ -85,21 +79,23 @@ You must include the `CKBoxImageEdit` plugin if you want to use CKBox image edit
 
 Finally, add {@link module:ckbox/ckbox~CKBox} to your plugin list and toolbar, and [configure](#configuration) the feature as needed. An example configuration may look like this:
 
+<code-switcher>
 ```js
 import { ClassicEditor, Image, ImageUpload, PictureEditing, CKBox, CKBoxImageEdit, CloudServices } from 'ckeditor5';
 
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
+		licenseKey: '<YOUR_LICENSE_KEY>',
 		plugins: [ Image, PictureEditing, ImageUpload, CloudServices, CKBox, CKBoxImageEdit, /* ... */ ],
 		toolbar: [ 'ckbox', 'ckboxImageEdit', /* ... */ ], // Depending on your preference.
 		ckbox: {
-			// Feature configuration including license key.
-			// ...
+			// Configuration.
 		}
 	} )
 	.then( /* ... */ )
 	.catch( /* ... */ );
 ```
+</code-switcher>
 
 Further in the document, the dependency plugins will be omitted in code listings for clarity.
 
@@ -114,6 +110,7 @@ The snippet below shows an example image contextual toolbar configuration.
 ```js
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
+		// ... Other configuration options ...
 		image: {
 			toolbar: [ 'toggleImageCaption', 'imageTextAlternative', 'ckboxImageEdit' ]
 		}
@@ -131,24 +128,21 @@ The feature can be configured via the {@link module:ckbox/ckboxconfig~CKBoxConfi
 <info-box>
 	This is a premium feature. [Contact us](https://ckeditor.com/contact/?sales=true#contact-form) to receive an offer tailored to your needs.
 
-	You can also sign up for the [CKEditor Premium Features 30-day free trial](https://orders.ckeditor.com/trial/premium-features) to test the feature.
+	You can also sign up for the [CKEditor Premium Features 14-day free trial](https://portal.ckeditor.com/checkout?plan=free) to test the feature.
 
 	If you already have a valid license, please log into your [user dashboard](https://dashboard.ckeditor.com/) to access the feature settings.
 </info-box>
 
-After you purchase a license, log into the CKEditor Ecosystem customer dashboard to create access credentials, as explained in the {@link @ckbox guides/configuration/authentication CKBox configuration guide}.
+After you purchase a license, log into the CKEditor Ecosystem customer dashboard to create access credentials, as explained in the [CKBox configuration guide](https://ckeditor.com/docs/ckbox/latest/guides/configuration/authentication.html).
 
 ### Defining upload categories
 
 By default, the CKBox feature maps the uploaded image type to the category configured on the cloud service. You can override this behavior and provide your own mappings via the {@link module:ckbox/ckboxconfig~CKBoxConfig#defaultUploadCategories `config.ckbox.defaultUploadCategories`} configuration option. It is an object, where the keys define categories and their values are the types of images that will be uploaded to these categories. The categories might be referenced either by their name or by their ID. Referencing by ID is future-proof because it will not require configuration changes when a category name changes.
 
 ```js
-import { ClassicEditor, CKBox } from 'ckeditor5';
-
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
-		plugins: [ CKBox, /* ... */ ],
-		toolbar: [ 'ckbox', /* ... */ ],
+		// ... Other configuration options ...
 		ckbox: {
 			defaultUploadCategories: {
 				Bitmaps: [ 'bmp' ],
@@ -175,15 +169,12 @@ If you define your own upload category mappings for a particular image type, onl
 
 The [CKBox workspaces](https://ckeditor.com/docs/ckbox/latest/features/file-management/workspaces.html) provide a convenient solution for achieving data isolation and user separation within CKBox. With workspaces, you can easily create separate storage and data spaces, giving you precise control over assigning specific users, user groups, or tenants to each workspace.
 
-If the user is assigned to more than one workspace, by default all the files uploaded directly from CKEditor are located in the first workspace in the list of workspaces allowed in the user's JWT token. This corresponds to uploads through drag and drop into the editor area, pasting images from the clipboard, or images uploaded using the Image {@icon @ckeditor/ckeditor5-core/theme/icons/image-upload.svg Image} feature. If you would like to define a specific workspace for files uploaded this way, you can define its ID in the `defaultUploadWorkspaceId` option. After that, all the files uploaded directly from CKEditor will be placed in the specified workspace.
+If the user is assigned to more than one workspace, by default all the files uploaded directly from CKEditor are located in the first workspace in the list of workspaces allowed in the user's JWT token. This corresponds to uploads through drag and drop into the editor area, pasting images from the clipboard, or images uploaded using the Image {@icon @ckeditor/ckeditor5-icons/theme/icons/image-upload.svg Image} feature. If you would like to define a specific workspace for files uploaded this way, you can define its ID in the `defaultUploadWorkspaceId` option. After that, all the files uploaded directly from CKEditor will be placed in the specified workspace.
 
 ```js
-import { ClassicEditor, CKBox } from 'ckeditor5';
-
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
-		plugins: [ CKBox, /* ... */ ],
-		toolbar: [ 'ckbox', /* ... */ ],
+		// ... Other configuration options ...
 		ckbox: {
 			tokenUrl: 'https://your.token.url',
 			// Sample workspace referenced by its ID.
@@ -201,12 +192,9 @@ You can obtain the list of available workspaces using the [Workspaces REST API](
 After choosing an asset from the CKBox dialog, it is inserted into the editor content with a unique `data-ckbox-resource-id` attribute. If you want to disable it and do not want to add this attribute, set the {@link module:ckbox/ckboxconfig~CKBoxConfig#ignoreDataId `config.ckbox.ignoreDataId`} option to `true`:
 
 ```js
-import { ClassicEditor, CKBox } from 'ckeditor5';
-
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
-		plugins: [ CKBox, /* ... */ ],
-		toolbar: [ 'ckbox', /* ... */ ],
+		// ... Other configuration options ...
 		ckbox: {
 			ignoreDataId: true
 		}
@@ -220,12 +208,9 @@ ClassicEditor
 By default, the CKBox dialog takes the current language from the editor. If you want to use a different language, you can set the language code in the {@link module:ckbox/ckboxconfig~CKBoxConfig#language `config.ckbox.language`} option:
 
 ```js
-import { ClassicEditor, CKBox } from 'ckeditor5';
-
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
-		plugins: [ CKBox, /* ... */ ],
-		toolbar: [ 'ckbox', /* ... */ ],
+		// ... Other configuration options ...
 		ckbox: {
 			language: 'es'
 		}
@@ -246,12 +231,9 @@ Also, make sure to include the translation file after loading the CKBox library:
 The CKBox feature requires the token endpoint URL configured in the {@link module:ckbox/ckboxconfig~CKBoxConfig#tokenUrl `config.ckbox.tokenUrl`} key. If not explicitly provided, the token URL from {@link module:cloud-services/cloudservicesconfig~CloudServicesConfig#tokenUrl `config.cloudServices.tokenUrl`} is used instead. If both are provided, the token URL defined in `config.ckbox.tokenUrl` takes precedence over the `config.cloudServices.tokenUrl`.
 
 ```js
-import { ClassicEditor, CKBox } from 'ckeditor5';
-
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
-		plugins: [ CKBox, /* ... */ ],
-		toolbar: [ 'ckbox', /* ... */ ],
+		// ... Other configuration options ...
 		ckbox: {
 			tokenUrl: 'https://example.com/cs-token-endpoint'
 		}
@@ -265,12 +247,9 @@ ClassicEditor
 If you host the cloud service in your environment, you should configure the base URL of the API service via the {@link module:ckbox/ckboxconfig~CKBoxConfig#serviceOrigin `config.ckbox.serviceOrigin`} option:
 
 ```js
-import { ClassicEditor, CKBox } from 'ckeditor5';
-
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
-		plugins: [ CKBox, /* ... */ ],
-		toolbar: [ 'ckbox', /* ... */ ],
+		// ... Other configuration options ...
 		ckbox: {
 			serviceOrigin: 'https://example.com/'
 		}
@@ -284,12 +263,9 @@ ClassicEditor
 If you want to allow CKBox to edit external images, not hosted by the file manager (for example, pasted via URL) you need to whitelist the URLs of the images. You can do this using the {@link module:ckbox/ckboxconfig~CKBoxConfig#allowExternalImagesEditing `config.ckbox.allowExternalImagesEditing`} option:
 
 ```js
-import { CKBox } from 'ckeditor5';
-
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
-		plugins: [ CKBox, /* ... */ ],
-		toolbar: [ 'ckbox', /* ... */ ],
+		// ... Other configuration options ...
 		ckbox: {
 			allowExternalImagesEditing: [ 'origin', /^cksource.com/ ]
 		}

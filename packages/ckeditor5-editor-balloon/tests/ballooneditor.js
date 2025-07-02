@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* globals document, console */
 
 import BalloonEditor from '../src/ballooneditor.js';
 import BalloonEditorUI from '../src/ballooneditorui.js';
@@ -54,6 +52,15 @@ describe( 'BalloonEditor', () => {
 			} );
 		} );
 
+		afterEach( async () => {
+			editor.fire( 'ready' );
+			await editor.destroy();
+		} );
+
+		it( 'it\'s possible to extract editor name from editor instance', () => {
+			expect( Object.getPrototypeOf( editor ).constructor.editorName ).to.be.equal( 'BalloonEditor' );
+		} );
+
 		it( 'pushes BalloonToolbar to the list of plugins', () => {
 			expect( editor.config.get( 'plugins' ) ).to.include( BalloonToolbar );
 		} );
@@ -102,28 +109,37 @@ describe( 'BalloonEditor', () => {
 		} );
 
 		describe( 'config.initialData', () => {
-			it( 'if not set, is set using DOM element data', () => {
+			it( 'if not set, is set using DOM element data', async () => {
 				const editorElement = document.createElement( 'div' );
 				editorElement.innerHTML = '<p>Foo</p>';
 
 				const editor = new BalloonEditor( editorElement );
 
 				expect( editor.config.get( 'initialData' ) ).to.equal( '<p>Foo</p>' );
+
+				editor.fire( 'ready' );
+				await editor.destroy();
 			} );
 
-			it( 'if not set, is set using data passed in constructor', () => {
+			it( 'if not set, is set using data passed in constructor', async () => {
 				const editor = new BalloonEditor( '<p>Foo</p>' );
 
 				expect( editor.config.get( 'initialData' ) ).to.equal( '<p>Foo</p>' );
+
+				editor.fire( 'ready' );
+				await editor.destroy();
 			} );
 
-			it( 'if set, is not overwritten with DOM element data', () => {
+			it( 'if set, is not overwritten with DOM element data', async () => {
 				const editorElement = document.createElement( 'div' );
 				editorElement.innerHTML = '<p>Foo</p>';
 
 				const editor = new BalloonEditor( editorElement, { initialData: '<p>Bar</p>' } );
 
 				expect( editor.config.get( 'initialData' ) ).to.equal( '<p>Bar</p>' );
+
+				editor.fire( 'ready' );
+				await editor.destroy();
 			} );
 
 			it( 'it should throw if config.initialData is set and initial data is passed in constructor', () => {

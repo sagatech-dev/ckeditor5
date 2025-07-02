@@ -1,13 +1,11 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
  * @module engine/dev-utils/view
  */
-
-/* globals document */
 
 /**
  * Collection of methods for manipulating the {@link module:engine/view/view view} for testing purposes.
@@ -54,6 +52,7 @@ const domConverterStub: DomConverter = {
 /**
  * Writes the content of the {@link module:engine/view/document~Document document} to an HTML-like string.
  *
+ * @param view The view to stringify.
  * @param options.withoutSelection Whether to write the selection. When set to `true`, the selection will
  * not be included in the returned string.
  * @param options.rootName The name of the root from which the data should be stringified. If not provided,
@@ -62,8 +61,6 @@ const domConverterStub: DomConverter = {
  * instead of `<p>`, `<attribute:b>` instead of `<b>` and `<empty:img>` instead of `<img>`).
  * @param options.showPriority When set to `true`, the attribute element's priority will be printed
  * (`<span view-priority="12">`, `<b view-priority="10">`).
- * @param options.showAttributeElementId When set to `true`, the attribute element's ID will be printed
- * (`<span id="marker:foo">`).
  * @param options.renderUIElements When set to `true`, the inner content of each
  * {@link module:engine/view/uielement~UIElement} will be printed.
  * @param options.renderRawElements When set to `true`, the inner content of each
@@ -403,7 +400,6 @@ export function stringify(
  * this node will be used as the root for all parsed nodes.
  * @param options.sameSelectionCharacters When set to `false`, the selection inside the text should be marked using
  * `{` and `}` and the selection outside the ext using `[` and `]`. When set to `true`, both should be marked with `[` and `]` only.
- * @param options.stylesProcessor Styles processor.
  * @returns Returns the parsed view node or an object with two fields: `view` and `selection` when selection ranges were included in the
  * data to parse.
  */

@@ -1,9 +1,7 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
-
-/* global document */
 
 import ClassicTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
 import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
@@ -139,6 +137,15 @@ describe( 'DropdownMenuNestedMenuView', () => {
 
 			sinon.assert.calledWithExactly( focusTrackerAddSpy.firstCall, menuView.buttonView.element );
 			sinon.assert.calledWithExactly( focusTrackerAddSpy.secondCall, menuView.panelView.element );
+		} );
+
+		// https://github.com/cksource/ckeditor5-commercial/issues/6633
+		it( 'should add the #listView to the focus tracker to allow for linking focus trackers and sharing state of nested menus', () => {
+			const focusTrackerAddSpy = sinon.spy( menuView.focusTracker, 'add' );
+
+			menuView.render();
+
+			sinon.assert.calledWithExactly( focusTrackerAddSpy.thirdCall, menuView.listView );
 		} );
 
 		it( 'should start listening to keystrokes', () => {

@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 import ClassicTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
@@ -8,8 +8,7 @@ import { getData as getViewData } from '@ckeditor/ckeditor5-engine/src/dev-utils
 import HeadingEditing from '@ckeditor/ckeditor5-heading/src/headingediting.js';
 import GeneralHtmlSupport from '../../src/generalhtmlsupport.js';
 import { getModelDataWithAttributes } from '../_utils/utils.js';
-
-/* global document */
+import HeadingElementSupport from '../../src/integrations/heading.js';
 
 describe( 'HeadingElementSupport', () => {
 	let editor, editorElement, model, doc, dataSchema, dataFilter, htmlSupport;
@@ -51,6 +50,14 @@ describe( 'HeadingElementSupport', () => {
 				classes: true,
 				styles: true
 			} ] );
+		} );
+
+		it( 'should have `isOfficialPlugin` static flag set to `true`', () => {
+			expect( HeadingElementSupport.isOfficialPlugin ).to.be.true;
+		} );
+
+		it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
+			expect( HeadingElementSupport.isPremiumPlugin ).to.be.false;
 		} );
 
 		it( 'should be named', () => {

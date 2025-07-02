@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 import Model from '../../../src/model/model.js';
@@ -12,8 +12,6 @@ import { setData, getData } from '../../../src/dev-utils/model.js';
 import CKEditorError from '@ckeditor/ckeditor5-utils/src/ckeditorerror.js';
 import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
 import { expectToThrowCKEditorError } from '@ckeditor/ckeditor5-utils/tests/_utils/utils.js';
-
-/* global console */
 
 describe( 'insertObject()', () => {
 	let model, doc, root, schema;

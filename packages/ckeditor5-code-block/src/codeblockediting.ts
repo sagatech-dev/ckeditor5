@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 /**
@@ -23,8 +23,6 @@ import {
 	type SelectionChangeRangeEvent
 } from 'ckeditor5/src/engine.js';
 import { ClipboardPipeline, type ClipboardContentInsertionEvent } from 'ckeditor5/src/clipboard.js';
-
-import type { ListEditing } from '@ckeditor/ckeditor5-list';
 
 import CodeBlockCommand from './codeblockcommand.js';
 import IndentCodeBlockCommand from './indentcodeblockcommand.js';
@@ -62,6 +60,13 @@ export default class CodeBlockEditing extends Plugin {
 	/**
 	 * @inheritDoc
 	 */
+	public static override get isOfficialPlugin(): true {
+		return true;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
 	public static get requires() {
 		return [ ShiftEnter ] as const;
 	}
@@ -80,6 +85,7 @@ export default class CodeBlockEditing extends Plugin {
 				{ language: 'cpp', label: 'C++' },
 				{ language: 'css', label: 'CSS' },
 				{ language: 'diff', label: 'Diff' },
+				{ language: 'go', label: 'Go' },
 				{ language: 'html', label: 'HTML' },
 				{ language: 'java', label: 'Java' },
 				{ language: 'javascript', label: 'JavaScript' },

@@ -1,6 +1,6 @@
 /**
- * @license Copyright (c) 2003-2024, CKSource Holding sp. z o.o. All rights reserved.
- * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-oss-license
+ * @license Copyright (c) 2003-2025, CKSource Holding sp. z o.o. All rights reserved.
+ * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
 import ClassicTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
@@ -14,8 +14,6 @@ import { setData as setModelData } from '@ckeditor/ckeditor5-engine/src/dev-util
 import { add as addTranslations, _clear as clearTranslations } from '@ckeditor/ckeditor5-utils/src/translation-service.js';
 import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
 import { expectToThrowCKEditorError } from '@ckeditor/ckeditor5-utils/tests/_utils/utils.js';
-
-/* global document, Event */
 
 describe( 'ContextualBalloon', () => {
 	let editor, editorElement, balloon, viewA, viewB, viewC, viewD;
@@ -61,9 +59,17 @@ describe( 'ContextualBalloon', () => {
 			} );
 	} );
 
-	afterEach( () => {
-		editor.destroy();
+	afterEach( async () => {
+		await editor.destroy();
 		editorElement.remove();
+	} );
+
+	it( 'should have `isOfficialPlugin` static flag set to `true`', () => {
+		expect( ContextualBalloon.isOfficialPlugin ).to.be.true;
+	} );
+
+	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
+		expect( ContextualBalloon.isPremiumPlugin ).to.be.false;
 	} );
 
 	it( 'should create a plugin instance', () => {
@@ -237,7 +243,8 @@ describe( 'ContextualBalloon', () => {
 				limiter: balloon.positionLimiter,
 				target: 'fake',
 				viewportOffsetConfig: {
-					top: 0
+					top: 0,
+					visualTop: 0
 				}
 			} );
 		} );
@@ -261,7 +268,21 @@ describe( 'ContextualBalloon', () => {
 				}
 			} );
 
-			expect( balloon.getPositionOptions().viewportOffsetConfig ).to.be.equal( editor.ui.viewportOffset );
+			expect( balloon.getPositionOptions().viewportOffsetConfig ).to.deep.equal( editor.ui.viewportOffset );
+		} );
+
+		it( 'should re-map viewportOffsetConfig so visualTop is used instead of top', () => {
+			sinon.stub( editor.ui.viewportOffset, 'top' ).get( () => 70 );
+			sinon.stub( editor.ui.viewportOffset, 'visualTop' ).get( () => 40 );
+
+			balloon.add( {
+				view: viewA,
+				position: {
+					target: 'blank'
+				}
+			} );
+
+			expect( balloon.getPositionOptions().viewportOffsetConfig.top ).to.equal( 40 );
 		} );
 	} );
 
@@ -850,8 +871,8 @@ describe( 'ContextualBalloon', () => {
 					expect( balloon.view.pin.calledTwice );
 					expect( balloon.view.pin.secondCall.args[ 0 ].viewportOffsetConfig.top ).to.equal( 200 );
 
-					newEditor.destroy();
 					editorElement.remove();
+					return newEditor.destroy();
 				} );
 		} );
 
