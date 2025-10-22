@@ -3,9 +3,9 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import ModelTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/modeltesteditor.js';
-import RemoveFormatCommand from '../src/removeformatcommand.js';
-import RemoveFormatEditing from '../src/removeformatediting.js';
+import { ModelTestEditor } from '@ckeditor/ckeditor5-core/tests/_utils/modeltesteditor.js';
+import { RemoveFormatCommand } from '../src/removeformatcommand.js';
+import { RemoveFormatEditing } from '../src/removeformatediting.js';
 
 describe( 'RemoveFormat', () => {
 	let editor;
@@ -26,8 +26,12 @@ describe( 'RemoveFormat', () => {
 		expect( RemoveFormatEditing.isOfficialPlugin ).to.be.true;
 	} );
 
-	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
-		expect( RemoveFormatEditing.isPremiumPlugin ).to.be.false;
+	it( 'should have `isPremiumPlugin` static flag set to `true`', () => {
+		expect( RemoveFormatEditing.isPremiumPlugin ).to.be.true;
+	} );
+
+	it( 'should have `licenseFeatureCode` static flag set to `RF`', () => {
+		expect( RemoveFormatEditing.licenseFeatureCode ).to.equal( 'RF' );
 	} );
 
 	it( 'should register removeFormat command', () => {

@@ -3,21 +3,20 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import FindAndReplaceEditing from '../src/findandreplaceediting.js';
+import { FindAndReplaceEditing } from '../src/findandreplaceediting.js';
 
-import DecoupledEditor from '@ckeditor/ckeditor5-editor-decoupled/src/decouplededitor.js';
-import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
-import Essentials from '@ckeditor/ckeditor5-essentials/src/essentials.js';
-import BoldEditing from '@ckeditor/ckeditor5-basic-styles/src/bold/boldediting.js';
-import { getData as getViewData } from '@ckeditor/ckeditor5-engine/src/dev-utils/view.js';
-import { getData as getModelData } from '@ckeditor/ckeditor5-engine/src/dev-utils/model.js';
-import { toWidget, viewToModelPositionOutsideModelElement } from '@ckeditor/ckeditor5-widget/src/index.js';
+import { DecoupledEditor } from '@ckeditor/ckeditor5-editor-decoupled';
+import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
+import { Essentials } from '@ckeditor/ckeditor5-essentials';
+import { BoldEditing } from '@ckeditor/ckeditor5-basic-styles';
+import { _getViewData, _getModelData } from '@ckeditor/ckeditor5-engine';
+import { toWidget, viewToModelPositionOutsideModelElement } from '@ckeditor/ckeditor5-widget';
 
-import FindAndReplace from '../src/findandreplace.js';
+import { FindAndReplace } from '../src/findandreplace.js';
 
-import FindCommand from '../src/findcommand.js';
-import ReplaceCommand from '../src/replacecommand.js';
-import ReplaceAllCommand from '../src/replaceallcommand.js';
+import { FindCommand } from '../src/findcommand.js';
+import { ReplaceCommand } from '../src/replacecommand.js';
+import { ReplaceAllCommand } from '../src/replaceallcommand.js';
 
 describe( 'FindAndReplaceEditing', () => {
 	const FOO_BAR_PARAGRAPH = '<p>Foo bar baz</p>';
@@ -47,8 +46,12 @@ describe( 'FindAndReplaceEditing', () => {
 		expect( FindAndReplaceEditing.isOfficialPlugin ).to.be.true;
 	} );
 
-	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
-		expect( FindAndReplaceEditing.isPremiumPlugin ).to.be.false;
+	it( 'should have `isPremiumPlugin` static flag set to `true`', () => {
+		expect( FindAndReplaceEditing.isPremiumPlugin ).to.be.true;
+	} );
+
+	it( 'should have `licenseFeatureCode` static flag set to `FAR`', () => {
+		expect( FindAndReplaceEditing.licenseFeatureCode ).to.equal( 'FAR' );
 	} );
 
 	describe( 'highlight', () => {
@@ -72,7 +75,7 @@ describe( 'FindAndReplaceEditing', () => {
 				'</p>'
 			);
 
-			expect( getModelData( model ) ).to.equal(
+			expect( _getModelData( model ) ).to.equal(
 				'<paragraph>[]<placeholder>Foo Bar Foo foo</placeholder>some text #</paragraph>'
 			);
 
@@ -100,7 +103,7 @@ describe( 'FindAndReplaceEditing', () => {
 				'</p>'
 			);
 
-			expect( getModelData( model ) ).to.equal(
+			expect( _getModelData( model ) ).to.equal(
 				'<paragraph>[]text Foo text<placeholder>Bar Foo baz</placeholder>some Foo text</paragraph>'
 			);
 
@@ -178,7 +181,7 @@ describe( 'FindAndReplaceEditing', () => {
 		}
 
 		function getSearchResultHTML() {
-			const viewData = getViewData( editor.editing.view, { withoutSelection: true, renderUIElements: false } );
+			const viewData = _getViewData( editor.editing.view, { withoutSelection: true, renderUIElements: false } );
 
 			return viewData.replaceAll( /\s*data-find-result="[^"]*"/g, '' );
 		}
@@ -191,7 +194,7 @@ describe( 'FindAndReplaceEditing', () => {
 			const paragraph = root.getChild( 0 );
 			addMarker( 'findResult:test-uid', paragraph, 4, 7 );
 
-			expect( getViewData( editor.editing.view, { withoutSelection: true } ) ).to.equal(
+			expect( _getViewData( editor.editing.view, { withoutSelection: true } ) ).to.equal(
 				'<p>Foo <span class="ck-find-result" data-find-result="test-uid">bar</span> baz</p>'
 			);
 		} );
@@ -202,7 +205,7 @@ describe( 'FindAndReplaceEditing', () => {
 			const paragraph = root.getChild( 0 );
 			addMarker( 'findResultHighlighted:test-uid', paragraph, 4, 7 );
 
-			expect( getViewData( editor.editing.view, { withoutSelection: true } ) ).to.equal(
+			expect( _getViewData( editor.editing.view, { withoutSelection: true } ) ).to.equal(
 				'<p>Foo <span class="ck-find-result_selected" data-find-result="test-uid">bar</span> baz</p>'
 			);
 		} );
@@ -213,14 +216,14 @@ describe( 'FindAndReplaceEditing', () => {
 			const secondParagraph = root.getChild( 1 );
 			addMarker( 'findResult:test-uid-1', secondParagraph, 4, 7 );
 
-			expect( getViewData( editor.editing.view, { withoutSelection: true } ) ).to.equal(
+			expect( _getViewData( editor.editing.view, { withoutSelection: true } ) ).to.equal(
 				'<p>Foo bar baz</p><p>Foo <span class="ck-find-result" data-find-result="test-uid-1">bar</span> baz</p>'
 			);
 
 			const firstParagraph = root.getChild( 0 );
 			addMarker( 'findResult:test-uid-2', firstParagraph, 4, 7 );
 
-			expect( getViewData( editor.editing.view, { withoutSelection: true } ) ).to.equal(
+			expect( _getViewData( editor.editing.view, { withoutSelection: true } ) ).to.equal(
 				'<p>Foo <span class="ck-find-result" data-find-result="test-uid-2">bar</span> baz</p>' +
           '<p>Foo <span class="ck-find-result" data-find-result="test-uid-1">bar</span> baz</p>'
 			);
@@ -240,7 +243,7 @@ describe( 'FindAndReplaceEditing', () => {
 				writer.removeMarker( 'findResult:test-uid-1' );
 			} );
 
-			expect( getViewData( editor.editing.view, { withoutSelection: true } ) ).to.equal(
+			expect( _getViewData( editor.editing.view, { withoutSelection: true } ) ).to.equal(
 				'<p>Foo bar baz</p>' +
           '<p>' +
           '<span class="ck-find-result" data-find-result="test-uid-2">Foo</span>' +

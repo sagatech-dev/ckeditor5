@@ -10,6 +10,8 @@ badges: [ premium ]
 
 Elevate your images with robust editing tools available through the premium {@link features/ckbox CKBox} and {@link features/uploadcare Uploadcare} integrations. In this guide you will discover how to modify and enhance visuals directly in the editor, giving you greater creative control.
 
+{@snippet getting-started/unlock-feature}
+
 ## Image optimizer by Uploadcare
 
 Uploadcare provides not only basic image editing capabilities, but also image properties adjustments and photo filters, further extending CKEditor&nbsp;5 feature set.
@@ -20,9 +22,9 @@ Click on the image to invoke the image toolbar, then use the image editing butto
 
 {@snippet features/image-image-optimizer-uploadcare}
 
-<info-box info>
+<snippet-footer>
 	This demo presents a limited set of features. Visit the {@link examples/builds/full-featured-editor feature-rich editor example} to see more in action.
-</info-box>
+</snippet-footer>
 
 ### Image editing
 
@@ -61,9 +63,9 @@ Click on the image to invoke the image toolbar, then use the image editing butto
 
 {@snippet features/image-image-optimizer-ckbox}
 
-<info-box info>
+<snippet-footer>
 	This demo presents a limited set of features. Visit the {@link examples/builds/full-featured-editor feature-rich editor example} to see more in action.
-</info-box>
+</snippet-footer>
 
 ### Image editing
 

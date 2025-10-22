@@ -3,14 +3,11 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import DropdownView from '../../src/dropdown/dropdownview.js';
-import KeystrokeHandler from '@ckeditor/ckeditor5-utils/src/keystrokehandler.js';
-import { keyCodes } from '@ckeditor/ckeditor5-utils/src/keyboard.js';
-import ButtonView from '../../src/button/buttonview.js';
-import DropdownPanelView from '../../src/dropdown/dropdownpanelview.js';
-import global from '@ckeditor/ckeditor5-utils/src/dom/global.js';
-import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
-import { FocusTracker } from '@ckeditor/ckeditor5-utils';
+import { DropdownView } from '../../src/dropdown/dropdownview.js';
+import { KeystrokeHandler, keyCodes, global, FocusTracker } from '@ckeditor/ckeditor5-utils';
+import { ButtonView } from '../../src/button/buttonview.js';
+import { DropdownPanelView } from '../../src/dropdown/dropdownpanelview.js';
+import { testUtils } from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
 
 describe( 'DropdownView', () => {
 	let view, buttonView, panelView, locale;

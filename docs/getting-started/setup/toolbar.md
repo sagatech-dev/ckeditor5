@@ -332,14 +332,14 @@ The block toolbar provides an additional configurable toolbar on the left-hand s
 ### Demo
 
 <info-box hint>
-	In the editor below, move the caret around the content. You will see that the block toolbar button {@icon @ckeditor/ckeditor5-icons/theme/icons/drag-indicator.svg drag indicator}  is following your selection. Click the button to show the toolbar.
+	In the editor below, move the caret around the content. You will see that the block toolbar button {@icon @ckeditor/ckeditor5-icons/theme/icons/drag-indicator.svg drag indicator} is following your selection. Click the button to show the toolbar.
 </info-box>
 
 {@snippet installation/setup/blocktoolbar}
 
-<info-box info>
+<snippet-footer>
 	This demo presents a limited set of features. Visit the {@link examples/builds/full-featured-editor feature-rich editor example} to see more in action.
-</info-box>
+</snippet-footer>
 
 ### Additional feature information
 

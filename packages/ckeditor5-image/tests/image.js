@@ -3,16 +3,15 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import ClassicTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
-import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
-import Image from '../src/image.js';
-import ImageEditing from '../src/image/imageediting.js';
-import Widget from '@ckeditor/ckeditor5-widget/src/widget.js';
-import ImageTextAlternative from '../src/imagetextalternative.js';
-import { setData as setModelData } from '@ckeditor/ckeditor5-engine/src/dev-utils/model.js';
-import { getData as getViewData } from '@ckeditor/ckeditor5-engine/src/dev-utils/view.js';
-import global from '@ckeditor/ckeditor5-utils/src/dom/global.js';
-import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
+import { ClassicTestEditor } from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
+import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
+import { Image } from '../src/image.js';
+import { ImageEditing } from '../src/image/imageediting.js';
+import { Widget } from '@ckeditor/ckeditor5-widget';
+import { ImageTextAlternative } from '../src/imagetextalternative.js';
+import { _setModelData, _getViewData } from '@ckeditor/ckeditor5-engine';
+import { global } from '@ckeditor/ckeditor5-utils';
+import { testUtils } from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
 
 describe( 'Image', () => {
 	let editorElement, model, view, editor, document, viewDocument;
@@ -69,9 +68,9 @@ describe( 'Image', () => {
 	describe( 'selection', () => {
 		describe( 'for block images', () => {
 			it( 'should create fake selection', () => {
-				setModelData( model, '[<imageBlock alt="alt text" src="/assets/sample.png"></imageBlock>]' );
+				_setModelData( model, '[<imageBlock alt="alt text" src="/assets/sample.png"></imageBlock>]' );
 
-				expect( getViewData( view ) ).to.equal(
+				expect( _getViewData( view ) ).to.equal(
 					'[<figure class="' +
 						'ck-widget ' +
 						'ck-widget_selected image" contenteditable="false"' +
@@ -88,9 +87,9 @@ describe( 'Image', () => {
 			} );
 
 			it( 'should create proper fake selection label when alt attribute is empty', () => {
-				setModelData( model, '[<imageBlock src="/assets/sample.png" alt=""></imageBlock>]' );
+				_setModelData( model, '[<imageBlock src="/assets/sample.png" alt=""></imageBlock>]' );
 
-				expect( getViewData( view ) ).to.equal(
+				expect( _getViewData( view ) ).to.equal(
 					'[<figure class="' +
 						'ck-widget ' +
 						'ck-widget_selected image" contenteditable="false"' +
@@ -107,12 +106,12 @@ describe( 'Image', () => {
 			} );
 
 			it( 'should remove selected class from previously selected element', () => {
-				setModelData( model,
+				_setModelData( model,
 					'[<imageBlock src="/assets/sample.png" alt="alt text"></imageBlock>]' +
 					'<imageBlock src="/assets/sample.png" alt="alt text"></imageBlock>'
 				);
 
-				expect( getViewData( view ) ).to.equal(
+				expect( _getViewData( view ) ).to.equal(
 					'[<figure class="' +
 						'ck-widget ' +
 						'ck-widget_selected image" contenteditable="false"' +
@@ -134,7 +133,7 @@ describe( 'Image', () => {
 					writer.setSelection( writer.createRangeOn( secondImage ) );
 				} );
 
-				expect( getViewData( view ) ).to.equal(
+				expect( _getViewData( view ) ).to.equal(
 					'<figure class="' +
 						'ck-widget ' +
 						'image" contenteditable="false"' +
@@ -155,9 +154,9 @@ describe( 'Image', () => {
 
 		describe( 'for inline images', () => {
 			it( 'should create fake selection', () => {
-				setModelData( model, '<paragraph>[<imageInline alt="alt text" src="/assets/sample.png"></imageInline>]</paragraph>' );
+				_setModelData( model, '<paragraph>[<imageInline alt="alt text" src="/assets/sample.png"></imageInline>]</paragraph>' );
 
-				expect( getViewData( view ) ).to.equal(
+				expect( _getViewData( view ) ).to.equal(
 					'<p>[' +
 						'<span class="ck-widget ck-widget_selected image-inline" contenteditable="false">' +
 							'<img alt="alt text" src="/assets/sample.png"></img>' +
@@ -170,9 +169,9 @@ describe( 'Image', () => {
 			} );
 
 			it( 'should create proper fake selection label when alt attribute is empty', () => {
-				setModelData( model, '<paragraph>[<imageInline src="/assets/sample.png" alt=""></imageInline>]</paragraph>' );
+				_setModelData( model, '<paragraph>[<imageInline src="/assets/sample.png" alt=""></imageInline>]</paragraph>' );
 
-				expect( getViewData( view ) ).to.equal(
+				expect( _getViewData( view ) ).to.equal(
 					'<p>[' +
 						'<span class="ck-widget ck-widget_selected image-inline" contenteditable="false">' +
 							'<img alt="" src="/assets/sample.png"></img>' +
@@ -185,12 +184,12 @@ describe( 'Image', () => {
 			} );
 
 			it( 'should remove selected class from previously selected element', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>[<imageInline src="/assets/sample.png" alt="alt text"></imageInline>]' +
 					'<imageInline src="/assets/sample.png" alt="alt text"></imageInline></paragraph>'
 				);
 
-				expect( getViewData( view ) ).to.equal(
+				expect( _getViewData( view ) ).to.equal(
 					'<p>[' +
 						'<span class="ck-widget ck-widget_selected image-inline" contenteditable="false">' +
 							'<img alt="alt text" src="/assets/sample.png"></img>' +
@@ -206,7 +205,7 @@ describe( 'Image', () => {
 					writer.setSelection( writer.createRangeOn( secondImage ) );
 				} );
 
-				expect( getViewData( view ) ).to.equal(
+				expect( _getViewData( view ) ).to.equal(
 					'<p>' +
 						'<span class="ck-widget image-inline" contenteditable="false">' +
 							'<img alt="alt text" src="/assets/sample.png"></img>' +

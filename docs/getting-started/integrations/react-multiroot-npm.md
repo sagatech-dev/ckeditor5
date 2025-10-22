@@ -9,12 +9,6 @@ modified_at: 2024-04-25
 
 # Integrating CKEditor&nbsp;5 with React rich text multi-root editor hook from npm
 
-<p>
-	<a href="https://www.npmjs.com/package/@ckeditor/ckeditor5-react" target="_blank" rel="noopener">
-		<img src="https://badge.fury.io/js/%40ckeditor%2Fckeditor5-react.svg" alt="npm version" loading="lazy">
-	</a>
-</p>
-
 This page focuses on describing the usage of the multi-root editor in React applications. If you would like to use a different type of editor, you can find more information {@link getting-started/integrations/react-default-npm in this guide}.
 
 <info-box hint>
@@ -104,9 +98,9 @@ The `useMultiRootEditor` hook supports the following properties:
 * `isLayoutReady: Boolean` &ndash; A property that delays the editor creation when set to `false`. It starts the initialization of the multi-root editor when sets to `true`. Useful when the CKEditor&nbsp;5 annotations or a presence list are used.
 * `disableTwoWayDataBinding: Boolean` &ndash; Allows disabling the two-way data binding mechanism between the editor state and `data` object to improve editor efficiency. The default value is `false`.
 * `onReady: Function` &ndash; It is called when the editor is ready with a {@link module:editor-multi-root/multirooteditor~MultiRootEditor `MultiRootEditor`} instance. This callback is also called after the reinitialization of the component if an error occurred.
-* `onChange: Function` &ndash; It is called when the editor data has changed. See the {@link module:engine/model/document~Document#event:change:data `editor.model.document#change:data`} event.
-* `onBlur: Function` &ndash; It is called when the editor was blurred. See the {@link module:engine/view/document~Document#event:blur `editor.editing.view.document#blur`} event.
-* `onFocus: Function` &ndash; It is called when the editor was focused. See the {@link module:engine/view/document~Document#event:focus `editor.editing.view.document#focus`} event.
+* `onChange: Function` &ndash; It is called when the editor data has changed. See the {@link module:engine/model/document~ModelDocument#event:change:data `editor.model.document#change:data`} event.
+* `onBlur: Function` &ndash; It is called when the editor was blurred. See the {@link module:engine/view/document~ViewDocument#event:blur `editor.editing.view.document#blur`} event.
+* `onFocus: Function` &ndash; It is called when the editor was focused. See the {@link module:engine/view/document~ViewDocument#event:focus `editor.editing.view.document#focus`} event.
 * `onError: Function` &ndash; It is called when the editor has crashed during the initialization or during the runtime. It receives two arguments: the error instance and the error details.
   Error details is an object that contains two properties:
   * `phase: 'initialization'|'runtime'` &ndash; Informs when an error has occurred (during the editor or context initialization, or after the initialization).

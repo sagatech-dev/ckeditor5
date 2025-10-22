@@ -1,12 +1,15 @@
 ---
+category: features
 title: Restricted editing
 menu-title: Restricted editing
 meta-title: Restricted editing | CKEditor 5 Documentation
 meta-description: Enable restricted editing in CKEditor 5 to limit content changes to specific regions, ensuring control and document integrity.
-category: features
+badges: [ premium ]
 ---
 
 The restricted editing feature introduces two modes: the standard editing mode and the restricted editing mode. Users working in the restricted editing mode cannot change the content, except for parts marked as editable.
+
+{@snippet getting-started/unlock-feature}
 
 ## Demo
 
@@ -16,15 +19,22 @@ Start by creating a template of the document in the standard editing mode. Selec
 
 Then switch to the restricted editing mode to see how the editable and non-editable regions behave.
 
-<info-box info>
-	Tip: Use <kbd>Tab</kbd> to navigate from one editable region to another (and <kbd>Shift</kbd>+<kbd>Tab</kbd> to move back) in the restricted mode.
+<info-box tip>
+	Use <kbd>Tab</kbd> to navigate from one editable region to another (and <kbd>Shift</kbd>+<kbd>Tab</kbd> to move back) in the restricted mode.
 </info-box>
+
+**Mode:**
+
+<div class="u-flex-horizontal u-gap-5">
+	<ck:checkbox id="mode-standard" type="radio" name="editor-restriction-mode" value="standard" label="Standard" checked />
+	<ck:checkbox id="mode-restricted" type="radio" name="editor-restriction-mode" value="restricted" label="Restricted" />
+</div>
 
 {@snippet features/restricted-editing}
 
-<info-box info>
+<snippet-footer>
 	This demo presents a limited set of features. Visit the {@link examples/builds/full-featured-editor feature-rich editor example} to see more in action.
-</info-box>
+</snippet-footer>
 
 ## Additional feature information
 
@@ -42,12 +52,6 @@ By using this feature, the users of your application will be able to create temp
 </info-box>
 
 ## Installation
-
-<info-box info>
-	⚠️ **New import paths**
-
-	Starting with {@link updating/update-to-42 version 42.0.0}, we changed the format of import paths. This guide uses the new, shorter format. Refer to the {@link getting-started/legacy-getting-started/legacy-imports Packages in the legacy setup} guide if you use an older version of CKEditor&nbsp;5.
-</info-box>
 
 After {@link getting-started/integrations-cdn/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration.
 
@@ -96,7 +100,7 @@ You can configure which features should be available in the restricted mode. For
 ```js
 ClassicEditor
 	.create( document.querySelector( '#editor' ), {
-		// ... Other confituration options ... 
+		// ... Other confituration options ...
 		restrictedEditing: {
 			allowedCommands: [ 'bold' ]
 		}
@@ -108,7 +112,7 @@ ClassicEditor
 **Note**: Typing and deleting text is always possible in restricted editing regions. For more information, check out the {@link module:restricted-editing/restrictededitingconfig~RestrictedEditingConfig `config.restrictedEditing`} documentation.
 
 <info-box warning>
-	Only inline content inserting or editing commands are allowed in this setting. Block content commands such as `insertTable` or `enter` cannot be allowed via this setting, as they are not supported in the restricted editing mode. 
+	Only inline content inserting or editing commands are allowed in this setting. Block content commands such as `insertTable` or `enter` cannot be allowed via this setting, as they are not supported in the restricted editing mode.
 </info-box>
 
 ### Enabling commands in the restricted editing mode

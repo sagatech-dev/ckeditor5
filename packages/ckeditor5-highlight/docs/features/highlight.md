@@ -14,17 +14,11 @@ Select the text you want to highlight. Then use the highlight toolbar button {@i
 
 {@snippet features/highlight}
 
-<info-box info>
+<snippet-footer>
 	This demo presents a limited set of features. Visit the {@link examples/builds/full-featured-editor feature-rich editor example} to see more in action.
-</info-box>
+</snippet-footer>
 
 ## Installation
-
-<info-box info>
-	⚠️ **New import paths**
-
-	Starting with {@link updating/update-to-42 version 42.0.0}, we changed the format of import paths. This guide uses the new, shorter format. Refer to the {@link getting-started/legacy-getting-started/legacy-imports Packages in the legacy setup} guide if you use an older version of CKEditor&nbsp;5.
-</info-box>
 
 After {@link getting-started/integrations-cdn/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
 
@@ -70,14 +64,14 @@ ClassicEditor
 					model: 'greenMarker',
 					class: 'marker-green',
 					title: 'Green marker',
-					color: 'var(--ck-highlight-marker-green)',
+					color: 'var(--ck-content-highlight-marker-green)',
 					type: 'marker'
 				},
 				{
 					model: 'redPen',
 					class: 'pen-red',
 					title: 'Red pen',
-					color: 'var(--ck-highlight-pen-red)',
+					color: 'var(--ck-content-highlight-pen-red)',
 					type: 'pen'
 				}
 			]
@@ -127,13 +121,13 @@ The highlight feature is using the power of [CSS variables](https://developer.mo
 ```css
 :root {
 	/* Make green a little darker. */
-	--ck-highlight-marker-green: #199c19;
+	--ck-content-highlight-marker-green: #199c19;
 
 	/* Make the yellow more "dirty". */
-	--ck-highlight-marker-yellow: #cac407;
+	--ck-content-highlight-marker-yellow: #cac407;
 
 	/* Make red more pinkish. */
-	--ck-highlight-pen-red: #ec3e6e;
+	--ck-content-highlight-pen-red: #ec3e6e;
 }
 ```
 
@@ -223,12 +217,12 @@ The {@link module:highlight/highlight~Highlight} plugin registers:
 
 	```js
 	highlight.options = [
-		{ model: 'yellowMarker', class: 'marker-yellow', title: 'Yellow Marker', color: 'var(--ck-highlight-marker-yellow)', type: 'marker' },
-		{ model: 'greenMarker', class: 'marker-green', title: 'Green marker', color: 'var(--ck-highlight-marker-green)', type: 'marker' },
-		{ model: 'pinkMarker', class: 'marker-pink', title: 'Pink marker', color: 'var(--ck-highlight-marker-pink)', type: 'marker' },
-		{ model: 'blueMarker', class: 'marker-blue', title: 'Blue marker', color: 'var(--ck-highlight-marker-blue)', type: 'marker' },
-		{ model: 'redPen', class: 'pen-red', title: 'Red pen', color: 'var(--ck-highlight-pen-red)', type: 'pen' },
-		{ model: 'greenPen', class: 'pen-green', title: 'Green pen', color: 'var(--ck-highlight-pen-green)', type: 'pen' }
+		{ model: 'yellowMarker', class: 'marker-yellow', title: 'Yellow Marker', color: 'var(--ck-content-highlight-marker-yellow)', type: 'marker' },
+		{ model: 'greenMarker', class: 'marker-green', title: 'Green marker', color: 'var(--ck-content-highlight-marker-green)', type: 'marker' },
+		{ model: 'pinkMarker', class: 'marker-pink', title: 'Pink marker', color: 'var(--ck-content-highlight-marker-pink)', type: 'marker' },
+		{ model: 'blueMarker', class: 'marker-blue', title: 'Blue marker', color: 'var(--ck-content-highlight-marker-blue)', type: 'marker' },
+		{ model: 'redPen', class: 'pen-red', title: 'Red pen', color: 'var(--ck-content-highlight-pen-red)', type: 'pen' },
+		{ model: 'greenPen', class: 'pen-green', title: 'Green pen', color: 'var(--ck-content-highlight-pen-green)', type: 'pen' }
 	]
 	```
 

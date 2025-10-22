@@ -7,25 +7,26 @@
  * @module table/tablecaption/tablecaptionediting
  */
 
-import { Plugin, type Editor } from 'ckeditor5/src/core.js';
-import { Element, enablePlaceholder } from 'ckeditor5/src/engine.js';
+import { Plugin } from 'ckeditor5/src/core.js';
+import { ModelElement, enableViewPlaceholder } from 'ckeditor5/src/engine.js';
 import { toWidgetEditable } from 'ckeditor5/src/widget.js';
 
-import injectTableCaptionPostFixer from '../converters/table-caption-post-fixer.js';
-import ToggleTableCaptionCommand from './toggletablecaptioncommand.js';
+import { injectTableCaptionPostFixer } from '../converters/table-caption-post-fixer.js';
+import { ToggleTableCaptionCommand } from './toggletablecaptioncommand.js';
 import { isTable, matchTableCaptionViewElement } from './utils.js';
+import type { TableEditing } from '../tableediting.js';
 
 /**
  * The table caption editing plugin.
  */
-export default class TableCaptionEditing extends Plugin {
+export class TableCaptionEditing extends Plugin {
 	/**
 	 * A map that keeps saved JSONified table captions and table model elements they are
 	 * associated with.
 	 *
 	 * To learn more about this system, see {@link #_saveCaption}.
 	 */
-	private _savedCaptionsMap: WeakMap<Element, unknown>;
+	private _savedCaptionsMap = new WeakMap<ModelElement, unknown>();
 
 	/**
 	 * @inheritDoc
@@ -44,20 +45,12 @@ export default class TableCaptionEditing extends Plugin {
 	/**
 	 * @inheritDoc
 	 */
-	constructor( editor: Editor ) {
-		super( editor );
-
-		this._savedCaptionsMap = new WeakMap();
-	}
-
-	/**
-	 * @inheritDoc
-	 */
 	public init(): void {
 		const editor = this.editor;
 		const schema = editor.model.schema;
 		const view = editor.editing.view;
 		const t = editor.t;
+		const useCaptionElement = editor.config.get( 'table.tableCaption.useCaptionElement' );
 
 		if ( !schema.isRegistered( 'caption' ) ) {
 			schema.register( 'caption', {
@@ -73,6 +66,15 @@ export default class TableCaptionEditing extends Plugin {
 
 		editor.commands.add( 'toggleTableCaption', new ToggleTableCaptionCommand( this.editor ) );
 
+		if ( useCaptionElement ) {
+			const tableEditing: TableEditing = editor.plugins.get( 'TableEditing' );
+
+			tableEditing.registerAdditionalSlot( {
+				filter: element => element.is( 'element', 'caption' ),
+				positionOffset: 'end'
+			} );
+		}
+
 		// View -> model converter for the data pipeline.
 		editor.conversion.for( 'upcast' ).elementToElement( {
 			view: matchTableCaptionViewElement,
@@ -87,7 +89,7 @@ export default class TableCaptionEditing extends Plugin {
 					return null;
 				}
 
-				return writer.createContainerElement( 'figcaption' );
+				return writer.createContainerElement( useCaptionElement ? 'caption' : 'figcaption' );
 			}
 		} );
 
@@ -99,18 +101,18 @@ export default class TableCaptionEditing extends Plugin {
 					return null;
 				}
 
-				const figcaptionElement = writer.createEditableElement( 'figcaption' );
-				writer.setCustomProperty( 'tableCaption', true, figcaptionElement );
+				const captionElement = writer.createEditableElement( useCaptionElement ? 'caption' : 'figcaption' );
+				writer.setCustomProperty( 'tableCaption', true, captionElement );
 
-				figcaptionElement.placeholder = t( 'Enter table caption' );
+				captionElement.placeholder = t( 'Enter table caption' );
 
-				enablePlaceholder( {
+				enableViewPlaceholder( {
 					view,
-					element: figcaptionElement,
+					element: captionElement,
 					keepOnFocus: true
 				} );
 
-				return toWidgetEditable( figcaptionElement, writer );
+				return toWidgetEditable( captionElement, writer );
 			}
 		} );
 
@@ -118,7 +120,7 @@ export default class TableCaptionEditing extends Plugin {
 	}
 
 	/**
-	 * Returns the saved {@link module:engine/model/element~Element#toJSON JSONified} caption
+	 * Returns the saved {@link module:engine/model/element~ModelElement#toJSON JSONified} caption
 	 * of a table model element.
 	 *
 	 * See {@link #_saveCaption}.
@@ -127,14 +129,14 @@ export default class TableCaptionEditing extends Plugin {
 	 * @param tableModelElement The model element the caption should be returned for.
 	 * @returns The model caption element or `null` if there is none.
 	 */
-	public _getSavedCaption( tableModelElement: Element ): Element | null {
+	public _getSavedCaption( tableModelElement: ModelElement ): ModelElement | null {
 		const jsonObject = this._savedCaptionsMap.get( tableModelElement );
 
-		return jsonObject ? Element.fromJSON( jsonObject ) : null;
+		return jsonObject ? ModelElement.fromJSON( jsonObject ) : null;
 	}
 
 	/**
-	 * Saves a {@link module:engine/model/element~Element#toJSON JSONified} caption for
+	 * Saves a {@link module:engine/model/element~ModelElement#toJSON JSONified} caption for
 	 * a table element to allow restoring it in the future.
 	 *
 	 * A caption is saved every time it gets hidden. The
@@ -151,7 +153,7 @@ export default class TableCaptionEditing extends Plugin {
 	 * @param tableModelElement The model element the caption is saved for.
 	 * @param caption The caption model element to be saved.
 	 */
-	public _saveCaption( tableModelElement: Element, caption: Element ): void {
+	public _saveCaption( tableModelElement: ModelElement, caption: ModelElement ): void {
 		this._savedCaptionsMap.set( tableModelElement, caption.toJSON() );
 	}
 }

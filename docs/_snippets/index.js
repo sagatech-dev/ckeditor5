@@ -5,13 +5,15 @@
 
 export { CS_CONFIG } from '@ckeditor/ckeditor5-cloud-services/tests/_utils/cloud-services-config.js';
 export { TOKEN_URL } from '@ckeditor/ckeditor5-ckbox/tests/_utils/ckbox-config.js';
-export { default as ArticlePluginSet } from '@ckeditor/ckeditor5-core/tests/_utils/articlepluginset.js';
+export { ArticlePluginSet } from '@ckeditor/ckeditor5-core/tests/_utils/articlepluginset.js';
 
 export {
 	attachTourBalloon,
 	findToolbarItem,
 	getViewportTopOffsetConfig,
-	createTabs
+	setViewportTopOffsetDynamically,
+	createTabs,
+	querySnippetCSSUrl
 } from './shared-helpers.js';
 
 export { BalloonBlockEditor } from './build-balloon-block.js';

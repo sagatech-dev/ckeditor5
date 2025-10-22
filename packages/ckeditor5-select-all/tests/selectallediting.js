@@ -3,11 +3,10 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import ModelTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/modeltesteditor.js';
-import SelectAllEditing from '../src/selectallediting.js';
-import SelectAllCommand from '../src/selectallcommand.js';
-import env from '@ckeditor/ckeditor5-utils/src/env.js';
-import { keyCodes } from '@ckeditor/ckeditor5-utils/src/keyboard.js';
+import { ModelTestEditor } from '@ckeditor/ckeditor5-core/tests/_utils/modeltesteditor.js';
+import { SelectAllEditing } from '../src/selectallediting.js';
+import { SelectAllCommand } from '../src/selectallcommand.js';
+import { env, keyCodes } from '@ckeditor/ckeditor5-utils';
 
 describe( 'SelectAllEditing', () => {
 	let editor, viewDocument;

@@ -3,14 +3,13 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import { default as Template, TemplateToBinding, TemplateIfBinding } from '../src/template.js';
-import View from '../src/view.js';
-import ViewCollection from '../src/viewcollection.js';
-import Model from '../src/model.js';
+import { Template, TemplateToBinding, TemplateIfBinding } from '../src/template.js';
+import { View } from '../src/view.js';
+import { ViewCollection } from '../src/viewcollection.js';
+import { UIModel } from '../src/model.js';
 
-import EmitterMixin from '@ckeditor/ckeditor5-utils/src/emittermixin.js';
-import DomEmitterMixin from '@ckeditor/ckeditor5-utils/src/dom/emittermixin.js';
-import normalizeHtml from '@ckeditor/ckeditor5-utils/tests/_utils/normalizehtml.js';
+import { EmitterMixin, DomEmitterMixin } from '@ckeditor/ckeditor5-utils';
+import { normalizeHtml } from '@ckeditor/ckeditor5-utils/tests/_utils/normalizehtml.js';
 
 import { expectToThrowCKEditorError } from '@ckeditor/ckeditor5-utils/tests/_utils/utils.js';
 
@@ -33,7 +32,7 @@ describe( 'Template', () => {
 		} );
 
 		it( 'accepts and normalizes the definition', () => {
-			const bind = Template.bind( new Model( {} ), Object.create( DomEmitterMixin ) );
+			const bind = Template.bind( new UIModel( {} ), new ( DomEmitterMixin() )() );
 			const childNode = document.createElement( 'div' );
 			const childTemplate = new Template( {
 				tag: 'b'
@@ -260,12 +259,12 @@ describe( 'Template', () => {
 				let observable, emitter, bind;
 
 				beforeEach( () => {
-					observable = new Model( {
+					observable = new UIModel( {
 						width: '10px',
 						backgroundColor: 'yellow'
 					} );
 
-					emitter = Object.create( EmitterMixin );
+					emitter = new ( EmitterMixin() )();
 					bind = Template.bind( observable, emitter );
 				} );
 
@@ -327,6 +326,64 @@ describe( 'Template', () => {
 					expect( normalizeHtml( el.outerHTML ) ).to.equal( '<p style="background-color:yellow;width:1em"></p>' );
 				} );
 
+				it( 'renders CSS variable as a static value', () => {
+					setElement( {
+						tag: 'p',
+						attributes: {
+							style: '--color: red'
+						}
+					} );
+
+					expect( normalizeHtml( el.outerHTML ) ).to.equal( '<p style="--color:red"></p>' );
+				} );
+
+				it( 'renders CSS variable as a static value (Array of values)', () => {
+					setElement( {
+						tag: 'p',
+						attributes: {
+							style: {
+								'--color': 'red',
+								'--display': 'block'
+							}
+						}
+					} );
+
+					expect( normalizeHtml( el.outerHTML ) ).to.equal( '<p style="--color:red;--display:block"></p>' );
+				} );
+
+				it( 'renders CSS variable as a value bound to the model', () => {
+					setElement( {
+						tag: 'p',
+						attributes: {
+							style: bind.to( 'width', w => `--width: ${ w }` )
+						}
+					} );
+
+					expect( normalizeHtml( el.outerHTML ) ).to.equal( '<p style="--width:10px"></p>' );
+
+					observable.width = '1em';
+
+					expect( normalizeHtml( el.outerHTML ) ).to.equal( '<p style="--width:1em"></p>' );
+				} );
+
+				it( 'renders CSS variable as a value bound to the model (Array of bindings)', () => {
+					setElement( {
+						tag: 'p',
+						attributes: {
+							style: [
+								bind.to( 'width', w => `--width: ${ w };` ),
+								bind.to( 'backgroundColor', c => `--background-color: ${ c };` )
+							]
+						}
+					} );
+
+					expect( normalizeHtml( el.outerHTML ) ).to.equal( '<p style="--background-color:yellow;--width:10px"></p>' );
+
+					observable.width = '1em';
+
+					expect( normalizeHtml( el.outerHTML ) ).to.equal( '<p style="--background-color:yellow;--width:1em"></p>' );
+				} );
+
 				describe( 'object', () => {
 					it( 'renders with static and bound attributes', () => {
 						setElement( {
@@ -348,6 +405,34 @@ describe( 'Template', () => {
 
 						expect( normalizeHtml( el.outerHTML ) )
 							.to.equal( '<p style="background-color:green;height:10px;width:20px"></p>' );
+					} );
+
+					it( 'renders CSS variables with static and bound attributes', () => {
+						setElement( {
+							tag: 'p',
+							attributes: {
+								style: {
+									'--width': bind.to( 'width' ),
+									'--height': '10px',
+									'--background-color': bind.to( 'backgroundColor' )
+								}
+							}
+						} );
+
+						expect( normalizeHtml( el.outerHTML ) )
+							.to.equal( '<p style="--background-color:yellow;--height:10px;--width:10px"></p>' );
+
+						observable.width = '20px';
+						observable.backgroundColor = 'green';
+
+						expect( normalizeHtml( el.outerHTML ) )
+							.to.equal( '<p style="--background-color:green;--height:10px;--width:20px"></p>' );
+
+						observable.width = '';
+						observable.backgroundColor = '';
+
+						expect( normalizeHtml( el.outerHTML ) )
+							.to.equal( '<p style="--height:10px"></p>' );
 					} );
 
 					it( 'renders with empty string attributes', () => {
@@ -656,11 +741,11 @@ describe( 'Template', () => {
 
 		describe( 'bindings', () => {
 			it( 'activates model bindings – root', () => {
-				const observable = new Model( {
+				const observable = new UIModel( {
 					foo: 'bar'
 				} );
 
-				const emitter = Object.create( EmitterMixin );
+				const emitter = new ( EmitterMixin() )();
 				const bind = Template.bind( observable, emitter );
 				const el = new Template( {
 					tag: 'div',
@@ -676,11 +761,11 @@ describe( 'Template', () => {
 			} );
 
 			it( 'activates model bindings – children', () => {
-				const observable = new Model( {
+				const observable = new UIModel( {
 					foo: 'bar'
 				} );
 
-				const emitter = Object.create( EmitterMixin );
+				const emitter = new ( EmitterMixin() )();
 				const bind = Template.bind( observable, emitter );
 				const el = new Template( {
 					tag: 'div',
@@ -715,12 +800,12 @@ describe( 'Template', () => {
 
 			text = document.createTextNode( '' );
 
-			observable = new Model( {
+			observable = new UIModel( {
 				foo: 'bar',
 				baz: 'qux'
 			} );
 
-			domEmitter = Object.create( DomEmitterMixin );
+			domEmitter = new ( DomEmitterMixin() )();
 			bind = Template.bind( observable, domEmitter );
 		} );
 
@@ -831,7 +916,7 @@ describe( 'Template', () => {
 
 			describe( 'style', () => {
 				beforeEach( () => {
-					observable = new Model( {
+					observable = new UIModel( {
 						width: '10px',
 						backgroundColor: 'yellow'
 					} );
@@ -1103,12 +1188,12 @@ describe( 'Template', () => {
 		beforeEach( () => {
 			el = getElement( { tag: 'div' } );
 
-			observable = new Model( {
+			observable = new UIModel( {
 				foo: 'bar',
 				baz: 'qux'
 			} );
 
-			domEmitter = Object.create( DomEmitterMixin );
+			domEmitter = new ( DomEmitterMixin() )();
 			bind = Template.bind( observable, domEmitter );
 		} );
 
@@ -1335,7 +1420,7 @@ describe( 'Template', () => {
 
 			describe( 'style', () => {
 				beforeEach( () => {
-					observable = new Model( {
+					observable = new UIModel( {
 						overflow: 'visible'
 					} );
 
@@ -1579,12 +1664,12 @@ describe( 'Template', () => {
 			let observable, domEmitter, bind;
 
 			beforeEach( () => {
-				observable = new Model( {
+				observable = new UIModel( {
 					foo: 'bar',
 					baz: 'qux'
 				} );
 
-				domEmitter = Object.create( DomEmitterMixin );
+				domEmitter = new ( DomEmitterMixin() )();
 				bind = Template.bind( observable, domEmitter );
 			} );
 
@@ -1796,12 +1881,12 @@ describe( 'Template', () => {
 			let observable, emitter, bind;
 
 			beforeEach( () => {
-				observable = new Model( {
+				observable = new UIModel( {
 					foo: 'bar',
 					baz: 'qux'
 				} );
 
-				emitter = Object.create( EmitterMixin );
+				emitter = new ( EmitterMixin() )();
 				bind = Template.bind( observable, emitter );
 			} );
 
@@ -2298,12 +2383,12 @@ describe( 'Template', () => {
 		let observable, emitter, bind;
 
 		beforeEach( () => {
-			observable = new Model( {
+			observable = new UIModel( {
 				foo: 'bar',
 				baz: 'qux'
 			} );
 
-			emitter = Object.create( DomEmitterMixin );
+			emitter = new ( DomEmitterMixin() )();
 			bind = Template.bind( observable, emitter );
 		} );
 

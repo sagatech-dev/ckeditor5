@@ -19,20 +19,20 @@ import {
 	type KeystrokeHandlerOptions
 } from '@ckeditor/ckeditor5-utils';
 import { IconCancel } from '@ckeditor/ckeditor5-icons';
-import ViewCollection from '../viewcollection.js';
-import View from '../view.js';
-import FormHeaderView from '../formheader/formheaderview.js';
-import ButtonView from '../button/buttonview.js';
+import { ViewCollection } from '../viewcollection.js';
+import { View } from '../view.js';
+import { FormHeaderView } from '../formheader/formheaderview.js';
+import { ButtonView } from '../button/buttonview.js';
 import { type ButtonExecuteEvent } from '../button/button.js';
-import FocusCycler, { isViewWithFocusCycler,
+import { FocusCycler, isViewWithFocusCycler,
 	type FocusableView,
 	isFocusable
 }
 	from '../focuscycler.js';
-import DraggableViewMixin, { type DraggableView, type DraggableViewDragEvent } from '../bindings/draggableviewmixin.js';
-import DialogActionsView, { type DialogActionButtonDefinition } from './dialogactionsview.js';
-import DialogContentView from './dialogcontentview.js';
-import type EditorUI from '../editorui/editorui.js';
+import { DraggableViewMixin, type DraggableView, type DraggableViewDragEvent } from '../bindings/draggableviewmixin.js';
+import { DialogActionsView, type DialogActionButtonDefinition } from './dialogactionsview.js';
+import { DialogContentView } from './dialogcontentview.js';
+import { type EditorUI } from '../editorui/editorui.js';
 
 import '../../theme/components/dialog/dialog.css';
 // @if CK_DEBUG_DIALOG // const RectDrawer = require( '@ckeditor/ckeditor5-utils/tests/_utils/rectdrawer' ).default;
@@ -67,7 +67,7 @@ const toPx = /* #__PURE__ */ toUnit( 'px' );
 /**
  * A dialog view class.
  */
-export default class DialogView extends /* #__PURE__ */ DraggableViewMixin( View ) implements DraggableView {
+export class DialogView extends /* #__PURE__ */ DraggableViewMixin( View ) implements DraggableView {
 	/**
 	 * A collection of the child views inside of the dialog.
 	 * A dialog can have 3 optional parts: header, content, and actions.
@@ -139,9 +139,13 @@ export default class DialogView extends /* #__PURE__ */ DraggableViewMixin( View
 	/**
 	 * The position of the dialog view.
 	 *
+	 * If set to a function, it will be called with the DOM root Rect and the dialog Rect as arguments.
+	 * It should return the coordinates of the dialog's position.
+	 *
 	 * @observable
 	 */
-	declare public position: typeof DialogViewPosition[ keyof typeof DialogViewPosition ] | null;
+	declare public position: typeof DialogViewPosition[ keyof typeof DialogViewPosition ] | null |
+		( ( dialogRect: Rect, domRootRect?: Rect | null ) => { left: number; top: number } | null );
 
 	/**
 	 * A flag indicating that the dialog should be shown. Once set to `true`, the dialog will be shown
@@ -490,6 +494,22 @@ export default class DialogView extends /* #__PURE__ */ DraggableViewMixin( View
 
 		const defaultOffset = DialogView.defaultOffset;
 		const dialogRect = this._getDialogRect();
+
+		if ( this.position == null ) {
+			return;
+		} else if ( typeof this.position == 'function' ) {
+			const coords = this.position( dialogRect, domRootRect );
+
+			if ( coords == null ) {
+				this._moveOffScreen();
+
+				return;
+			}
+
+			this._moveTo( coords.left, coords.top );
+
+			return;
+		}
 
 		// @if CK_DEBUG_DIALOG // RectDrawer.clear();
 		// @if CK_DEBUG_DIALOG // RectDrawer.draw( viewportRect, { outlineColor: 'blue' }, 'Viewport' );

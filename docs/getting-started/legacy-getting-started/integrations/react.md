@@ -8,14 +8,8 @@ order: 30
 # (Legacy) React rich text editor component
 
 <info-box warning>
-	⚠️  We changed installation methods and this legacy guide is kept for users' convenience. As of April 2025, integrations based on predefined builds are **no longer supported**. Please refer to the {@link getting-started/index#ckeditor-5-framework-integrations Quick Start} guide to choose one of the modern installation and integration methods available and {@link updating/nim-migration/migration-to-new-installation-methods migrate to new installation methods}.
+	We changed installation methods and this legacy guide is kept for users' convenience. As of April 2025, integrations based on predefined builds are **no longer supported**. Please refer to the {@link getting-started/index#ckeditor-5-framework-integrations Quick Start} guide to choose one of the modern installation and integration methods available and {@link updating/nim-migration/migration-to-new-installation-methods migrate to new installation methods}.
 </info-box>
-
-<p>
-	<a href="https://www.npmjs.com/package/@ckeditor/ckeditor5-react" target="_blank" rel="noopener">
-		<img src="https://badge.fury.io/js/%40ckeditor%2Fckeditor5-react.svg" alt="npm version" loading="lazy">
-	</a>
-</p>
 
 CKEditor&nbsp;5 consists of editor builds and {@link framework/index CKEditor&nbsp;5 Framework} upon which the builds are based.
 
@@ -82,9 +76,9 @@ The `<CKEditor>` component supports the following properties:
 * `disableWatchdog` &ndash; A Boolean value. If set to `true`, {@link features/watchdog the watchdog feature} will be disabled. It is set to `false` by default.
 * `watchdogConfig` &ndash; {@link module:watchdog/watchdog~WatchdogConfig Configuration object} for the [watchdog feature](https://ckeditor.com/docs/ckeditor5/latest/features/watchdog.html).
 * `onReady` &ndash; A function called when the editor is ready with an {@link module:core/editor/editor~Editor `editor`} instance. This callback is also called after the reinitialization of the component if an error occurred.
-* `onChange` &ndash; A function called when the editor data has changed. See the {@link module:engine/model/document~Document#event:change:data `editor.model.document#change:data`} event.
-* `onBlur` &ndash; A function called when the editor was blurred. See the {@link module:engine/view/document~Document#event:blur `editor.editing.view.document#blur`} event.
-* `onFocus` &ndash; A function called when the editor was focused. See the {@link module:engine/view/document~Document#event:focus `editor.editing.view.document#focus`} event.
+* `onChange` &ndash; A function called when the editor data has changed. See the {@link module:engine/model/document~ModelDocument#event:change:data `editor.model.document#change:data`} event.
+* `onBlur` &ndash; A function called when the editor was blurred. See the {@link module:engine/view/document~ViewDocument#event:blur `editor.editing.view.document#blur`} event.
+* `onFocus` &ndash; A function called when the editor was focused. See the {@link module:engine/view/document~ViewDocument#event:focus `editor.editing.view.document#focus`} event.
 * `onError` &ndash; A function called when the editor has crashed during the initialization or during the runtime. It receives two arguments: the error instance and the error details.
 	Error details is an object that contains two properties:
 	* `{String} phase`: `'initialization'|'runtime'` &ndash; Informs when the error has occurred (during the editor or context initialization, or after the initialization).
@@ -260,12 +254,12 @@ Because of that, we recommend placing the directory next to the `src/` and `node
 
 ```plain
 ├── ckeditor5
-│   ├── build
-│   ├── sample
-│   ├── src
-│   ├── ...
-│   ├── package.json
-│   └── webpack.config.js
+│   ├── build
+│   ├── sample
+│   ├── src
+│   ├── ...
+│   ├── package.json
+│   └── webpack.config.js
 ├── node_modules
 ├── public
 ├── src

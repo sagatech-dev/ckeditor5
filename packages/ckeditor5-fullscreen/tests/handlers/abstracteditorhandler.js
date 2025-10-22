@@ -3,18 +3,17 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import global from '@ckeditor/ckeditor5-utils/src/dom/global.js';
-import Essentials from '@ckeditor/ckeditor5-essentials/src/essentials.js';
-import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
-import ClassicEditor from '@ckeditor/ckeditor5-editor-classic/src/classiceditor.js';
-import View from '@ckeditor/ckeditor5-ui/src/view.js';
-import { Dialog, DialogViewPosition } from '@ckeditor/ckeditor5-ui';
+import { global } from '@ckeditor/ckeditor5-utils';
+import { Essentials } from '@ckeditor/ckeditor5-essentials';
+import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
+import { ClassicEditor } from '@ckeditor/ckeditor5-editor-classic';
+import { View, Dialog, DialogViewPosition } from '@ckeditor/ckeditor5-ui';
 import { SourceEditing } from '@ckeditor/ckeditor5-source-editing';
 import { Plugin } from '@ckeditor/ckeditor5-core';
 
-import RevisionHistoryMock from '../_utils/revisionhistorymock.js';
-import AbstractEditorHandler from '../../src/handlers/abstracteditorhandler.js';
-import Fullscreen from '../../src/fullscreen.js';
+import { RevisionHistoryMock } from '../_utils/revisionhistorymock.js';
+import { FullscreenAbstractEditorHandler } from '../../src/handlers/abstracteditorhandler.js';
+import { Fullscreen } from '../../src/fullscreen.js';
 
 describe( 'AbstractHandler', () => {
 	let abstractHandler, domElement, editor;
@@ -31,7 +30,7 @@ describe( 'AbstractHandler', () => {
 			]
 		} );
 
-		abstractHandler = new AbstractEditorHandler( editor );
+		abstractHandler = new FullscreenAbstractEditorHandler( editor );
 	} );
 
 	afterEach( () => {
@@ -272,7 +271,7 @@ describe( 'AbstractHandler', () => {
 				}
 			} );
 
-			const tempAbstractHandlerDynamicToolbar = new AbstractEditorHandler( tempEditorDynamicToolbar );
+			const tempAbstractHandlerDynamicToolbar = new FullscreenAbstractEditorHandler( tempEditorDynamicToolbar );
 
 			tempAbstractHandlerDynamicToolbar.enable();
 			tempAbstractHandlerDynamicToolbar.disable();
@@ -300,7 +299,7 @@ describe( 'AbstractHandler', () => {
 				}
 			} );
 
-			const tempAbstractHandlerStaticToolbar = new AbstractEditorHandler( tempEditorStaticToolbar );
+			const tempAbstractHandlerStaticToolbar = new FullscreenAbstractEditorHandler( tempEditorStaticToolbar );
 
 			tempAbstractHandlerStaticToolbar.enable();
 			tempAbstractHandlerStaticToolbar.disable();
@@ -381,7 +380,7 @@ describe( 'AbstractHandler', () => {
 				]
 			} );
 
-			abstractEditorHandler = new AbstractEditorHandler( editorWithRevisionHistory );
+			abstractEditorHandler = new FullscreenAbstractEditorHandler( editorWithRevisionHistory );
 		} );
 
 		afterEach( async () => {
@@ -447,7 +446,7 @@ describe( 'AbstractHandler', () => {
 				]
 			} );
 
-			abstractEditorHandler = new AbstractEditorHandler( editorWithSourceEditing );
+			abstractEditorHandler = new FullscreenAbstractEditorHandler( editorWithSourceEditing );
 			sinon.stub( abstractEditorHandler, '_generateDocumentOutlineContainer' );
 		} );
 

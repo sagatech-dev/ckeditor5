@@ -3,20 +3,19 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
-import Heading from '@ckeditor/ckeditor5-heading/src/heading.js';
-import GeneralHtmlSupport from '@ckeditor/ckeditor5-html-support/src/generalhtmlsupport.js';
-import ClassicTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
-import Image from '@ckeditor/ckeditor5-image/src/image.js';
-import ImageCaption from '@ckeditor/ckeditor5-image/src/imagecaption.js';
-import BlockQuote from '@ckeditor/ckeditor5-block-quote/src/blockquote.js';
-import Link from '@ckeditor/ckeditor5-link/src/link.js';
+import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
+import { Heading } from '@ckeditor/ckeditor5-heading';
+import { GeneralHtmlSupport } from '@ckeditor/ckeditor5-html-support';
+import { ClassicTestEditor } from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
+import { Image, ImageCaption } from '@ckeditor/ckeditor5-image';
+import { BlockQuote } from '@ckeditor/ckeditor5-block-quote';
+import { Link } from '@ckeditor/ckeditor5-link';
 import { Bold } from '@ckeditor/ckeditor5-basic-styles';
-import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
-import { setData as setModelData, getData as getModelData } from '@ckeditor/ckeditor5-engine/src/dev-utils/model.js';
-import LinkStyleSupport from '../../src/integrations/link.js';
+import { testUtils } from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
+import { _setModelData, _getModelData } from '@ckeditor/ckeditor5-engine';
+import { LinkStyleSupport } from '../../src/integrations/link.js';
 
-import Style from '../../src/style.js';
+import { Style } from '../../src/style.js';
 
 describe( 'LinkStyleSupport', () => {
 	let editor, editorElement, command, model;
@@ -54,7 +53,7 @@ describe( 'LinkStyleSupport', () => {
 	describe( 'enabled styles', () => {
 		describe( 'collapsed selection', () => {
 			it( 'Link style should be enabled for the selection in the link', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123">foo[]bar</$text>' +
@@ -69,7 +68,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should not be enabled for the selection outside the link', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'bef[]ore ' +
 						'<$text linkHref="123">foobar</$text>' +
@@ -84,7 +83,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be enabled for the selection at the beginning of a link (selection gravity override)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'[]<$text linkHref="123">foobar</$text>' +
@@ -99,7 +98,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should not be enabled for the selection at the beginning of a link (default selection gravity)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'[]<$text linkHref="123">foobar</$text>' +
@@ -114,7 +113,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be enabled for the selection at the end of a link (default selection gravity override)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123">foobar</$text>[]' +
@@ -129,7 +128,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should not be enabled for the selection at the end of a link (selection gravity override)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123">foobar</$text>[]' +
@@ -144,7 +143,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be enabled for the selection in bolded link', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123" bold="true">foo[]bar</$text>' +
@@ -159,7 +158,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should not be enabled for the selection in bolded text', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text bold="true">foo[]bar</$text>' +
@@ -176,7 +175,7 @@ describe( 'LinkStyleSupport', () => {
 
 		describe( 'non-collapsed selection', () => {
 			it( 'Link style should be enabled for the selection in the link', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123">fo[ob]ar</$text>' +
@@ -191,7 +190,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be enabled for the selection on the link', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123">[foobar]</$text>' +
@@ -206,7 +205,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be enabled for the selection on na inline widget', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'[<imageInline linkHref="123"></imageInline>]' +
@@ -221,7 +220,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be enabled for the selection including a link', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'bef[ore ' +
 						'<$text linkHref="123">foobar</$text>' +
@@ -236,7 +235,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be enabled for the selection including a link partly from start', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'bef[ore ' +
 						'<$text linkHref="123">foo]bar</$text>' +
@@ -251,7 +250,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be enabled for the selection including a link partly from end', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123">foo[bar</$text>' +
@@ -266,7 +265,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be enabled for the selection covering multiple links', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123">foo[bar</$text>' +
@@ -283,7 +282,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be enabled for the selection covering multiple links (from outside)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'bef[ore ' +
 						'<$text linkHref="123">foobar</$text>' +
@@ -300,7 +299,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be enabled for the selection covering multiple links (outside on the start)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'bef[ore ' +
 						'<$text linkHref="123">foobar</$text>' +
@@ -317,7 +316,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be enabled for the selection covering multiple links (outside on the end)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123">foo[bar</$text>' +
@@ -334,7 +333,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should not be enabled for the selection outside link', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123">foobar</$text>' +
@@ -355,7 +354,7 @@ describe( 'LinkStyleSupport', () => {
 	describe( 'active styles', () => {
 		describe( 'collapsed selection', () => {
 			it( 'Link style should be active for the selection in the link', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						`<$text linkHref="123" htmlA="${ ghsAttribute( { classes: [ 'a-styled' ] } ) }">foo[]bar</$text>` +
@@ -369,7 +368,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should not be active for the selection outside the link', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'bef[]ore ' +
 						'<$text linkHref="123" htmlA="${ ghsAttribute( { classes: [ \'a-styled\' ] } ) }">foobar</$text>' +
@@ -383,7 +382,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be active for the selection at the beginning of a link (selection gravity override)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						`[]<$text linkHref="123" htmlA="${ ghsAttribute( { classes: [ 'a-styled' ] } ) }">foobar</$text>` +
@@ -397,7 +396,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should not be active for the selection at the beginning of a link (default selection gravity)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						`[]<$text linkHref="123" htmlA="${ ghsAttribute( { classes: [ 'a-styled' ] } ) }">foobar</$text>` +
@@ -411,7 +410,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be active for the selection at the end of a link (default selection gravity override)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						`<$text linkHref="123" htmlA="${ ghsAttribute( { classes: [ 'a-styled' ] } ) }">foobar</$text>[]` +
@@ -425,7 +424,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should not be active for the selection at the end of a link (selection gravity override)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						`<$text linkHref="123" htmlA="${ ghsAttribute( { classes: [ 'a-styled' ] } ) }">foobar</$text>[]` +
@@ -439,7 +438,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be active for the selection in bolded link', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						`<$text linkHref="123" bold="true" htmlA="${ ghsAttribute( { classes: [ 'a-styled' ] } ) }">foo[]bar</$text>` +
@@ -453,7 +452,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should not be active for the selection in bolded text', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text bold="true">foo[]bar</$text>' +
@@ -469,7 +468,7 @@ describe( 'LinkStyleSupport', () => {
 
 		describe( 'non-collapsed selection', () => {
 			it( 'Link style should be active for the selection in the link', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						`<$text linkHref="123" htmlA="${ ghsAttribute( { classes: [ 'a-styled' ] } ) }">fo[ob]ar</$text>` +
@@ -483,7 +482,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be active for the selection on the link', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						`<$text linkHref="123" htmlA="${ ghsAttribute( { classes: [ 'a-styled' ] } ) }">[foobar]</$text>` +
@@ -497,7 +496,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be active for the selection on na inline widget', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						`[<imageInline linkHref="123" htmlA="${ ghsAttribute( { classes: [ 'a-styled' ] } ) }"></imageInline>]` +
@@ -511,7 +510,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be active for the selection including a link', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'bef[ore ' +
 						`<$text linkHref="123" htmlA="${ ghsAttribute( { classes: [ 'a-styled' ] } ) }">foobar</$text>` +
@@ -525,7 +524,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be active for the selection including a link partly from start', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'bef[ore ' +
 						`<$text linkHref="123" htmlA="${ ghsAttribute( { classes: [ 'a-styled' ] } ) }">foo]bar</$text>` +
@@ -539,7 +538,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be active for the selection including a link partly from end', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						`<$text linkHref="123" htmlA="${ ghsAttribute( { classes: [ 'a-styled' ] } ) }">foo[bar</$text>` +
@@ -553,7 +552,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be active for the selection covering multiple links', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						`<$text linkHref="123" htmlA="${ ghsAttribute( { classes: [ 'a-styled' ] } ) }">foo[bar</$text>` +
@@ -569,7 +568,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be active for the selection covering multiple links (from outside)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'bef[ore ' +
 						`<$text linkHref="123" htmlA="${ ghsAttribute( { classes: [ 'a-styled' ] } ) }">foobar</$text>` +
@@ -585,7 +584,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be active for the selection covering multiple links (outside on the start)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'bef[ore ' +
 						`<$text linkHref="123" htmlA="${ ghsAttribute( { classes: [ 'a-styled' ] } ) }">foobar</$text>` +
@@ -601,7 +600,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be active for the selection covering multiple links (outside on the end)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						`<$text linkHref="123" htmlA="${ ghsAttribute( { classes: [ 'a-styled' ] } ) }">foo[bar</$text>` +
@@ -617,7 +616,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be active for the selection covering multiple links (first has style)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						`<$text linkHref="123" htmlA="${ ghsAttribute( { classes: [ 'a-styled' ] } ) }">foo[bar</$text>` +
@@ -633,7 +632,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should not be active for the selection covering multiple links (second has style)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123">foo[bar</$text>' +
@@ -649,7 +648,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should not be active for the selection outside link', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						`<$text linkHref="123" htmlA="${ ghsAttribute( { classes: [ 'a-styled' ] } ) }">foobar</$text>` +
@@ -673,7 +672,7 @@ describe( 'LinkStyleSupport', () => {
 
 		describe( 'collapsed selection', () => {
 			it( 'Link style should be applied to the link with the selection in the link', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123">foo[]bar</$text>' +
@@ -689,7 +688,7 @@ describe( 'LinkStyleSupport', () => {
 				command.execute( { styleName: 'A style' } );
 
 				expect( command.value ).to.have.members( [ 'A style' ] );
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>' +
 						'before ' +
 						'<$text htmlA="{"classes":["a-styled"]}" linkHref="123">foo[]bar</$text>' +
@@ -699,7 +698,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should not be applied for the selection outside the link', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'bef[]ore ' +
 						'<$text linkHref="123">foobar</$text>' +
@@ -715,7 +714,7 @@ describe( 'LinkStyleSupport', () => {
 				command.execute( { styleName: 'A style' } );
 
 				expect( command.value ).to.be.empty;
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>' +
 						'bef[]ore ' +
 						'<$text linkHref="123">foobar</$text>' +
@@ -725,7 +724,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be applied for the selection at the beginning of a link (selection gravity override)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'[]<$text linkHref="123">foobar</$text>' +
@@ -741,7 +740,7 @@ describe( 'LinkStyleSupport', () => {
 				command.execute( { styleName: 'A style' } );
 
 				expect( command.value ).to.have.members( [ 'A style' ] );
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>' +
 						'before ' +
 						'<$text htmlA="{"classes":["a-styled"]}" linkHref="123">[]foobar</$text>' +
@@ -751,7 +750,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should not be applied for the selection at the beginning of a link (default selection gravity)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'[]<$text linkHref="123">foobar</$text>' +
@@ -767,7 +766,7 @@ describe( 'LinkStyleSupport', () => {
 				command.execute( { styleName: 'A style' } );
 
 				expect( command.value ).to.be.empty;
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>' +
 						'before ' +
 						'[]<$text linkHref="123">foobar</$text>' +
@@ -777,7 +776,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be applied for the selection at the end of a link (default selection gravity override)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123">foobar</$text>[]' +
@@ -793,7 +792,7 @@ describe( 'LinkStyleSupport', () => {
 				command.execute( { styleName: 'A style' } );
 
 				expect( command.value ).to.have.members( [ 'A style' ] );
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>' +
 						'before ' +
 						'<$text htmlA="{"classes":["a-styled"]}" linkHref="123">foobar[]</$text>' +
@@ -803,7 +802,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should not be applied for the selection at the end of a link (selection gravity override)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123">foobar</$text>[]' +
@@ -819,7 +818,7 @@ describe( 'LinkStyleSupport', () => {
 				command.execute( { styleName: 'A style' } );
 
 				expect( command.value ).to.be.empty;
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123">foobar</$text>[]' +
@@ -829,7 +828,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be applied for the selection in bolded link', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123" bold="true">foo[]bar</$text>' +
@@ -845,7 +844,7 @@ describe( 'LinkStyleSupport', () => {
 				command.execute( { styleName: 'A style' } );
 
 				expect( command.value ).to.have.members( [ 'A style' ] );
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>' +
 						'before ' +
 						'<$text bold="true" htmlA="{"classes":["a-styled"]}" linkHref="123">foo[]bar</$text>' +
@@ -855,7 +854,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should not be applied for the selection in bolded text', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text bold="true">foo[]bar</$text>' +
@@ -871,7 +870,7 @@ describe( 'LinkStyleSupport', () => {
 				command.execute( { styleName: 'A style' } );
 
 				expect( command.value ).to.be.empty;
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>' +
 						'before ' +
 						'<$text bold="true">foo[]bar</$text>' +
@@ -883,7 +882,7 @@ describe( 'LinkStyleSupport', () => {
 
 		describe( 'non-collapsed selection', () => {
 			it( 'Link style should be applied for the selection in the link', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123">fo[ob]ar</$text>' +
@@ -899,7 +898,7 @@ describe( 'LinkStyleSupport', () => {
 				command.execute( { styleName: 'A style' } );
 
 				expect( command.value ).to.have.members( [ 'A style' ] );
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>' +
 						'before ' +
 						'<$text htmlA="{"classes":["a-styled"]}" linkHref="123">fo[ob]ar</$text>' +
@@ -909,7 +908,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be applied for the selection on the link', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 					'before ' +
 					'<$text linkHref="123">[foobar]</$text>' +
@@ -925,7 +924,7 @@ describe( 'LinkStyleSupport', () => {
 				command.execute( { styleName: 'A style' } );
 
 				expect( command.value ).to.have.members( [ 'A style' ] );
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>' +
 						'before ' +
 						'[<$text htmlA="{"classes":["a-styled"]}" linkHref="123">foobar</$text>]' +
@@ -935,7 +934,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be applied for the selection on na inline widget', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'[<imageInline linkHref="123"></imageInline>]' +
@@ -951,7 +950,7 @@ describe( 'LinkStyleSupport', () => {
 				command.execute( { styleName: 'A style' } );
 
 				expect( command.value ).to.have.members( [ 'A style' ] );
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>' +
 						'before ' +
 						'[<imageInline htmlA="{"classes":["a-styled"]}" linkHref="123"></imageInline>]' +
@@ -961,7 +960,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be applied for the selection including a link', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'bef[ore ' +
 						'<$text linkHref="123">foobar</$text>' +
@@ -977,7 +976,7 @@ describe( 'LinkStyleSupport', () => {
 				command.execute( { styleName: 'A style' } );
 
 				expect( command.value ).to.have.members( [ 'A style' ] );
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>' +
 						'bef[ore ' +
 						'<$text htmlA="{"classes":["a-styled"]}" linkHref="123">foobar</$text>' +
@@ -987,7 +986,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be applied for the selection including a link partly from start', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'bef[ore ' +
 						'<$text linkHref="123">foo]bar</$text>' +
@@ -1003,7 +1002,7 @@ describe( 'LinkStyleSupport', () => {
 				command.execute( { styleName: 'A style' } );
 
 				expect( command.value ).to.have.members( [ 'A style' ] );
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>' +
 						'bef[ore ' +
 						'<$text htmlA="{"classes":["a-styled"]}" linkHref="123">foo]bar</$text>' +
@@ -1013,7 +1012,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be applied for the selection including a link partly from end', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123">foo[bar</$text>' +
@@ -1029,7 +1028,7 @@ describe( 'LinkStyleSupport', () => {
 				command.execute( { styleName: 'A style' } );
 
 				expect( command.value ).to.have.members( [ 'A style' ] );
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>' +
 						'before ' +
 						'<$text htmlA="{"classes":["a-styled"]}" linkHref="123">foo[bar</$text>' +
@@ -1039,7 +1038,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be applied for the selection covering multiple links', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123">foo[bar</$text>' +
@@ -1057,7 +1056,7 @@ describe( 'LinkStyleSupport', () => {
 				command.execute( { styleName: 'A style' } );
 
 				expect( command.value ).to.have.members( [ 'A style' ] );
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>' +
 						'before ' +
 						'<$text htmlA="{"classes":["a-styled"]}" linkHref="123">foo[bar</$text>' +
@@ -1069,7 +1068,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be applied for the selection covering multiple links (from outside)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'bef[ore ' +
 						'<$text linkHref="123">foobar</$text>' +
@@ -1087,7 +1086,7 @@ describe( 'LinkStyleSupport', () => {
 				command.execute( { styleName: 'A style' } );
 
 				expect( command.value ).to.have.members( [ 'A style' ] );
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>' +
 						'bef[ore ' +
 						'<$text htmlA="{"classes":["a-styled"]}" linkHref="123">foobar</$text>' +
@@ -1099,7 +1098,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be applied for the selection covering multiple links (outside on the start)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'bef[ore ' +
 						'<$text linkHref="123">foobar</$text>' +
@@ -1117,7 +1116,7 @@ describe( 'LinkStyleSupport', () => {
 				command.execute( { styleName: 'A style' } );
 
 				expect( command.value ).to.have.members( [ 'A style' ] );
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>' +
 						'bef[ore ' +
 						'<$text htmlA="{"classes":["a-styled"]}" linkHref="123">foobar</$text>' +
@@ -1129,7 +1128,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be applied for the selection covering multiple links (outside on the end)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123">foo[bar</$text>' +
@@ -1147,7 +1146,7 @@ describe( 'LinkStyleSupport', () => {
 				command.execute( { styleName: 'A style' } );
 
 				expect( command.value ).to.have.members( [ 'A style' ] );
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>' +
 						'before ' +
 						'<$text htmlA="{"classes":["a-styled"]}" linkHref="123">foo[bar</$text>' +
@@ -1159,7 +1158,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be removed for the selection covering multiple links (first has style)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						`<$text linkHref="123" htmlA="${ ghsAttribute( { classes: [ 'a-styled' ] } ) }">foo[bar</$text>` +
@@ -1176,7 +1175,7 @@ describe( 'LinkStyleSupport', () => {
 				command.execute( { styleName: 'A style' } );
 
 				expect( command.value ).to.be.empty;
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123">foo[bar</$text>' +
@@ -1188,7 +1187,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should be applied for the selection covering multiple links (second has style)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123">foo[bar</$text>' +
@@ -1205,7 +1204,7 @@ describe( 'LinkStyleSupport', () => {
 				command.execute( { styleName: 'A style' } );
 
 				expect( command.value ).to.have.members( [ 'A style' ] );
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>' +
 						'before ' +
 						'<$text htmlA="{"classes":["a-styled"]}" linkHref="123">foo[bar</$text>' +
@@ -1217,7 +1216,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'Link style should not be applied for the selection outside link', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123">foobar</$text>' +
@@ -1235,7 +1234,7 @@ describe( 'LinkStyleSupport', () => {
 				command.execute( { styleName: 'A style' } );
 
 				expect( command.value ).to.be.empty;
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123">foobar</$text>' +
@@ -1247,7 +1246,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'bold style should be applied on the selection only', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text bold="true">foo[bar]</$text>' +
@@ -1258,7 +1257,7 @@ describe( 'LinkStyleSupport', () => {
 				command.refresh();
 				command.execute( { styleName: 'B style' } );
 
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>' +
 						'before ' +
 						'<$text bold="true">foo</$text>' +
@@ -1269,7 +1268,7 @@ describe( 'LinkStyleSupport', () => {
 			} );
 
 			it( 'link style should be applied on the whole link (partly bolded link)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>' +
 						'before ' +
 						'<$text linkHref="123">f[o]o</$text>' +
@@ -1281,7 +1280,7 @@ describe( 'LinkStyleSupport', () => {
 				command.refresh();
 				command.execute( { styleName: 'A style' } );
 
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>' +
 						'before ' +
 						'<$text htmlA="{"classes":["a-styled"]}" linkHref="123">f[o]o</$text>' +

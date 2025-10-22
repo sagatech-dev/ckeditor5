@@ -87,7 +87,8 @@ async function buildSnippets( snippets, paths, constants, imports ) {
 			 * (e.g. in https://github.com/cksource/docs/). To ensure that all dependencies can be resolved,
 			 * we need to add the local `node_modules` directory to the list of node paths.
 			 */
-			upath.join( CKEDITOR5_ROOT_PATH, 'node_modules' )
+			upath.join( CKEDITOR5_ROOT_PATH, 'node_modules' ),
+			upath.join( CKEDITOR5_COMMERCIAL_PATH, 'node_modules' )
 		],
 		bundle: true,
 		minify: true,
@@ -106,6 +107,32 @@ async function buildSnippets( snippets, paths, constants, imports ) {
 			'.svg': 'text'
 		},
 		plugins: [
+			/**
+			 * Handles imports ending with `?raw`, loading file contents as plain text. Useful for inlining raw assets.
+			 *
+			 * Must be loaded before `externalize-ckeditor5` to avoid `?raw` imports being marked as external.
+			 */
+			{
+				name: 'raw-import',
+				setup( build ) {
+					build.onResolve( { filter: /\?raw$/ }, async args => {
+						const cleanPath = args.path.replace( /\?raw$/, '' );
+
+						return {
+							path: upath.join( args.resolveDir, cleanPath ),
+							namespace: 'raw-file'
+						};
+					} );
+
+					build.onLoad( { filter: /.*/, namespace: 'raw-file' }, async args => {
+						return {
+							contents: await readFile( args.path, 'utf8' ),
+							loader: 'text'
+						};
+					} );
+				}
+			},
+
 			/**
 			 * Esbuild has an `external` property. However, it doesn't look for direct match, but checks if the path starts
 			 * with the provided value. This means that if the `external` array includes `@ckeditor/ckeditor5-core` and we
@@ -156,6 +183,11 @@ async function buildSnippets( snippets, paths, constants, imports ) {
 async function buildDocuments( snippets, paths, constants, imports, getSnippetPlaceholder ) {
 	const getStyle = href => `<link rel="stylesheet" href="${ href }" data-cke="true">`;
 	const getScript = src => `<script type="module" src="${ src }"></script>`;
+	const getLayeredStyles = ( layer, hrefs ) =>
+		'<style>' +
+			hrefs.map( href => `@import '${ href }' layer(${ layer });` ).join( '\n' ) +
+		'</style>';
+
 	const documents = {};
 
 	// TODO: Use `Object.groupBy` instead, when we migrate to Node 22.
@@ -164,17 +196,25 @@ async function buildDocuments( snippets, paths, constants, imports, getSnippetPl
 		documents[ snippet.destinationPath ].push( snippet );
 	}
 
+	// Style paths for preloading and layered imports
+	const editorStylePaths = [
+		'%BASE_PATH%/assets/ckeditor5/ckeditor5.css',
+		'%BASE_PATH%/assets/ckeditor5-premium-features/ckeditor5-premium-features.css',
+		'%BASE_PATH%/assets/global.css'
+	];
+
 	// Gather global tags added to each document that do not require relative paths.
 	const globalTags = [
+		...editorStylePaths.map( href => `<link rel="preload" href="${ href }" as="style">` ),
 		`<script type="importmap">${ JSON.stringify( { imports } ) }</script>`,
-		`<script>window.CKEDITOR_GLOBAL_LICENSE_KEY = '${ constants.LICENSE_KEY }';</script>`,
-		'<script defer src="%BASE_PATH%/assets/global.js"></script>',
-		'<script defer src="https://cdn.ckbox.io/ckbox/latest/ckbox.js"></script>',
-		getStyle( '%BASE_PATH%/assets/ckeditor5/ckeditor5.css' ),
-		getStyle( '%BASE_PATH%/assets/ckeditor5-premium-features/ckeditor5-premium-features.css' ),
-		getStyle( '%BASE_PATH%/assets/global.css' ),
 		'<link rel="modulepreload" href="%BASE_PATH%/assets/ckeditor5/ckeditor5.js">',
-		'<link rel="modulepreload" href="%BASE_PATH%/assets/ckeditor5-premium-features/ckeditor5-premium-features.js">'
+		'<link rel="modulepreload" href="%BASE_PATH%/assets/ckeditor5-premium-features/ckeditor5-premium-features.js">',
+		'<link rel="preload" href="%BASE_PATH%/assets/global.js" as="script">',
+		'<link rel="preload" href="https://cdn.ckbox.io/ckbox/latest/ckbox.js" as="script">',
+		`<script>window.CKEDITOR_GLOBAL_LICENSE_KEY = '${ constants.LICENSE_KEY }';</script>`,
+		'<script src="%BASE_PATH%/assets/global.js"></script>',
+		'<script src="https://cdn.ckbox.io/ckbox/latest/ckbox.js"></script>',
+		getLayeredStyles( 'editor', editorStylePaths )
 	];
 
 	// Iterate over each document and replace placeholders with the actual content.
@@ -187,18 +227,34 @@ async function buildDocuments( snippets, paths, constants, imports, getSnippetPl
 		// Iterate over each snippet in the document and replace placeholders with the actual content.
 		for ( const snippet of documentSnippets ) {
 			const data = await readFile( snippet.snippetSources.html, { encoding: 'utf-8' } );
+			const snippetSizeCssClass = snippet.snippetSize ? `live-snippet--${ snippet.snippetSize }` : '';
 
 			documentContent = documentContent.replace(
 				getSnippetPlaceholder( snippet.snippetName ),
-				() => `<div class="live-snippet">${ data }</div>`
-			);
+				() => `
+					<div class="doc live-snippet ${ snippetSizeCssClass }">${ data }</div>
+					<script>
+						(function() {
+							const el = document.currentScript.previousElementSibling;
 
-			if ( await fileExists( upath.join( snippet.outputPath, snippet.snippetName, 'snippet.js' ) ) ) {
-				documentTags.push( getScript( `%BASE_PATH%/snippets/${ snippet.snippetName }/snippet.js` ) );
-			}
+							el.dispatchEvent( new CustomEvent( 'ck:snippet-transform', {
+								bubbles: true,
+								detail: { snippet: el }
+							} ) );
+						})();
+					</script>
+				`
+					.split( '\n' )
+					.map( line => line.trim() )
+					.join( '\n' )
+			);
 
 			if ( await fileExists( upath.join( snippet.outputPath, snippet.snippetName, 'snippet.css' ) ) ) {
 				documentTags.push( getStyle( `%BASE_PATH%/snippets/${ snippet.snippetName }/snippet.css` ) );
+			}
+
+			if ( await fileExists( upath.join( snippet.outputPath, snippet.snippetName, 'snippet.js' ) ) ) {
+				documentTags.push( getScript( `%BASE_PATH%/snippets/${ snippet.snippetName }/snippet.js` ) );
 			}
 		}
 

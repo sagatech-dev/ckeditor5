@@ -3,24 +3,23 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import ListEditing from '../../../src/list/listediting.js';
-import stubUid from '../_utils/uid.js';
+import { ListEditing } from '../../../src/list/listediting.js';
+import { stubUid } from '../_utils/uid.js';
 import { modelList } from '../_utils/utils.js';
 
-import IndentEditing from '@ckeditor/ckeditor5-indent/src/indentediting.js';
-import BlockQuoteEditing from '@ckeditor/ckeditor5-block-quote/src/blockquoteediting.js';
-import Table from '@ckeditor/ckeditor5-table/src/table.js';
-import CodeBlockEditing from '@ckeditor/ckeditor5-code-block/src/codeblockediting.js';
-import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
-import ClassicTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
-import EventInfo from '@ckeditor/ckeditor5-utils/src/eventinfo.js';
+import { IndentEditing } from '@ckeditor/ckeditor5-indent';
+import { BlockQuoteEditing } from '@ckeditor/ckeditor5-block-quote';
+import { Table } from '@ckeditor/ckeditor5-table';
+import { CodeBlockEditing } from '@ckeditor/ckeditor5-code-block';
+import { testUtils } from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
+import { ClassicTestEditor } from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
+import { EventInfo } from '@ckeditor/ckeditor5-utils';
 import { Paragraph } from 'ckeditor5/src/paragraph.js';
 import { modelTable } from '@ckeditor/ckeditor5-table/tests/_utils/utils.js';
 import {
-	getData as getModelData,
-	setData as setModelData
-} from '@ckeditor/ckeditor5-engine/src/dev-utils/model.js';
-import { DomEventData } from '@ckeditor/ckeditor5-engine';
+	_getModelData,
+	_setModelData,
+	ViewDocumentDomEventData } from '@ckeditor/ckeditor5-engine';
 
 describe( 'ListEditing integrations: tab key', () => {
 	const blocksChangedByCommands = [];
@@ -51,12 +50,12 @@ describe( 'ListEditing integrations: tab key', () => {
 
 		eventInfo = new EventInfo( view.document, 'tab' );
 
-		tabDomEventData = new DomEventData( view.document, {
+		tabDomEventData = new ViewDocumentDomEventData( view.document, {
 			preventDefault: sinon.spy(),
 			stopPropagation: sinon.spy()
 		} );
 
-		shiftTabDomEventData = new DomEventData( view.document, {
+		shiftTabDomEventData = new ViewDocumentDomEventData( view.document, {
 			preventDefault: sinon.spy(),
 			stopPropagation: sinon.spy()
 		}, { shiftKey: true } );
@@ -1206,7 +1205,7 @@ describe( 'ListEditing integrations: tab key', () => {
 		describe( 'tab + shift keys handling', () => {
 			it( 'should outdent code block', () => {
 				const customSetModelData = () => {
-					setModelData(
+					_setModelData(
 						model,
 						modelList( [
 							'* <codeBlock language="language-plaintext">[]foo</codeBlock>'
@@ -1256,7 +1255,7 @@ describe( 'ListEditing integrations: tab key', () => {
 
 			it( 'should outdent list items if a selection starts before code block and ends at a code block', () => {
 				const customSetModelData = () => {
-					setModelData(
+					_setModelData(
 						model,
 						modelList( [
 							'* foo',
@@ -1290,7 +1289,7 @@ describe( 'ListEditing integrations: tab key', () => {
 
 			it( 'should outdent a code block if a selection starts at a code block and ends after it', () => {
 				const customSetModelData = () => {
-					setModelData(
+					_setModelData(
 						model,
 						modelList( [
 							'* foo',
@@ -1435,7 +1434,7 @@ describe( 'ListEditing integrations: tab key', () => {
 			} );
 		} );
 
-		it( 'nothing should happen if selection spans a table but one of the list items cannot be indented', () => {
+		it( 'nothing should happen if selection spans a table but one of the list items cannot be indented (table gets selected)', () => {
 			const inputTable = modelTable( [
 				[ 'foo', 'bar' ]
 			] );
@@ -1452,13 +1451,18 @@ describe( 'ListEditing integrations: tab key', () => {
 					'* ya]r'
 				],
 				expected: [
-					'* fo[o',
+					'* foo',
 					'* bar',
-					'* ' + outputTable,
-					'* ya]r'
+					'* [' + outputTable + ']',
+					'* yar'
 				],
 				domEventData: tabDomEventData,
-				eventStopped: false,
+				eventStopped: {
+					// This is a default widget behavior, not list handling.
+					stop: true,
+					preventDefault: true,
+					stopPropagation: false
+				},
 				executedCommands: {
 					outdentList: 0,
 					indentList: 0
@@ -1602,7 +1606,7 @@ describe( 'ListEditing integrations: tab key', () => {
 
 	// @param {Iterable.<String>} input
 	// @param {Iterable.<String>} expected
-	// @param {module:engine/view/observer/domeventdata~DomEventData} domEventData
+	// @param {module:engine/view/observer/domeventdata~ViewDocumentDomEventData} domEventData
 	// @param {Boolean|Object.<String,Boolean>} eventStopped Boolean when preventDefault() and stop() were called/not called together.
 	// Object, when mixed behavior was expected.
 	// @param {Object.<String,Number>} executedCommands Numbers of command executions.
@@ -1612,12 +1616,12 @@ describe( 'ListEditing integrations: tab key', () => {
 		if ( customSetModelData ) {
 			customSetModelData();
 		} else {
-			setModelData( model, modelList( input ) );
+			_setModelData( model, modelList( input ) );
 		}
 
 		view.document.fire( eventInfo, domEventData );
 
-		expect( getModelData( model ) ).to.equalMarkup( modelList( expected ) );
+		expect( _getModelData( model ) ).to.equalMarkup( modelList( expected ) );
 
 		if ( typeof eventStopped === 'object' ) {
 			expect( domEventData.domEvent.stopPropagation.called ).to.equal( eventStopped.stopPropagation, 'stopPropagation() call' );

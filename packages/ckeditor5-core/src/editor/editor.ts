@@ -14,11 +14,12 @@ import {
 	CKEditorError,
 	ObservableMixin,
 	logError,
-	parseBase64EncodedObject,
 	releaseDate,
 	toArray,
 	uid,
 	crc32,
+	decodeLicenseKey,
+	isFeatureBlockedByLicenseKey,
 	type Locale,
 	type LocaleTranslate,
 	type ObservableChangeEvent,
@@ -36,21 +37,20 @@ import {
 import type { EditorUI } from '@ckeditor/ckeditor5-ui';
 import { ContextWatchdog, EditorWatchdog } from '@ckeditor/ckeditor5-watchdog';
 
-import Context from '../context.js';
-import PluginCollection from '../plugincollection.js';
-import CommandCollection, { type CommandsMap } from '../commandcollection.js';
-import EditingKeystrokeHandler from '../editingkeystrokehandler.js';
-import Accessibility from '../accessibility.js';
+import { Context } from '../context.js';
+import { PluginCollection } from '../plugincollection.js';
+import { CommandCollection, type CommandsMap } from '../commandcollection.js';
+import { EditingKeystrokeHandler } from '../editingkeystrokehandler.js';
+import { Accessibility } from '../accessibility.js';
 import { getEditorUsageData, type EditorUsageData } from './utils/editorusagedata.js';
 
 import type { LoadedPlugins, PluginConstructor } from '../plugin.js';
 import type { EditorConfig } from './editorconfig.js';
 
-declare global {
-	// eslint-disable-next-line no-var
-	var CKEDITOR_GLOBAL_LICENSE_KEY: string | undefined;
+import '../../theme/core.css';
 
-	// eslint-disable-next-line no-var
+declare global {
+	var CKEDITOR_GLOBAL_LICENSE_KEY: string | undefined;
 	var CKEDITOR_WARNING_SUPPRESSIONS: Record<string, boolean>;
 }
 
@@ -72,7 +72,7 @@ declare global {
  * the specific editor implements also the {@link ~Editor#ui} property
  * (as most editor implementations do).
  */
-export default abstract class Editor extends /* #__PURE__ */ ObservableMixin() {
+export abstract class Editor extends /* #__PURE__ */ ObservableMixin() {
 	/**
 	 * A required name of the editor class. The name should reflect the constructor name.
 	 */
@@ -172,7 +172,7 @@ export default abstract class Editor extends /* #__PURE__ */ ObservableMixin() {
 	 * Note: Certain typing-oriented keystrokes (like <kbd>Backspace</kbd> or <kbd>Enter</kbd>) are handled
 	 * by a low-level mechanism and trying to listen to them via the keystroke handler will not work reliably.
 	 * To handle these specific keystrokes, see the events fired by the
-	 * {@link module:engine/view/document~Document editing view document} (`editor.editing.view.document`).
+	 * {@link module:engine/view/document~ViewDocument editing view document} (`editor.editing.view.document`).
 	 */
 	public readonly keystrokes: EditingKeystrokeHandler;
 
@@ -412,19 +412,9 @@ export default abstract class Editor extends /* #__PURE__ */ ObservableMixin() {
 			const licenseKey = editor.config.get( 'licenseKey' )!;
 			const distributionChannel = ( window as any )[ Symbol.for( 'cke distribution' ) ] || 'sh';
 
-			function blockEditor( reason: LicenseErrorReason ) {
+			function blockEditor( reason: LicenseErrorReason, name?: string ) {
 				editor.enableReadOnlyMode( Symbol( 'invalidLicense' ) );
-				editor._showLicenseError( reason );
-			}
-
-			function getPayload( licenseKey: string ): string | null {
-				const parts = licenseKey.split( '.' );
-
-				if ( parts.length != 3 ) {
-					return null;
-				}
-
-				return parts[ 1 ];
+				editor._showLicenseError( reason, name );
 			}
 
 			function hasAllRequiredFields( licensePayload: Record<string, unknown> ) {
@@ -489,15 +479,7 @@ export default abstract class Editor extends /* #__PURE__ */ ObservableMixin() {
 				return;
 			}
 
-			const encodedPayload = getPayload( licenseKey );
-
-			if ( !encodedPayload ) {
-				blockEditor( 'invalid' );
-
-				return;
-			}
-
-			const licensePayload = parseBase64EncodedObject( encodedPayload );
+			const licensePayload = decodeLicenseKey( licenseKey );
 
 			if ( !licensePayload ) {
 				blockEditor( 'invalid' );
@@ -822,7 +804,45 @@ export default abstract class Editor extends /* #__PURE__ */ ObservableMixin() {
 		const extraPlugins = config.get( 'extraPlugins' ) || [];
 		const substitutePlugins = config.get( 'substitutePlugins' ) || [];
 
-		return this.plugins.init( plugins.concat( extraPlugins ), removePlugins, substitutePlugins );
+		return this.plugins.init( plugins.concat( extraPlugins ), removePlugins, substitutePlugins )
+			.then( plugins => {
+				checkPluginsAllowedByLicenseKey( this );
+
+				return plugins;
+			} );
+
+		function checkPluginsAllowedByLicenseKey( editor: Editor ): void {
+			const licenseKey = editor.config.get( 'licenseKey' )!;
+
+			if ( licenseKey === 'GPL' ) {
+				return;
+			}
+
+			const decodedPayload = decodeLicenseKey( licenseKey );
+
+			if ( !decodedPayload ) {
+				return;
+			}
+
+			const disallowedPlugin = [ ...editor.plugins ]
+				.map( ( [ pluginConstructor ] ) => pluginConstructor )
+				.find( pluginConstructor => {
+					if ( !pluginConstructor.pluginName ) {
+						return false;
+					}
+
+					if ( !pluginConstructor.licenseFeatureCode ) {
+						return false;
+					}
+
+					return isFeatureBlockedByLicenseKey( decodedPayload, pluginConstructor.licenseFeatureCode );
+				} );
+
+			if ( disallowedPlugin ) {
+				editor.enableReadOnlyMode( Symbol( 'invalidLicense' ) );
+				editor._showLicenseError( 'pluginNotAllowed', disallowedPlugin.pluginName );
+			}
+		}
 	}
 
 	/**
@@ -889,7 +909,7 @@ export default abstract class Editor extends /* #__PURE__ */ ObservableMixin() {
 	 * Focuses the editor.
 	 *
 	 * **Note** To explicitly focus the editing area of the editor, use the
-	 * {@link module:engine/view/view~View#focus `editor.editing.view.focus()`} method of the editing view.
+	 * {@link module:engine/view/view~EditingView#focus `editor.editing.view.focus()`} method of the editing view.
 	 *
 	 * Check out the {@glink framework/deep-dive/ui/focus-tracking#focus-in-the-editor-ui Focus in the editor UI} section
 	 * of the {@glink framework/deep-dive/ui/focus-tracking Deep dive into focus tracking} guide to learn more.
@@ -936,7 +956,7 @@ export default abstract class Editor extends /* #__PURE__ */ ObservableMixin() {
 	 */
 	public static ContextWatchdog = ContextWatchdog;
 
-	private _showLicenseError( reason: LicenseErrorReason, pluginName?: string ) {
+	protected _showLicenseError( reason: LicenseErrorReason, name?: string ): void {
 		setTimeout( () => {
 			if ( reason == 'invalid' ) {
 				/**
@@ -978,7 +998,11 @@ export default abstract class Editor extends /* #__PURE__ */ ObservableMixin() {
 				throw new CKEditorError( 'license-key-domain-limit' );
 			}
 
-			if ( reason == 'featureNotAllowed' ) {
+			if ( reason == 'pluginNotAllowed' ) {
+				// It's safe to assume `name` exists because `pluginNotAllowed` must know a plugin name when checking the license.
+				const gluePluginName = name!.replace( /(Editing|UI)$/, '' );
+				const containsGluePlugin = this.plugins.has( gluePluginName );
+
 				/**
 				 * The plugin you are trying to use is not permitted under your current license.
 				 * Please check the available features on the
@@ -988,7 +1012,22 @@ export default abstract class Editor extends /* #__PURE__ */ ObservableMixin() {
 				 * @error license-key-plugin-not-allowed
 				 * @param {String} pluginName The plugin you tried to load.
 				 */
-				throw new CKEditorError( 'license-key-plugin-not-allowed', null, { pluginName } );
+				throw new CKEditorError( 'license-key-plugin-not-allowed', null, {
+					pluginName: containsGluePlugin ? gluePluginName : name
+				} );
+			}
+
+			if ( reason == 'featureNotAllowed' ) {
+				/**
+				 * The feature you are trying to use is not permitted under your current license.
+				 * Please check the available features on the
+				 * [Customer Portal](https://portal.ckeditor.com) or
+				 * [contact support](https://ckeditor.com/contact/) for more information.
+				 *
+				 * @error license-key-feature-not-allowed
+				 * @param {String} featureName The feature you tried to use.
+				 */
+				throw new CKEditorError( 'license-key-feature-not-allowed', null, { featureName: name } );
 			}
 
 			if ( reason == 'evaluationLimit' ) {
@@ -1124,10 +1163,14 @@ function collectUsageData( editor: Editor ): EditorUsageData {
 	return collectedData;
 }
 
-type LicenseErrorReason =
+/**
+ * @internal
+ */
+export type LicenseErrorReason =
 	'invalid' |
 	'expired' |
 	'domainLimit' |
+	'pluginNotAllowed' |
 	'featureNotAllowed' |
 	'evaluationLimit' |
 	'trialLimit' |

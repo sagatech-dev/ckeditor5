@@ -22,11 +22,10 @@ import {
 	splitListItemBefore
 } from '../../../src/list/utils/model.js';
 import { modelList } from '../_utils/utils.js';
-import stubUid from '../_utils/uid.js';
+import { stubUid } from '../_utils/uid.js';
 
-import Model from '@ckeditor/ckeditor5-engine/src/model/model.js';
-import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
-import { stringify as stringifyModel, parse as parseModel } from '@ckeditor/ckeditor5-engine/src/dev-utils/model.js';
+import { Model, _stringifyModel, _parseModel } from '@ckeditor/ckeditor5-engine';
+import { testUtils } from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
 
 describe( 'List - utils - model', () => {
 	let model, schema;
@@ -64,7 +63,7 @@ describe( 'List - utils - model', () => {
 				'bar'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 1 );
 			const foundElements = getAllListItemBlocks( listItem );
 
@@ -82,7 +81,7 @@ describe( 'List - utils - model', () => {
 				'bar'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 1 );
 			const foundElements = getAllListItemBlocks( listItem );
 
@@ -102,7 +101,7 @@ describe( 'List - utils - model', () => {
 				'bar'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 3 );
 			const foundElements = getAllListItemBlocks( listItem );
 
@@ -122,7 +121,7 @@ describe( 'List - utils - model', () => {
 				'bar'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 2 );
 			const foundElements = getAllListItemBlocks( listItem );
 
@@ -145,7 +144,7 @@ describe( 'List - utils - model', () => {
 				'bar'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 4 );
 			const foundElements = getAllListItemBlocks( listItem );
 
@@ -165,7 +164,7 @@ describe( 'List - utils - model', () => {
 				'bar'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 1 );
 			const backwardElements = getListItemBlocks( listItem, { direction: 'backward' } );
 			const forwardElements = getListItemBlocks( listItem, { direction: 'forward' } );
@@ -185,7 +184,7 @@ describe( 'List - utils - model', () => {
 				'bar'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 1 );
 			const backwardElements = getListItemBlocks( listItem, { direction: 'backward' } );
 			const forwardElements = getListItemBlocks( listItem, { direction: 'forward' } );
@@ -207,7 +206,7 @@ describe( 'List - utils - model', () => {
 				'bar'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 3 );
 			const backwardElements = getListItemBlocks( listItem, { direction: 'backward' } );
 			const forwardElements = getListItemBlocks( listItem, { direction: 'forward' } );
@@ -230,7 +229,7 @@ describe( 'List - utils - model', () => {
 				'bar'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 2 );
 			const backwardElements = getListItemBlocks( listItem, { direction: 'backward' } );
 			const forwardElements = getListItemBlocks( listItem, { direction: 'forward' } );
@@ -256,7 +255,7 @@ describe( 'List - utils - model', () => {
 				'bar'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 4 );
 			const backwardElements = getListItemBlocks( listItem, { direction: 'backward' } );
 			const forwardElements = getListItemBlocks( listItem, { direction: 'forward' } );
@@ -279,7 +278,7 @@ describe( 'List - utils - model', () => {
 				'bar'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 2 );
 			const backwardElements = getListItemBlocks( listItem, { direction: 'backward' } );
 			const forwardElements = getListItemBlocks( listItem, { direction: 'forward' } );
@@ -301,7 +300,7 @@ describe( 'List - utils - model', () => {
 				'bar'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 3 );
 			const backwardElements = getListItemBlocks( listItem );
 
@@ -317,7 +316,7 @@ describe( 'List - utils - model', () => {
 				'* b'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 0 );
 			const blocks = getNestedListBlocks( listItem );
 
@@ -333,7 +332,7 @@ describe( 'List - utils - model', () => {
 				'* e'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 0 );
 			const blocks = getNestedListBlocks( listItem );
 
@@ -352,7 +351,7 @@ describe( 'List - utils - model', () => {
 				'* e'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 1 );
 			const blocks = getNestedListBlocks( listItem );
 
@@ -370,7 +369,7 @@ describe( 'List - utils - model', () => {
 				'  * e'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 0 );
 			const blocks = getNestedListBlocks( listItem );
 
@@ -390,7 +389,7 @@ describe( 'List - utils - model', () => {
 				'4'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 1 );
 
 			expect( getListItems( listItem ) ).to.deep.equal( [
@@ -409,7 +408,7 @@ describe( 'List - utils - model', () => {
 				'4'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 3 );
 
 			expect( getListItems( listItem ) ).to.deep.equal( [
@@ -428,7 +427,7 @@ describe( 'List - utils - model', () => {
 				'4'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 2 );
 
 			expect( getListItems( listItem ) ).to.deep.equal( [
@@ -447,7 +446,7 @@ describe( 'List - utils - model', () => {
 				'* 4'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 2 );
 
 			expect( getListItems( listItem ) ).to.deep.equal( [
@@ -466,7 +465,7 @@ describe( 'List - utils - model', () => {
 				'# 4'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 2 );
 
 			expect( getListItems( listItem ) ).to.deep.equal( [
@@ -485,7 +484,7 @@ describe( 'List - utils - model', () => {
 				'4'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 1 );
 
 			expect( getListItems( listItem ) ).to.deep.equal( [
@@ -504,7 +503,7 @@ describe( 'List - utils - model', () => {
 				'5'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 2 );
 
 			expect( getListItems( listItem ) ).to.deep.equal( [
@@ -528,7 +527,7 @@ describe( 'List - utils - model', () => {
 					'7'
 				] );
 
-				const fragment = parseModel( input, schema );
+				const fragment = _parseModel( input, schema );
 				const listItem = fragment.getChild( 4 );
 
 				expect( getListItems( listItem, { higherIndent: true } ) ).to.deep.equal( [
@@ -549,7 +548,7 @@ describe( 'List - utils - model', () => {
 					'# 4'
 				] );
 
-				const fragment = parseModel( input, schema );
+				const fragment = _parseModel( input, schema );
 				const listItem = fragment.getChild( 2 );
 
 				expect( getListItems( listItem, { sameAttributes: [] } ) ).to.deep.equal( [
@@ -570,7 +569,7 @@ describe( 'List - utils - model', () => {
 				'* b'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 0 );
 
 			expect( isFirstBlockOfListItem( listItem ) ).to.be.true;
@@ -582,7 +581,7 @@ describe( 'List - utils - model', () => {
 				'* b'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 1 );
 
 			expect( isFirstBlockOfListItem( listItem ) ).to.be.true;
@@ -594,7 +593,7 @@ describe( 'List - utils - model', () => {
 				'  b'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 1 );
 
 			expect( isFirstBlockOfListItem( listItem ) ).to.be.false;
@@ -606,7 +605,7 @@ describe( 'List - utils - model', () => {
 				'  * b'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 1 );
 
 			expect( isFirstBlockOfListItem( listItem ) ).to.be.true;
@@ -619,7 +618,7 @@ describe( 'List - utils - model', () => {
 				'  c'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 2 );
 
 			expect( isFirstBlockOfListItem( listItem ) ).to.be.false;
@@ -633,7 +632,7 @@ describe( 'List - utils - model', () => {
 				'* b'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 1 );
 
 			expect( isLastBlockOfListItem( listItem ) ).to.be.true;
@@ -645,7 +644,7 @@ describe( 'List - utils - model', () => {
 				'* b'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 0 );
 
 			expect( isLastBlockOfListItem( listItem ) ).to.be.true;
@@ -657,7 +656,7 @@ describe( 'List - utils - model', () => {
 				'  b'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 0 );
 
 			expect( isLastBlockOfListItem( listItem ) ).to.be.false;
@@ -670,7 +669,7 @@ describe( 'List - utils - model', () => {
 				'* c'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 1 );
 
 			expect( isLastBlockOfListItem( listItem ) ).to.be.true;
@@ -683,7 +682,7 @@ describe( 'List - utils - model', () => {
 				'  c'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const listItem = fragment.getChild( 0 );
 
 			expect( isLastBlockOfListItem( listItem ) ).to.be.false;
@@ -699,7 +698,7 @@ describe( 'List - utils - model', () => {
 				'* d'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			let blocks = [
 				fragment.getChild( 0 )
 			];
@@ -717,7 +716,7 @@ describe( 'List - utils - model', () => {
 				'  2'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			let blocks = [
 				fragment.getChild( 0 )
 			];
@@ -739,7 +738,7 @@ describe( 'List - utils - model', () => {
 				'* 3'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			let blocks = [
 				fragment.getChild( 1 )
 			];
@@ -761,7 +760,7 @@ describe( 'List - utils - model', () => {
 				'* 3'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			let blocks = [
 				fragment.getChild( 3 )
 			];
@@ -783,7 +782,7 @@ describe( 'List - utils - model', () => {
 				'* 3'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			let blocks = [
 				fragment.getChild( 2 )
 			];
@@ -805,7 +804,7 @@ describe( 'List - utils - model', () => {
 				'* 3'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			let blocks = [
 				fragment.getChild( 2 )
 			];
@@ -825,7 +824,7 @@ describe( 'List - utils - model', () => {
 				'  2'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			let blocks = [
 				fragment.getChild( 0 )
 			];
@@ -845,7 +844,7 @@ describe( 'List - utils - model', () => {
 				'  2'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			let blocks = [
 				fragment.getChild( 2 )
 			];
@@ -868,7 +867,7 @@ describe( 'List - utils - model', () => {
 				'* y'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			let blocks = [
 				fragment.getChild( 2 ),
 				fragment.getChild( 3 )
@@ -892,7 +891,7 @@ describe( 'List - utils - model', () => {
 				'* 4'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			let blocks = [
 				fragment.getChild( 2 )
 			];
@@ -905,7 +904,7 @@ describe( 'List - utils - model', () => {
 		} );
 
 		it( 'should include all blocks even if not at the same indent level from the edge block', () => {
-			const fragment = parseModel( modelList( [
+			const fragment = _parseModel( modelList( [
 				'* 0',
 				'  * 1',
 				'    * 2',
@@ -952,7 +951,7 @@ describe( 'List - utils - model', () => {
 				'* d'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			let blocks = [
 				fragment.getChild( 1 )
 			];
@@ -974,7 +973,7 @@ describe( 'List - utils - model', () => {
 				'* d' // <--
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			let blocks = [
 				fragment.getChild( 1 ),
 				fragment.getChild( 3 )
@@ -998,7 +997,7 @@ describe( 'List - utils - model', () => {
 				'  e'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			let blocks = [
 				fragment.getChild( 2 )
 			];
@@ -1024,7 +1023,7 @@ describe( 'List - utils - model', () => {
 				'* d'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			let blocks = [
 				fragment.getChild( 3 )
 			];
@@ -1052,7 +1051,7 @@ describe( 'List - utils - model', () => {
 				'* d'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			let blocks = [
 				fragment.getChild( 2 ),
 				fragment.getChild( 3 )
@@ -1080,7 +1079,7 @@ describe( 'List - utils - model', () => {
 				'* 3b'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			let blocks = [
 				fragment.getChild( 3 )
 			];
@@ -1104,7 +1103,7 @@ describe( 'List - utils - model', () => {
 				'<paragraph listItemId="01" listType="bulleted">3a</paragraph>'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			let blocks = [
 				fragment.getChild( 3 )
 			];
@@ -1126,12 +1125,12 @@ describe( 'List - utils - model', () => {
 				'  c'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 
 			stubUid();
 			model.change( writer => splitListItemBefore( fragment.getChild( 0 ), writer ) );
 
-			expect( stringifyModel( fragment ) ).to.equalMarkup( modelList( [
+			expect( _stringifyModel( fragment ) ).to.equalMarkup( modelList( [
 				'* a{id:a00}',
 				'  b',
 				'  c'
@@ -1145,12 +1144,12 @@ describe( 'List - utils - model', () => {
 				'  c'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 
 			stubUid();
 			model.change( writer => splitListItemBefore( fragment.getChild( 1 ), writer ) );
 
-			expect( stringifyModel( fragment ) ).to.equalMarkup( modelList( [
+			expect( _stringifyModel( fragment ) ).to.equalMarkup( modelList( [
 				'* a',
 				'* b{id:a00}',
 				'  c'
@@ -1166,12 +1165,12 @@ describe( 'List - utils - model', () => {
 				'* y'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 
 			stubUid();
 			model.change( writer => splitListItemBefore( fragment.getChild( 2 ), writer ) );
 
-			expect( stringifyModel( fragment ) ).to.equalMarkup( modelList( [
+			expect( _stringifyModel( fragment ) ).to.equalMarkup( modelList( [
 				'* x',
 				'* a',
 				'* b{id:a00}',
@@ -1188,12 +1187,12 @@ describe( 'List - utils - model', () => {
 				'  d'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 
 			stubUid();
 			model.change( writer => splitListItemBefore( fragment.getChild( 1 ), writer ) );
 
-			expect( stringifyModel( fragment ) ).to.equalMarkup( modelList( [
+			expect( _stringifyModel( fragment ) ).to.equalMarkup( modelList( [
 				'* a',
 				'* b{id:a00}',
 				'  * c',
@@ -1210,12 +1209,12 @@ describe( 'List - utils - model', () => {
 				'  e'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 
 			stubUid();
 			model.change( writer => splitListItemBefore( fragment.getChild( 2 ), writer ) );
 
-			expect( stringifyModel( fragment ) ).to.equalMarkup( modelList( [
+			expect( _stringifyModel( fragment ) ).to.equalMarkup( modelList( [
 				'* a',
 				'  * b',
 				'  * c{id:a00}',
@@ -1233,14 +1232,14 @@ describe( 'List - utils - model', () => {
 				'* 2'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			let changedBlocks;
 
 			model.change( writer => {
 				changedBlocks = mergeListItemBefore( fragment.getChild( 1 ), fragment.getChild( 0 ), writer );
 			} );
 
-			expect( stringifyModel( fragment ) ).to.equalMarkup( modelList( [
+			expect( _stringifyModel( fragment ) ).to.equalMarkup( modelList( [
 				'* 0',
 				'  1',
 				'* 2'
@@ -1259,14 +1258,14 @@ describe( 'List - utils - model', () => {
 				'* 3'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			let changedBlocks;
 
 			model.change( writer => {
 				changedBlocks = mergeListItemBefore( fragment.getChild( 1 ), fragment.getChild( 0 ), writer );
 			} );
 
-			expect( stringifyModel( fragment ) ).to.equalMarkup( modelList( [
+			expect( _stringifyModel( fragment ) ).to.equalMarkup( modelList( [
 				'* 0',
 				'  1',
 				'  2',
@@ -1286,14 +1285,14 @@ describe( 'List - utils - model', () => {
 				'* 2'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			let changedBlocks;
 
 			model.change( writer => {
 				changedBlocks = mergeListItemBefore( fragment.getChild( 1 ), fragment.getChild( 0 ), writer );
 			} );
 
-			expect( stringifyModel( fragment ) ).to.equalMarkup( modelList( [
+			expect( _stringifyModel( fragment ) ).to.equalMarkup( modelList( [
 				'* <paragraph alignment="right">0</paragraph>',
 				'  1',
 				'* 2'
@@ -1315,7 +1314,7 @@ describe( 'List - utils - model', () => {
 					'  d'
 				] );
 
-				const fragment = parseModel( input, schema );
+				const fragment = _parseModel( input, schema );
 				const blocks = [
 					fragment.getChild( 2 ),
 					fragment.getChild( 3 )
@@ -1325,7 +1324,7 @@ describe( 'List - utils - model', () => {
 
 				model.change( writer => indentBlocks( blocks, writer ) );
 
-				expect( stringifyModel( fragment ) ).to.equalMarkup( modelList( [
+				expect( _stringifyModel( fragment ) ).to.equalMarkup( modelList( [
 					'* a',
 					'  b',
 					'  * c',
@@ -1342,7 +1341,7 @@ describe( 'List - utils - model', () => {
 					'* e'
 				] );
 
-				const fragment = parseModel( input, schema );
+				const fragment = _parseModel( input, schema );
 				const blocks = [
 					fragment.getChild( 1 ),
 					fragment.getChild( 2 ),
@@ -1353,7 +1352,7 @@ describe( 'List - utils - model', () => {
 
 				model.change( writer => indentBlocks( blocks, writer ) );
 
-				expect( stringifyModel( fragment ) ).to.equal( modelList( [
+				expect( _stringifyModel( fragment ) ).to.equal( modelList( [
 					'* a',
 					'    * b',
 					'      * c',
@@ -1372,7 +1371,7 @@ describe( 'List - utils - model', () => {
 					'* 5'
 				] );
 
-				const fragment = parseModel( input, schema );
+				const fragment = _parseModel( input, schema );
 				const blocks = [
 					fragment.getChild( 2 ),
 					fragment.getChild( 3 )
@@ -1380,7 +1379,7 @@ describe( 'List - utils - model', () => {
 
 				model.change( writer => indentBlocks( blocks, writer, { expand: true } ) );
 
-				expect( stringifyModel( fragment ) ).to.equalMarkup( modelList( [
+				expect( _stringifyModel( fragment ) ).to.equalMarkup( modelList( [
 					'* 0',
 					'  * 1',
 					'    2',
@@ -1401,7 +1400,7 @@ describe( 'List - utils - model', () => {
 					'* 4'
 				] );
 
-				const fragment = parseModel( input, schema );
+				const fragment = _parseModel( input, schema );
 				const blocks = [
 					fragment.getChild( 1 ),
 					fragment.getChild( 2 ),
@@ -1414,7 +1413,7 @@ describe( 'List - utils - model', () => {
 					changedBlocks = indentBlocks( blocks, writer, { indentBy: -1 } );
 				} );
 
-				expect( stringifyModel( fragment ) ).to.equalMarkup( modelList( [
+				expect( _stringifyModel( fragment ) ).to.equalMarkup( modelList( [
 					'* 0',
 					'* 1',
 					'  * 2',
@@ -1434,7 +1433,7 @@ describe( 'List - utils - model', () => {
 					'* 4'
 				] );
 
-				const fragment = parseModel( input, schema );
+				const fragment = _parseModel( input, schema );
 				const blocks = [
 					fragment.getChild( 2 ),
 					fragment.getChild( 3 ),
@@ -1447,7 +1446,7 @@ describe( 'List - utils - model', () => {
 					changedBlocks = indentBlocks( blocks, writer, { indentBy: -1 } );
 				} );
 
-				expect( stringifyModel( fragment ) ).to.equalMarkup( modelList( [
+				expect( _stringifyModel( fragment ) ).to.equalMarkup( modelList( [
 					'* 0',
 					'* 1',
 					'2',
@@ -1467,7 +1466,7 @@ describe( 'List - utils - model', () => {
 					'  * <paragraph alignment="right">4</paragraph>'
 				] );
 
-				const fragment = parseModel( input, schema );
+				const fragment = _parseModel( input, schema );
 				const blocks = [
 					fragment.getChild( 2 ),
 					fragment.getChild( 3 ),
@@ -1480,7 +1479,7 @@ describe( 'List - utils - model', () => {
 					changedBlocks = indentBlocks( blocks, writer, { indentBy: -1 } );
 				} );
 
-				expect( stringifyModel( fragment ) ).to.equalMarkup( modelList( [
+				expect( _stringifyModel( fragment ) ).to.equalMarkup( modelList( [
 					'* <paragraph alignment="right">0</paragraph>',
 					'* <paragraph alignment="right">1</paragraph>',
 					'* <paragraph alignment="right">2</paragraph>',
@@ -1501,7 +1500,7 @@ describe( 'List - utils - model', () => {
 					'  * 5'
 				] );
 
-				const fragment = parseModel( input, schema );
+				const fragment = _parseModel( input, schema );
 				const blocks = [
 					fragment.getChild( 2 ),
 					fragment.getChild( 3 )
@@ -1513,7 +1512,7 @@ describe( 'List - utils - model', () => {
 					changedBlocks = indentBlocks( blocks, writer, { expand: true, indentBy: -1 } );
 				} );
 
-				expect( stringifyModel( fragment ) ).to.equalMarkup( modelList( [
+				expect( _stringifyModel( fragment ) ).to.equalMarkup( modelList( [
 					'* 0',
 					'* 1',
 					'  2',
@@ -1542,7 +1541,7 @@ describe( 'List - utils - model', () => {
 				'* 4'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const blocks = [
 				fragment.getChild( 1 )
 			];
@@ -1553,7 +1552,7 @@ describe( 'List - utils - model', () => {
 				changedBlocks = outdentBlocksWithMerge( blocks, writer );
 			} );
 
-			expect( stringifyModel( fragment ) ).to.equalMarkup( modelList( [
+			expect( _stringifyModel( fragment ) ).to.equalMarkup( modelList( [
 				'* 0',
 				'  1',
 				'  2',
@@ -1576,7 +1575,7 @@ describe( 'List - utils - model', () => {
 				'* 4'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const blocks = [
 				fragment.getChild( 1 )
 			];
@@ -1587,7 +1586,7 @@ describe( 'List - utils - model', () => {
 				changedBlocks = outdentBlocksWithMerge( blocks, writer );
 			} );
 
-			expect( stringifyModel( fragment ) ).to.equalMarkup( modelList( [
+			expect( _stringifyModel( fragment ) ).to.equalMarkup( modelList( [
 				'* 0',
 				'* 1',
 				'  2',
@@ -1610,7 +1609,7 @@ describe( 'List - utils - model', () => {
 				'* 4'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const blocks = [
 				fragment.getChild( 1 )
 			];
@@ -1621,7 +1620,7 @@ describe( 'List - utils - model', () => {
 				changedBlocks = outdentBlocksWithMerge( blocks, writer );
 			} );
 
-			expect( stringifyModel( fragment ) ).to.equalMarkup( modelList( [
+			expect( _stringifyModel( fragment ) ).to.equalMarkup( modelList( [
 				'* 0',
 				'* 1',
 				'  * 2',
@@ -1648,7 +1647,7 @@ describe( 'List - utils - model', () => {
 				'* 5'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const blocks = [
 				fragment.getChild( 2 ),
 				fragment.getChild( 3 ),
@@ -1661,7 +1660,7 @@ describe( 'List - utils - model', () => {
 				changedBlocks = removeListAttributes( blocks, writer );
 			} );
 
-			expect( stringifyModel( fragment ) ).to.equalMarkup( modelList( [
+			expect( _stringifyModel( fragment ) ).to.equalMarkup( modelList( [
 				'* 0',
 				'* 1',
 				'2',
@@ -1683,7 +1682,7 @@ describe( 'List - utils - model', () => {
 				'* 5'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const blocks = [
 				fragment.getChild( 2 ),
 				fragment.getChild( 3 ),
@@ -1696,7 +1695,7 @@ describe( 'List - utils - model', () => {
 				changedBlocks = removeListAttributes( blocks, writer );
 			} );
 
-			expect( stringifyModel( fragment ) ).to.equalMarkup( modelList( [
+			expect( _stringifyModel( fragment ) ).to.equalMarkup( modelList( [
 				'* 0',
 				'* 1',
 				'<paragraph alignmnent="right">2</paragraph>',
@@ -1720,7 +1719,7 @@ describe( 'List - utils - model', () => {
 				'1'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const blocks = [
 				fragment.getChild( 1 )
 			];
@@ -1735,7 +1734,7 @@ describe( 'List - utils - model', () => {
 				'* 2'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const blocks = [
 				fragment.getChild( 0 ),
 				fragment.getChild( 1 ),
@@ -1752,7 +1751,7 @@ describe( 'List - utils - model', () => {
 				'* 2'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const blocks = [
 				fragment.getChild( 0 ),
 				fragment.getChild( 1 )
@@ -1784,14 +1783,14 @@ describe( 'List - utils - model', () => {
 			] );
 			/* eslint-enable @stylistic/no-multi-spaces */
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			let changedBlocks;
 
 			model.change( writer => {
 				changedBlocks = outdentFollowingItems( fragment.getChild( 3 ), writer );
 			} );
 
-			expect( stringifyModel( fragment ) ).to.equalMarkup( modelList( [
+			expect( _stringifyModel( fragment ) ).to.equalMarkup( modelList( [
 				'0',
 				'* 1',
 				'  * 2',

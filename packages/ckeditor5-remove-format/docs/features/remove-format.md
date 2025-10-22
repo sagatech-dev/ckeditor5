@@ -1,12 +1,15 @@
 ---
+category: features
 title: Removing text formatting
 menu-title: Remove formatting
 meta-title: Removing text formatting | CKEditor 5 Documentation
 meta-description: Use the Remove Format feature in CKEditor 5 to clear text styling and return content to its default, unformatted state.
-category: features
+badges: [ premium ]
 ---
 
 The remove format feature lets you quickly remove any text formatting applied using inline HTML elements and CSS styles, like {@link features/basic-styles basic text styles} (bold, italic) or {@link features/font font family, size, and color}. This feature does not remove block-level formatting ({@link features/headings headings}, {@link features/images-overview images}) or semantic data ({@link features/link links}).
+
+{@snippet getting-started/unlock-feature}
 
 ## Demo
 
@@ -14,17 +17,11 @@ Select the content you want to clean up and press the remove format button {@ico
 
 {@snippet features/remove-format}
 
-<info-box info>
+<snippet-footer>
 	This demo presents a limited set of features. Visit the {@link examples/builds/full-featured-editor feature-rich editor example} to see more in action.
-</info-box>
+</snippet-footer>
 
 ## Installation
-
-<info-box info>
-	⚠️ **New import paths**
-
-	Starting with {@link updating/update-to-42 version 42.0.0}, we changed the format of import paths. This guide uses the new, shorter format. Refer to the {@link getting-started/legacy-getting-started/legacy-imports Packages in the legacy setup} guide if you use an older version of CKEditor&nbsp;5.
-</info-box>
 
 After {@link getting-started/integrations-cdn/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
 
@@ -93,7 +90,7 @@ ClassicEditor
 	.catch( /* ... */ );
 ```
 
-From now on, the remove format button should also remove links in the content. {@link module:engine/model/schema~Schema#setAttributeProperties Learn more about attribute properties.}
+From now on, the remove format button should also remove links in the content. {@link module:engine/model/schema~ModelSchema#setAttributeProperties Learn more about attribute properties.}
 
 ## Related features
 

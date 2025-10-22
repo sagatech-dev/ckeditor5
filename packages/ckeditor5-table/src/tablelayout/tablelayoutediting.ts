@@ -14,13 +14,13 @@ import type {
 	UpcastDispatcher,
 	UpcastElementEvent,
 	ViewElement,
-	SchemaContext,
-	Writer
+	ModelSchemaContext,
+	ModelWriter
 } from 'ckeditor5/src/engine.js';
 
-import InsertTableLayoutCommand from './../commands/inserttablelayoutcommand.js';
-import TableColumnResize from '../tablecolumnresize.js';
-import TableTypeCommand from './commands/tabletypecommand.js';
+import { InsertTableLayoutCommand } from './../commands/inserttablelayoutcommand.js';
+import { TableColumnResize } from '../tablecolumnresize.js';
+import { TableTypeCommand } from './commands/tabletypecommand.js';
 import { createEmptyTableCell } from '../utils/common.js';
 import type { TableType } from '../tableconfig.js';
 
@@ -31,12 +31,20 @@ const TABLE_TYPES: Array<TableType> = [ 'content', 'layout' ];
 /**
  * The table layout editing plugin.
  */
-export default class TableLayoutEditing extends Plugin {
+export class TableLayoutEditing extends Plugin {
 	/**
 	 * @inheritDoc
 	 */
 	public static get pluginName() {
 		return 'TableLayoutEditing' as const;
+	}
+
+	/**
+	 * @inheritDoc
+	 * @internal
+	 */
+	public static get licenseFeatureCode(): string {
+		return 'TL';
 	}
 
 	/**
@@ -50,6 +58,13 @@ export default class TableLayoutEditing extends Plugin {
 	 * @inheritDoc
 	 */
 	public static override get isOfficialPlugin(): true {
+		return true;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public static override get isPremiumPlugin(): true {
 		return true;
 	}
 
@@ -156,7 +171,7 @@ export default class TableLayoutEditing extends Plugin {
 	private _registerTableTypeAttributePostfixer() {
 		const editor = this.editor;
 
-		editor.model.document.registerPostFixer( ( writer: Writer ) => {
+		editor.model.document.registerPostFixer( ( writer: ModelWriter ) => {
 			const changes = editor.model.document.differ.getChanges();
 			let hasChanged = false;
 
@@ -342,7 +357,7 @@ function resolveTableType( viewTable: ViewElement, preferredExternalTableType: T
  * Checks if the element is a layout table.
  * It is used to disallow attributes or children that is managed by `Schema`.
  */
-function layoutTableCheck( context: SchemaContext ) {
+function layoutTableCheck( context: ModelSchemaContext ) {
 	if ( context.endsWith( 'table' ) && context.last.getAttribute( 'tableType' ) == 'layout' ) {
 		return false;
 	}

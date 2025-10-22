@@ -3,11 +3,10 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import VirtualTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/virtualtesteditor.js';
-import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
-import { getData as getModelData } from '@ckeditor/ckeditor5-engine/src/dev-utils/model.js';
-import HtmlComment from '../src/htmlcomment.js';
-import Range from '@ckeditor/ckeditor5-engine/src/model/range.js';
+import { VirtualTestEditor } from '@ckeditor/ckeditor5-core/tests/_utils/virtualtesteditor.js';
+import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
+import { _getModelData, ModelRange } from '@ckeditor/ckeditor5-engine';
+import { HtmlComment } from '../src/htmlcomment.js';
 
 describe( 'HtmlComment', () => {
 	let model, root, editor, htmlCommentPlugin;
@@ -130,7 +129,7 @@ describe( 'HtmlComment', () => {
 		it( 'should not create a dedicated model element for a comment node', () => {
 			editor.setData( '<p><!-- comment 1 -->Foo<!-- comment 2 --></p>' );
 
-			expect( getModelData( model, { withoutSelection: true } ) ).to.equal( '<paragraph>Foo</paragraph>' );
+			expect( _getModelData( model, { withoutSelection: true } ) ).to.equal( '<paragraph>Foo</paragraph>' );
 		} );
 	} );
 
@@ -485,7 +484,7 @@ describe( 'HtmlComment', () => {
 			const posStart = model.createPositionFromPath( root, [ 2, 1 ] );
 			const posEnd = model.createPositionFromPath( root, [ 2, 3 ] );
 
-			const range = new Range( posStart, posEnd );
+			const range = new ModelRange( posStart, posEnd );
 
 			// Comments at the range boundaries.
 			const id3 = htmlCommentPlugin.createHtmlComment( posStart, 'baz' );
@@ -503,7 +502,7 @@ describe( 'HtmlComment', () => {
 			const posStart = model.createPositionFromPath( root, [ 2, 1 ] );
 			const posEnd = model.createPositionFromPath( root, [ 2, 3 ] );
 
-			const range = new Range( posStart, posEnd );
+			const range = new ModelRange( posStart, posEnd );
 
 			// Comments at the range boundaries.
 			htmlCommentPlugin.createHtmlComment( posStart, 'baz' );
@@ -520,7 +519,7 @@ describe( 'HtmlComment', () => {
 
 			const position = model.createPositionFromPath( root, [ 2, 1 ] );
 
-			const range = new Range( position, position );
+			const range = new ModelRange( position, position );
 
 			// Two comments at the position of the collapsed range.
 			const id1 = htmlCommentPlugin.createHtmlComment( position, 'baz' );

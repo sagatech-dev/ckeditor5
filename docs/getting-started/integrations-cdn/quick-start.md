@@ -1,7 +1,7 @@
 ---
 menu-title: Vanilla JS
 meta-title: Vanilla JS CKEditor 5 installation - quick start from CDN | CKEditor 5 Documentation
-meta-description: Install, integrate, and configure CKEditor 5 using Vanilla JS with CDN.
+meta-description: Install, integrate, and configure CKEditor 5 using Vanilla JS with CDN. Follow step-by-step instructions for fast installation and setup.
 category: cloud
 order: 20
 ---
@@ -26,7 +26,7 @@ Start by attaching a link to style sheets. They contain all styles for the edito
 <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/{@var ckeditor5-version}/ckeditor5.css" />
 ```
 
-<info-box>
+<info-box tip>
 	If you do not want to use the global variables presented below, you can continue from here and use an alternative, [more advanced setup with import maps](#advanced-setup-with-import-maps).
 </info-box>
 
@@ -36,7 +36,7 @@ Then, you need to attach the script with the JavaScript code.
 <script src="https://cdn.ckeditor.com/ckeditor5/{@var ckeditor5-version}/ckeditor5.umd.js"></script>
 ```
 
-The included script exposes the global variable named `CKEDITOR`. You can use object destructuring shown below to access the editor class and plugins.
+Import the selected {@link getting-started/setup/editor-types editor type} and plugins. The included script exposes the global variable named `CKEDITOR`. You can use object destructuring shown below to access the editor class and plugins.
 
 ```js
 const {
@@ -113,6 +113,10 @@ A simple HTML page with the CKEditor may look like the one below.
 </html>
 ```
 
+<info-box important>
+	The multi-root editor requires a {@link getting-started/setup/editor-types#multi-root-editor more advanced configuration} of the roots.
+</info-box>
+
 ## Installing premium features from CDN
 
 Just like with open-source features, start by attaching a link to style sheets. They contain all styles for the editor's UI and content. The styles are in two separate style sheets &ndash; for open-source and premium plugins. You can also include your styles if you like. Refer to the {@link getting-started/setup/css#styling-the-published-content content styles} guide for more information.
@@ -123,7 +127,7 @@ Just like with open-source features, start by attaching a link to style sheets. 
 <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5-premium-features/{@var ckeditor5-version}/ckeditor5-premium-features.css" />
 ```
 
-<info-box>
+<info-box tip>
 	If you do not want to use the global variables presented below, you can continue from here and use an alternative, [more advanced setup with import maps](#advanced-setup-with-import-maps).
 </info-box>
 

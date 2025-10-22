@@ -3,12 +3,10 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import MultiRootEditor from '../src/multirooteditor.js';
-import EditorUI from '@ckeditor/ckeditor5-ui/src/editorui/editorui.js';
-import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
-import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
-
-import View from '@ckeditor/ckeditor5-ui/src/view.js';
+import { MultiRootEditor } from '../src/multirooteditor.js';
+import { EditorUI, View } from '@ckeditor/ckeditor5-ui';
+import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
+import { testUtils } from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
 
 describe( 'MultiRootEditorUI', () => {
 	let editor, view, ui;

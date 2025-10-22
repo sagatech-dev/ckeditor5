@@ -4,17 +4,16 @@
  */
 
 // TODO change to new ListEditing
-import LegacyListEditing from '../../src/legacylist/legacylistediting.js';
-import ListUI from '../../src/list/listui.js';
-import List from '../../src/list.js';
-import ListProperties from '../../src/listproperties.js';
+import { LegacyListEditing } from '../../src/legacylist/legacylistediting.js';
+import { ListUI } from '../../src/list/listui.js';
+import { List } from '../../src/list.js';
+import { ListProperties } from '../../src/listproperties.js';
 
-import ClassicTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
-import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
-import BlockQuote from '@ckeditor/ckeditor5-block-quote/src/blockquote.js';
-import ButtonView from '@ckeditor/ckeditor5-ui/src/button/buttonview.js';
-import { setData } from '@ckeditor/ckeditor5-engine/src/dev-utils/model.js';
-import { MenuBarMenuListItemButtonView } from '@ckeditor/ckeditor5-ui';
+import { ClassicTestEditor } from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
+import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
+import { BlockQuote } from '@ckeditor/ckeditor5-block-quote';
+import { ButtonView, MenuBarMenuListItemButtonView } from '@ckeditor/ckeditor5-ui';
+import { _setModelData } from '@ckeditor/ckeditor5-engine';
 
 describe( 'ListUI', () => {
 	let editorElement, editor, model;
@@ -75,7 +74,7 @@ describe( 'ListUI', () => {
 		} );
 
 		it( 'should bind bulleted list button model to bulledList command', () => {
-			setData( model, '<listItem listType="bulleted" listIndent="0">[]foo</listItem>' );
+			_setModelData( model, '<listItem listType="bulleted" listIndent="0">[]foo</listItem>' );
 
 			const command = editor.commands.get( 'bulletedList' );
 
@@ -90,7 +89,7 @@ describe( 'ListUI', () => {
 		} );
 
 		it( 'should bind numbered list button model to numberedList command', () => {
-			setData( model, '<listItem listType="bulleted" listIndent="0">[]foo</listItem>' );
+			_setModelData( model, '<listItem listType="bulleted" listIndent="0">[]foo</listItem>' );
 
 			const command = editor.commands.get( 'numberedList' );
 
@@ -138,7 +137,7 @@ describe( 'ListUI', () => {
 		} );
 
 		it( 'should bind bulleted list button model to bulledList command', () => {
-			setData( model, '<listItem listType="bulleted" listIndent="0">[]foo</listItem>' );
+			_setModelData( model, '<listItem listType="bulleted" listIndent="0">[]foo</listItem>' );
 
 			const command = editor.commands.get( 'bulletedList' );
 
@@ -153,7 +152,7 @@ describe( 'ListUI', () => {
 		} );
 
 		it( 'should bind numbered list button model to numberedList command', () => {
-			setData( model, '<listItem listType="bulleted" listIndent="0">[]foo</listItem>' );
+			_setModelData( model, '<listItem listType="bulleted" listIndent="0">[]foo</listItem>' );
 
 			const command = editor.commands.get( 'numberedList' );
 

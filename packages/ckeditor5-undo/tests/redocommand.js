@@ -3,12 +3,12 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import ModelTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/modeltesteditor.js';
-import Batch from '@ckeditor/ckeditor5-engine/src/model/batch.js';
-import UndoCommand from '../src/undocommand.js';
-import RedoCommand from '../src/redocommand.js';
+import { ModelTestEditor } from '@ckeditor/ckeditor5-core/tests/_utils/modeltesteditor.js';
+import { Batch } from '@ckeditor/ckeditor5-engine';
+import { UndoCommand } from '../src/undocommand.js';
+import { RedoCommand } from '../src/redocommand.js';
 import { itemAt, getText } from '@ckeditor/ckeditor5-engine/tests/model/_utils/utils.js';
-import toArray from '@ckeditor/ckeditor5-utils/src/toarray.js';
+import { toArray } from '@ckeditor/ckeditor5-utils';
 
 describe( 'RedoCommand', () => {
 	let editor, model, root, redo, undo;
@@ -18,6 +18,7 @@ describe( 'RedoCommand', () => {
 			editor = newEditor;
 
 			redo = new RedoCommand( editor );
+			undo = new UndoCommand( editor );
 			model = editor.model;
 			root = model.document.getRoot();
 		} );
@@ -36,8 +37,6 @@ describe( 'RedoCommand', () => {
 			const batches = new Set();
 
 			beforeEach( () => {
-				undo = new UndoCommand( editor );
-
 				// Simple integration with undo.
 				undo.on( 'revert', ( evt, undoneBatch, undoingBatch ) => {
 					if ( !batches.has( undoingBatch ) ) {
@@ -340,6 +339,38 @@ describe( 'RedoCommand', () => {
 
 			expect( data[ 1 ] ).to.be.an( 'object' );
 			expect( data[ 1 ].batchType ).to.deep.equal( { isUndoable: true } );
+		} );
+
+		it( 'should fire `revert` event when executed', done => {
+			const batch = model.createBatch();
+			undo.addBatch( batch );
+
+			model.enqueueChange( batch, writer => {
+				writer.insertText( 'foo', root, 0 );
+			} );
+
+			let undoBatch;
+
+			// Save batch that undone the operations. In redo callback we will see if that batch was reverted.
+			undo.on( 'revert', ( evt, undoneBatch, undoingBatch ) => {
+				undoBatch = undoingBatch;
+
+				redo.addBatch( undoBatch );
+			} );
+
+			undo.execute();
+
+			redo.on( 'revert', ( evt, undoneBatch, redoingBatch ) => {
+				// Check if `undoneBatch` is a batch previously created by undo command.
+				expect( undoneBatch ).to.be.equal( undoBatch );
+
+				// Check if `redoingBatch` is the last batch that made changes in the editor.
+				expect( redoingBatch ).to.be.equal( editor.model.document.history.lastOperation.batch );
+
+				done();
+			} );
+
+			redo.execute();
 		} );
 	} );
 } );

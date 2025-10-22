@@ -9,14 +9,14 @@
 
 import { Plugin } from 'ckeditor5/src/core.js';
 
-import RemoveFormatCommand from './removeformatcommand.js';
+import { RemoveFormatCommand } from './removeformatcommand.js';
 
 /**
  * The remove format editing plugin.
  *
  * It registers the {@link module:remove-format/removeformatcommand~RemoveFormatCommand removeFormat} command.
  */
-export default class RemoveFormatEditing extends Plugin {
+export class RemoveFormatEditing extends Plugin {
 	/**
 	 * @inheritDoc
 	 */
@@ -26,8 +26,23 @@ export default class RemoveFormatEditing extends Plugin {
 
 	/**
 	 * @inheritDoc
+	 * @internal
+	 */
+	public static get licenseFeatureCode(): string {
+		return 'RF';
+	}
+
+	/**
+	 * @inheritDoc
 	 */
 	public static override get isOfficialPlugin(): true {
+		return true;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public static override get isPremiumPlugin(): true {
 		return true;
 	}
 

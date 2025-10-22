@@ -3,14 +3,13 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import ClassicTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
-import global from '@ckeditor/ckeditor5-utils/src/dom/global.js';
-import Element from '@ckeditor/ckeditor5-engine/src/view/element.js';
-import Text from '@ckeditor/ckeditor5-engine/src/view/text.js';
+import { ClassicTestEditor } from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
+import { global } from '@ckeditor/ckeditor5-utils';
+import { ViewElement, ViewText } from '@ckeditor/ckeditor5-engine';
 
-import Mention from '../src/mention.js';
-import MentionEditing from '../src/mentionediting.js';
-import MentionUI from '../src/mentionui.js';
+import { Mention } from '../src/mention.js';
+import { MentionEditing } from '../src/mentionediting.js';
+import { MentionUI } from '../src/mentionui.js';
 
 describe( 'Mention', () => {
 	let editorElement, editor, viewDocument;
@@ -61,9 +60,9 @@ describe( 'Mention', () => {
 
 	describe( 'toMentionAttribute()', () => {
 		it( 'should create mention attribute with default properties', () => {
-			const text = new Text( viewDocument, 'John Doe' );
+			const text = new ViewText( viewDocument, 'John Doe' );
 
-			const viewElement = new Element( viewDocument, 'span', {
+			const viewElement = new ViewElement( viewDocument, 'span', {
 				'data-mention': '@John'
 			}, text );
 
@@ -75,9 +74,9 @@ describe( 'Mention', () => {
 		} );
 
 		it( 'should create mention attribute with provided attributes', () => {
-			const text = new Text( viewDocument, 'John Doe' );
+			const text = new ViewText( viewDocument, 'John Doe' );
 
-			const viewElement = new Element( viewDocument, 'span', {
+			const viewElement = new ViewElement( viewDocument, 'span', {
 				'data-mention': '@John'
 			}, text );
 
@@ -90,7 +89,7 @@ describe( 'Mention', () => {
 		} );
 
 		it( 'should return undefined if Element has no text node', () => {
-			const viewElement = new Element( viewDocument, 'span', {
+			const viewElement = new ViewElement( viewDocument, 'span', {
 				'data-mention': '@John'
 			} );
 

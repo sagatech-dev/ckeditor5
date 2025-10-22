@@ -3,11 +3,10 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import ListWalker from '../../../src/list/utils/listwalker.js';
+import { ListWalker } from '../../../src/list/utils/listwalker.js';
 import { modelList } from '../_utils/utils.js';
 
-import Model from '@ckeditor/ckeditor5-engine/src/model/model.js';
-import { parse as parseModel } from '@ckeditor/ckeditor5-engine/src/dev-utils/model.js';
+import { Model, _parseModel } from '@ckeditor/ckeditor5-engine';
 
 describe( 'List - utils - ListWalker', () => {
 	let model, schema;
@@ -28,7 +27,7 @@ describe( 'List - utils - ListWalker', () => {
 			'* 2'
 		] );
 
-		const fragment = parseModel( input, schema );
+		const fragment = _parseModel( input, schema );
 		const walker = new ListWalker( fragment.getChild( 0 ), {
 			direction: 'forward',
 			includeSelf: true
@@ -50,7 +49,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 2'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 0 ), {
 				direction: 'forward',
 				sameIndent: true,
@@ -71,7 +70,7 @@ describe( 'List - utils - ListWalker', () => {
 				'2'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 0 ), {
 				direction: 'forward',
 				sameIndent: true,
@@ -91,7 +90,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 1'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 0 ), {
 				direction: 'forward',
 				sameIndent: true,
@@ -109,7 +108,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 2'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 0 ), {
 				direction: 'forward',
 				sameIndent: true
@@ -129,7 +128,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 2'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 2 ), {
 				direction: 'backward',
 				sameIndent: true
@@ -149,7 +148,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 2'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 0 ), {
 				direction: 'forward',
 				sameIndent: true,
@@ -170,7 +169,7 @@ describe( 'List - utils - ListWalker', () => {
 				'# 2'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 0 ), {
 				direction: 'forward',
 				sameIndent: true,
@@ -191,7 +190,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 2 {style:xyz}'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 0 ), {
 				direction: 'forward',
 				sameIndent: true,
@@ -213,7 +212,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 3 {style:xyz}'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 0 ), {
 				direction: 'forward',
 				sameIndent: true,
@@ -235,7 +234,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 3'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 1 ), {
 				direction: 'forward',
 				sameIndent: true,
@@ -256,7 +255,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 3'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 0 ), {
 				direction: 'forward',
 				sameIndent: true,
@@ -279,7 +278,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 5'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 1 ), {
 				direction: 'forward',
 				sameIndent: true,
@@ -305,7 +304,7 @@ describe( 'List - utils - ListWalker', () => {
 				'  * 5'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 1 ), {
 				direction: 'forward',
 				sameIndent: true,
@@ -332,7 +331,7 @@ describe( 'List - utils - ListWalker', () => {
 				'  * 5'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 4 ), {
 				direction: 'backward',
 				sameIndent: true,
@@ -359,7 +358,7 @@ describe( 'List - utils - ListWalker', () => {
 				'  * 5'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 4 ), {
 				direction: 'backward',
 				sameIndent: true,
@@ -383,7 +382,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 5'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 1 ), {
 				direction: 'forward',
 				sameIndent: true,
@@ -412,7 +411,7 @@ describe( 'List - utils - ListWalker', () => {
 					'* 5'
 				] );
 
-				const fragment = parseModel( input, schema );
+				const fragment = _parseModel( input, schema );
 				const block = ListWalker.first( fragment.getChild( 2 ), {
 					direction: 'forward',
 					sameIndent: true
@@ -431,7 +430,7 @@ describe( 'List - utils - ListWalker', () => {
 					'* 5'
 				] );
 
-				const fragment = parseModel( input, schema );
+				const fragment = _parseModel( input, schema );
 				const block = ListWalker.first( fragment.getChild( 1 ), {
 					direction: 'forward',
 					sameIndent: true
@@ -450,7 +449,7 @@ describe( 'List - utils - ListWalker', () => {
 					'* 5'
 				] );
 
-				const fragment = parseModel( input, schema );
+				const fragment = _parseModel( input, schema );
 				const block = ListWalker.first( fragment.getChild( 4 ), {
 					direction: 'backward',
 					sameIndent: true
@@ -472,7 +471,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 5'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 1 ), {
 				direction: 'forward',
 				higherIndent: true
@@ -494,7 +493,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 5'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 0 ), {
 				direction: 'forward',
 				higherIndent: true
@@ -518,7 +517,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 5'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 5 ), {
 				direction: 'backward',
 				higherIndent: true
@@ -542,7 +541,7 @@ describe( 'List - utils - ListWalker', () => {
 				'  * 5'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 0 ), {
 				direction: 'forward',
 				higherIndent: true
@@ -564,7 +563,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 5'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 5 ), {
 				direction: 'backward',
 				higherIndent: true
@@ -584,7 +583,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 3'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 1 ), {
 				direction: 'forward',
 				higherIndent: true
@@ -602,7 +601,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 3'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 2 ), {
 				direction: 'backward',
 				higherIndent: true
@@ -620,7 +619,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 3'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 2 ), {
 				direction: 'forward',
 				higherIndent: true
@@ -638,7 +637,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 3'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 1 ), {
 				direction: 'backward',
 				higherIndent: true
@@ -659,7 +658,7 @@ describe( 'List - utils - ListWalker', () => {
 					'* 5'
 				] );
 
-				const fragment = parseModel( input, schema );
+				const fragment = _parseModel( input, schema );
 				const block = ListWalker.first( fragment.getChild( 1 ), {
 					direction: 'forward',
 					higherIndent: true
@@ -678,7 +677,7 @@ describe( 'List - utils - ListWalker', () => {
 					'* 5'
 				] );
 
-				const fragment = parseModel( input, schema );
+				const fragment = _parseModel( input, schema );
 				const block = ListWalker.first( fragment.getChild( 4 ), {
 					direction: 'backward',
 					higherIndent: true
@@ -698,7 +697,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 3'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 0 ), {
 				direction: 'backward',
 				lowerIndent: true
@@ -716,7 +715,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 3'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 1 ), {
 				direction: 'backward',
 				lowerIndent: true
@@ -734,7 +733,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 3'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 1 ), {
 				direction: 'forward',
 				lowerIndent: true
@@ -752,7 +751,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 3'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 1 ), {
 				direction: 'backward',
 				lowerIndent: true
@@ -771,7 +770,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 3'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 2 ), {
 				direction: 'backward',
 				lowerIndent: true
@@ -792,7 +791,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 5'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 4 ), {
 				direction: 'backward',
 				lowerIndent: true
@@ -813,7 +812,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 5'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 1 ), {
 				direction: 'forward',
 				lowerIndent: true
@@ -834,7 +833,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 5'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 4 ), {
 				direction: 'backward',
 				lowerIndent: true
@@ -858,7 +857,7 @@ describe( 'List - utils - ListWalker', () => {
 				'* 6'
 			] );
 
-			const fragment = parseModel( input, schema );
+			const fragment = _parseModel( input, schema );
 			const walker = new ListWalker( fragment.getChild( 3 ), {
 				direction: 'forward',
 				lowerIndent: true
@@ -881,7 +880,7 @@ describe( 'List - utils - ListWalker', () => {
 					'* 5'
 				] );
 
-				const fragment = parseModel( input, schema );
+				const fragment = _parseModel( input, schema );
 				const block = ListWalker.first( fragment.getChild( 4 ), {
 					direction: 'backward',
 					lowerIndent: true

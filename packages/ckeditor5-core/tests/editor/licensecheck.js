@@ -3,12 +3,12 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import CKEditorError from '@ckeditor/ckeditor5-utils/src/ckeditorerror.js';
+import { CKEditorError, global } from '@ckeditor/ckeditor5-utils';
 import { expectToThrowCKEditorError } from '@ckeditor/ckeditor5-utils/tests/_utils/utils.js';
-import { global } from '@ckeditor/ckeditor5-utils';
-import Editor from '../../src/editor/editor.js';
-import testUtils from '../../tests/_utils/utils.js';
-import generateKey from '../_utils/generatelicensekey.js';
+import { Editor } from '../../src/editor/editor.js';
+import { Plugin } from '../../src/plugin.js';
+import { testUtils } from '../../tests/_utils/utils.js';
+import { generateLicenseKey } from '../_utils/generatelicensekey.js';
 import { getEditorUsageData } from '../../src/editor/utils/editorusagedata.js';
 
 class TestEditor extends Editor {
@@ -46,7 +46,7 @@ describe( 'Editor - license check', () => {
 
 		describe( 'required fields in the license key', () => {
 			it( 'should not block the editor when required fields are provided and are valid', () => {
-				const { licenseKey } = generateKey();
+				const { licenseKey } = generateLicenseKey();
 
 				const editor = new TestEditor( { licenseKey } );
 
@@ -55,7 +55,7 @@ describe( 'Editor - license check', () => {
 			} );
 
 			it( 'should block the editor when the `exp` field is missing', () => {
-				const { licenseKey } = generateKey( { expExist: false } );
+				const { licenseKey } = generateLicenseKey( { expExist: false } );
 
 				const editor = new TestEditor( { licenseKey } );
 
@@ -64,7 +64,7 @@ describe( 'Editor - license check', () => {
 			} );
 
 			it( 'should block the editor when the `jti` field is missing', () => {
-				const { licenseKey } = generateKey( { jtiExist: false } );
+				const { licenseKey } = generateLicenseKey( { jtiExist: false } );
 
 				const editor = new TestEditor( { licenseKey } );
 
@@ -73,7 +73,7 @@ describe( 'Editor - license check', () => {
 			} );
 
 			it( 'should block the editor when the `vc` field is missing', () => {
-				const { licenseKey } = generateKey( { vcExist: false } );
+				const { licenseKey } = generateLicenseKey( { vcExist: false } );
 
 				const editor = new TestEditor( { licenseKey } );
 
@@ -169,7 +169,7 @@ describe( 'Editor - license check', () => {
 				it( `works on ${ set.name }`, () => {
 					sinon.stub( URL.prototype, 'hostname' ).value( set.hostname );
 
-					const { licenseKey } = generateKey( { licensedHosts: [ set.licensedHost ] } );
+					const { licenseKey } = generateLicenseKey( { licensedHosts: [ set.licensedHost ] } );
 					const editor = new TestEditor( { licenseKey } );
 
 					sinon.assert.notCalled( showErrorStub );
@@ -182,7 +182,7 @@ describe( 'Editor - license check', () => {
 				it( `fails on ${ set.name }`, () => {
 					sinon.stub( URL.prototype, 'hostname' ).value( set.hostname );
 
-					const { licenseKey } = generateKey( { licensedHosts: [ set.licensedHost ] } );
+					const { licenseKey } = generateLicenseKey( { licensedHosts: [ set.licensedHost ] } );
 					const editor = new TestEditor( { licenseKey } );
 
 					sinon.assert.calledWithMatch( showErrorStub, 'domainLimit' );
@@ -200,7 +200,7 @@ describe( 'Editor - license check', () => {
 			it( 'should not block if distribution channel match', () => {
 				setChannel( 'xyz' );
 
-				const { licenseKey } = generateKey( { distributionChannel: 'xyz' } );
+				const { licenseKey } = generateLicenseKey( { distributionChannel: 'xyz' } );
 
 				const editor = new TestEditor( { licenseKey } );
 
@@ -211,7 +211,7 @@ describe( 'Editor - license check', () => {
 			it( 'should not block if one of distribution channel match', () => {
 				setChannel( 'xyz' );
 
-				const { licenseKey } = generateKey( { distributionChannel: [ 'abc', 'xyz' ] } );
+				const { licenseKey } = generateLicenseKey( { distributionChannel: [ 'abc', 'xyz' ] } );
 
 				const editor = new TestEditor( { licenseKey } );
 
@@ -220,7 +220,7 @@ describe( 'Editor - license check', () => {
 			} );
 
 			it( 'should not block if implicit distribution channel match', () => {
-				const { licenseKey } = generateKey( { distributionChannel: 'sh' } );
+				const { licenseKey } = generateLicenseKey( { distributionChannel: 'sh' } );
 
 				const editor = new TestEditor( { licenseKey } );
 
@@ -231,7 +231,7 @@ describe( 'Editor - license check', () => {
 			it( 'should not block if distribution channel is not restricted', () => {
 				setChannel( 'xyz' );
 
-				const { licenseKey } = generateKey();
+				const { licenseKey } = generateLicenseKey();
 
 				const editor = new TestEditor( { licenseKey } );
 
@@ -242,7 +242,7 @@ describe( 'Editor - license check', () => {
 			it( 'should block if distribution channel doesn\'t match', () => {
 				setChannel( 'abc' );
 
-				const { licenseKey } = generateKey( { distributionChannel: 'xyz' } );
+				const { licenseKey } = generateLicenseKey( { distributionChannel: 'xyz' } );
 
 				const editor = new TestEditor( { licenseKey } );
 
@@ -253,7 +253,7 @@ describe( 'Editor - license check', () => {
 			it( 'should block if none of distribution channel doesn\'t match', () => {
 				setChannel( 'abc' );
 
-				const { licenseKey } = generateKey( { distributionChannel: [ 'xyz', 'def' ] } );
+				const { licenseKey } = generateLicenseKey( { distributionChannel: [ 'xyz', 'def' ] } );
 
 				const editor = new TestEditor( { licenseKey } );
 
@@ -262,7 +262,7 @@ describe( 'Editor - license check', () => {
 			} );
 
 			it( 'should block if implicit distribution channel doesn\'t match', () => {
-				const { licenseKey } = generateKey( { distributionChannel: 'xyz' } );
+				const { licenseKey } = generateLicenseKey( { distributionChannel: 'xyz' } );
 
 				const editor = new TestEditor( { licenseKey } );
 
@@ -339,7 +339,7 @@ describe( 'Editor - license check', () => {
 
 			licenseTypes.forEach( licenseType => {
 				it( `should not block if ${ licenseType } license did not expired`, () => {
-					const { licenseKey, todayTimestamp } = generateKey( {
+					const { licenseKey, todayTimestamp } = generateLicenseKey( {
 						licenseType,
 						isExpired: false,
 						daysAfterExpiration: -1
@@ -357,7 +357,7 @@ describe( 'Editor - license check', () => {
 				} );
 
 				it( `should block if ${ licenseType } license is expired`, () => {
-					const { licenseKey, todayTimestamp } = generateKey( {
+					const { licenseKey, todayTimestamp } = generateLicenseKey( {
 						licenseType,
 						daysAfterExpiration: 1
 					} );
@@ -373,7 +373,7 @@ describe( 'Editor - license check', () => {
 				} );
 
 				it( `should block editor after 10 minutes on ${ licenseType } license`, () => {
-					const { licenseKey, todayTimestamp } = generateKey( {
+					const { licenseKey, todayTimestamp } = generateLicenseKey( {
 						licenseType,
 						isExpired: false,
 						daysAfterExpiration: -1
@@ -395,7 +395,7 @@ describe( 'Editor - license check', () => {
 				} );
 
 				it( `should clear timer on editor destroy on ${ licenseType } license`, done => {
-					const { licenseKey, todayTimestamp } = generateKey( {
+					const { licenseKey, todayTimestamp } = generateLicenseKey( {
 						licenseType,
 						isExpired: false,
 						daysAfterExpiration: -1
@@ -416,7 +416,7 @@ describe( 'Editor - license check', () => {
 				} );
 
 				it( `should log information to the console about using the ${ licenseType } license`, () => {
-					const { licenseKey, todayTimestamp } = generateKey( {
+					const { licenseKey, todayTimestamp } = generateLicenseKey( {
 						licenseType
 					} );
 
@@ -437,7 +437,7 @@ describe( 'Editor - license check', () => {
 				} );
 
 				it( `should log information to the console about using the ${ licenseType } license only once`, () => {
-					const { licenseKey, todayTimestamp } = generateKey( {
+					const { licenseKey, todayTimestamp } = generateLicenseKey( {
 						licenseType
 					} );
 
@@ -467,11 +467,11 @@ describe( 'Editor - license check', () => {
 			} );
 
 			it( 'should log information to the console twice when using two different license types', () => {
-				const trialLicense = generateKey( {
+				const trialLicense = generateLicenseKey( {
 					licenseType: 'trial'
 				} );
 
-				const evaluationLicense = generateKey( {
+				const evaluationLicense = generateLicenseKey( {
 					licenseType: 'evaluation'
 				} );
 
@@ -512,7 +512,7 @@ describe( 'Editor - license check', () => {
 			} );
 
 			it( 'should log information to the console about using the development license', () => {
-				const { licenseKey } = generateKey( {
+				const { licenseKey } = generateLicenseKey( {
 					licenseType: 'development'
 				} );
 
@@ -530,7 +530,7 @@ describe( 'Editor - license check', () => {
 			} );
 
 			it( 'should show the warning only once for development license', () => {
-				const { licenseKey } = generateKey( {
+				const { licenseKey } = generateLicenseKey( {
 					licenseType: 'development'
 				} );
 
@@ -555,7 +555,7 @@ describe( 'Editor - license check', () => {
 			} );
 
 			it( 'should not block the editor if 10 minutes have not passed (development license)', () => {
-				const { licenseKey } = generateKey( {
+				const { licenseKey } = generateLicenseKey( {
 					licenseType: 'development'
 				} );
 
@@ -576,7 +576,7 @@ describe( 'Editor - license check', () => {
 			} );
 
 			it( 'should not block editor after 10 minutes (development license)', () => {
-				const { licenseKey, todayTimestamp } = generateKey( {
+				const { licenseKey, todayTimestamp } = generateLicenseKey( {
 					licenseType: 'development'
 				} );
 
@@ -596,7 +596,7 @@ describe( 'Editor - license check', () => {
 			} );
 
 			it( 'should not interact with timers', done => {
-				const { licenseKey, todayTimestamp } = generateKey( {
+				const { licenseKey, todayTimestamp } = generateLicenseKey( {
 					licenseType: 'development'
 				} );
 
@@ -615,8 +615,127 @@ describe( 'Editor - license check', () => {
 			} );
 		} );
 
+		describe( 'plugin check', () => {
+			class FreePlugin extends Plugin {
+				static get pluginName() {
+					return 'FreePlugin';
+				}
+			};
+
+			class LicensedPlugin extends Plugin {
+				static get pluginName() {
+					return 'LicensedPlugin';
+				}
+			};
+
+			Object.defineProperty( LicensedPlugin, 'licenseFeatureCode', {
+				get() {
+					return 'LP';
+				}
+			} );
+
+			class LicensedPluginNoName extends Plugin {};
+
+			Object.defineProperty( LicensedPluginNoName, 'licenseFeatureCode', {
+				get() {
+					return 'LPNN';
+				}
+			} );
+
+			it( 'should not throw if license key is invalid', () => {
+				const licenseKey = 'invalid';
+
+				const editor = new TestEditor( {
+					licenseKey,
+					plugins: [ FreePlugin, LicensedPlugin ]
+				} );
+
+				return editor.initPlugins()
+					.catch( () => {
+						throw new Error( 'Expected not to throw.' );
+					} );
+			} );
+
+			it( 'should not block if license key is GPL', () => {
+				const licenseKey = 'GPL';
+
+				const editor = new TestEditor( {
+					licenseKey,
+					plugins: [ FreePlugin, LicensedPlugin ]
+				} );
+
+				return editor.initPlugins()
+					.then( () => {
+						sinon.assert.notCalled( showErrorStub );
+						expect( editor.isReadOnly ).to.be.false;
+					} );
+			} );
+
+			it( 'should not block if licensed plugin does not have a name', () => {
+				const { licenseKey } = generateLicenseKey();
+
+				const editor = new TestEditor( {
+					licenseKey,
+					plugins: [ FreePlugin, LicensedPluginNoName ]
+				} );
+
+				return editor.initPlugins()
+					.then( () => {
+						sinon.assert.notCalled( showErrorStub );
+						expect( editor.isReadOnly ).to.be.false;
+					} );
+			} );
+
+			it( 'should not block if editor does not load licensed plugin', () => {
+				const { licenseKey } = generateLicenseKey();
+
+				const editor = new TestEditor( {
+					licenseKey,
+					plugins: [ FreePlugin ]
+				} );
+
+				return editor.initPlugins()
+					.then( () => {
+						sinon.assert.notCalled( showErrorStub );
+						expect( editor.isReadOnly ).to.be.false;
+					} );
+			} );
+
+			it( 'should not block if editor loads licensed plugin allowed by license key', () => {
+				const { licenseKey } = generateLicenseKey();
+
+				const editor = new TestEditor( {
+					licenseKey,
+					plugins: [ FreePlugin, LicensedPlugin ]
+				} );
+
+				return editor.initPlugins()
+					.then( () => {
+						sinon.assert.notCalled( showErrorStub );
+						expect( editor.isReadOnly ).to.be.false;
+					} );
+			} );
+
+			it( 'should block if editor loads licensed plugin not allowed by license key', () => {
+				const { licenseKey } = generateLicenseKey( {
+					removeFeatures: [ 'LP' ]
+				} );
+
+				const editor = new TestEditor( {
+					licenseKey,
+					plugins: [ FreePlugin, LicensedPlugin ]
+				} );
+
+				return editor.initPlugins()
+					.then( () => {
+						sinon.assert.calledWithMatch( showErrorStub, 'pluginNotAllowed', 'LicensedPlugin' );
+						expect( editor.isReadOnly ).to.be.true;
+					} );
+			} );
+		} );
+
 		it( 'should block the editor when the license key is not valid (expiration date in the past)', () => {
-			const { licenseKey } = generateKey( {
+			const { licenseKey } = generateLicenseKey( {
 				isExpired: true
 			} );
 
@@ -627,7 +746,7 @@ describe( 'Editor - license check', () => {
 		} );
 
 		it( 'should block the editor when the license key has wrong format (wrong verificationCode)', () => {
-			const { licenseKey } = generateKey( {
+			const { licenseKey } = generateLicenseKey( {
 				customVc: 'wrong vc'
 			} );
 
@@ -638,7 +757,7 @@ describe( 'Editor - license check', () => {
 		} );
 
 		it( 'should block the editor when the license key has wrong format (missing header part)', () => {
-			const { licenseKey } = generateKey( {
+			const { licenseKey } = generateLicenseKey( {
 				isExpired: true,
 				skipHeader: true
 			} );
@@ -650,7 +769,7 @@ describe( 'Editor - license check', () => {
 		} );
 
 		it( 'should block the editor when the license key has wrong format (missing tail part)', () => {
-			const { licenseKey } = generateKey( {
+			const { licenseKey } = generateLicenseKey( {
 				isExpired: true,
 				skipTail: true
 			} );
@@ -684,7 +803,7 @@ describe( 'Editor - license check', () => {
 		it( 'should send request with telemetry data if license key contains a usage endpoint', () => {
 			const fetchStub = sinon.stub( window, 'fetch' );
 
-			const { licenseKey } = generateKey( {
+			const { licenseKey } = generateLicenseKey( {
 				usageEndpoint: 'https://ckeditor.com'
 			} );
 			const editor = new TestEditor( { licenseKey } );
@@ -706,7 +825,7 @@ describe( 'Editor - license check', () => {
 		it( 'should not send any request if license key does not contain a usage endpoint', () => {
 			const fetchStub = sinon.stub( window, 'fetch' );
 
-			const { licenseKey } = generateKey();
+			const { licenseKey } = generateLicenseKey();
 			const editor = new TestEditor( { licenseKey } );
 
 			editor.fire( 'ready' );
@@ -715,7 +834,7 @@ describe( 'Editor - license check', () => {
 		} );
 
 		it( 'should display error on the console and not block the editor if response status is not ok (HTTP 500)', async () => {
-			const { licenseKey } = generateKey( {
+			const { licenseKey } = generateLicenseKey( {
 				usageEndpoint: 'https://ckeditor.com'
 			} );
 			const fetchStub = sinon.stub( window, 'fetch' ).resolves( new Response( null, { status: 500 } ) );
@@ -741,7 +860,7 @@ describe( 'Editor - license check', () => {
 			} );
 			const showErrorStub = testUtils.sinon.stub( TestEditor.prototype, '_showLicenseError' );
 
-			const { licenseKey } = generateKey( {
+			const { licenseKey } = generateLicenseKey( {
 				usageEndpoint: 'https://ckeditor.com'
 			} );
 			const editor = new TestEditor( { licenseKey } );
@@ -766,7 +885,7 @@ describe( 'Editor - license check', () => {
 			const warnStub = testUtils.sinon.stub( console, 'warn' );
 			const showErrorStub = testUtils.sinon.stub( TestEditor.prototype, '_showLicenseError' );
 
-			const { licenseKey } = generateKey( {
+			const { licenseKey } = generateLicenseKey( {
 				usageEndpoint: 'https://ckeditor.com'
 			} );
 			const editor = new TestEditor( { licenseKey } );
@@ -794,7 +913,8 @@ describe( 'Editor - license check', () => {
 			{ reason: 'invalid', error: 'invalid-license-key' },
 			{ reason: 'expired', error: 'license-key-expired' },
 			{ reason: 'domainLimit', error: 'license-key-domain-limit' },
-			{ reason: 'featureNotAllowed', error: 'license-key-plugin-not-allowed', pluginName: 'PluginABC' },
+			{ reason: 'pluginNotAllowed', error: 'license-key-plugin-not-allowed', pluginName: 'PluginABC' },
+			{ reason: 'featureNotAllowed', error: 'license-key-feature-not-allowed', featureName: 'FeatureABC' },
 			{ reason: 'evaluationLimit', error: 'license-key-evaluation-limit' },
 			{ reason: 'trialLimit', error: 'license-key-trial-limit' },
 			{ reason: 'developmentLimit', error: 'license-key-development-limit' },
@@ -803,17 +923,57 @@ describe( 'Editor - license check', () => {
 		];
 
 		for ( const testCase of testCases ) {
-			const { reason, error, pluginName } = testCase;
-			const expectedData = pluginName ? { pluginName } : undefined;
+			const { reason, error, ...name } = testCase;
+
+			const pluginOrFeatureName = name.pluginName || name.featureName;
+			const expectedData = pluginOrFeatureName ? name : undefined;
 
 			it( `should throw \`${ error }\` error`, () => {
 				const editor = new TestEditor( { licenseKey: 'GPL' } );
 
-				editor._showLicenseError( reason, pluginName );
+				editor._showLicenseError( reason, pluginOrFeatureName );
 
 				expectToThrowCKEditorError( () => clock.tick( 1 ), error, undefined, expectedData );
 			} );
 		}
+
+		it( 'should throw `license-key-plugin-not-allowed` pointing to the main plugin if a check is an editing part', async () => {
+			const editor = await TestEditor.create( {
+				licenseKey: 'GPL',
+				plugins: [
+					class TableColumnResize {
+						static get pluginName() {
+							return 'TableColumnResize';
+						}
+					}
+				]
+			} );
+
+			editor._showLicenseError( 'pluginNotAllowed', 'TableColumnResizeEditing' );
+
+			expectToThrowCKEditorError( () => clock.tick( 1 ), 'license-key-plugin-not-allowed', undefined, {
+				pluginName: 'TableColumnResize'
+			} );
+		} );
+
+		it( 'should throw `license-key-plugin-not-allowed` pointing to the main plugin if a check is a UI part', async () => {
+			const editor = await TestEditor.create( {
+				licenseKey: 'GPL',
+				plugins: [
+					class TableColumnResize {
+						static get pluginName() {
+							return 'TableColumnResize';
+						}
+					}
+				]
+			} );
+
+			editor._showLicenseError( 'pluginNotAllowed', 'TableColumnResizeUI' );
+
+			expectToThrowCKEditorError( () => clock.tick( 1 ), 'license-key-plugin-not-allowed', undefined, {
+				pluginName: 'TableColumnResize'
+			} );
+		} );
 
 		it( 'should throw error only once', () => {
 			const editor = new TestEditor( { licenseKey: 'GPL' } );
@@ -836,7 +996,7 @@ describe( 'Editor - license check', () => {
 		let editor, sendUsageRequestStub;
 
 		beforeEach( () => {
-			const { licenseKey } = generateKey( {
+			const { licenseKey } = generateLicenseKey( {
 				usageEndpoint: 'https://ckeditor.com'
 			} );
 

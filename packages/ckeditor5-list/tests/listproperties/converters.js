@@ -3,22 +3,21 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import BoldEditing from '@ckeditor/ckeditor5-basic-styles/src/bold/boldediting.js';
-import UndoEditing from '@ckeditor/ckeditor5-undo/src/undoediting.js';
-import ClipboardPipeline from '@ckeditor/ckeditor5-clipboard/src/clipboardpipeline.js';
-import BlockQuoteEditing from '@ckeditor/ckeditor5-block-quote/src/blockquoteediting.js';
-import HeadingEditing from '@ckeditor/ckeditor5-heading/src/headingediting.js';
-import IndentEditing from '@ckeditor/ckeditor5-indent/src/indentediting.js';
-import TableEditing from '@ckeditor/ckeditor5-table/src/tableediting.js';
-import AlignmentEditing from '@ckeditor/ckeditor5-alignment/src/alignmentediting.js';
-import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
-import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
+import { BoldEditing } from '@ckeditor/ckeditor5-basic-styles';
+import { UndoEditing } from '@ckeditor/ckeditor5-undo';
+import { ClipboardPipeline } from '@ckeditor/ckeditor5-clipboard';
+import { BlockQuoteEditing } from '@ckeditor/ckeditor5-block-quote';
+import { HeadingEditing } from '@ckeditor/ckeditor5-heading';
+import { IndentEditing } from '@ckeditor/ckeditor5-indent';
+import { TableEditing } from '@ckeditor/ckeditor5-table';
+import { AlignmentEditing } from '@ckeditor/ckeditor5-alignment';
+import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
+import { testUtils } from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
 
-import VirtualTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/virtualtesteditor.js';
-import { setData as setModelData } from '@ckeditor/ckeditor5-engine/src/dev-utils/model.js';
-import { getData as getViewData } from '@ckeditor/ckeditor5-engine/src/dev-utils/view.js';
-import stubUid from '../list/_utils/uid.js';
-import ListPropertiesEditing from '../../src/listproperties/listpropertiesediting.js';
+import { VirtualTestEditor } from '@ckeditor/ckeditor5-core/tests/_utils/virtualtesteditor.js';
+import { _setModelData, _getViewData } from '@ckeditor/ckeditor5-engine';
+import { stubUid } from '../list/_utils/uid.js';
+import { ListPropertiesEditing } from '../../src/listproperties/listpropertiesediting.js';
 import { modelList, setupTestHelpers } from '../list/_utils/utils.js';
 
 describe( 'ListPropertiesEditing - converters', () => {
@@ -366,7 +365,7 @@ describe( 'ListPropertiesEditing - converters', () => {
 
 			describe( 'copy and getSelectedContent()', () => {
 				it( 'should be able to downcast part of a nested list', () => {
-					setModelData( model, modelList( `
+					_setModelData( model, modelList( `
 						* A
 						  * [B1 {style:circle}
 						    B2
@@ -392,7 +391,7 @@ describe( 'ListPropertiesEditing - converters', () => {
 				} );
 
 				it( 'should be able to downcast part of a deep nested list', () => {
-					setModelData( model, modelList( `
+					_setModelData( model, modelList( `
 						* A
 						  * B1 {style:circle}
 						    B2
@@ -814,7 +813,7 @@ describe( 'ListPropertiesEditing - converters', () => {
 						conversionApi.consumable.consume( data.item, evt.name );
 					}, { priority: 'highest' } );
 
-					setModelData( model,
+					_setModelData( model,
 						'<paragraph listIndent="0" listItemId="a" listType="bulleted">a</paragraph>'
 					);
 
@@ -822,7 +821,7 @@ describe( 'ListPropertiesEditing - converters', () => {
 						writer.setAttribute( 'listStyle', 'circle', modelRoot.getChild( 0 ) );
 					} );
 
-					expect( getViewData( editor.editing.view, { withoutSelection: true } ) ).to.equal(
+					expect( _getViewData( editor.editing.view, { withoutSelection: true } ) ).to.equal(
 						'<ul>' +
 							'<li><span class="ck-list-bogus-paragraph">a</span></li>' +
 						'</ul>'
@@ -1081,7 +1080,7 @@ describe( 'ListPropertiesEditing - converters', () => {
 
 			describe( 'copy and getSelectedContent()', () => {
 				it( 'should be able to downcast part of a nested list', () => {
-					setModelData( model, modelList( `
+					_setModelData( model, modelList( `
 						# A
 						  # [B1 {reversed:true}
 						    B2
@@ -1107,7 +1106,7 @@ describe( 'ListPropertiesEditing - converters', () => {
 				} );
 
 				it( 'should be able to downcast part of a deep nested list', () => {
-					setModelData( model, modelList( `
+					_setModelData( model, modelList( `
 						# A
 						  # B1 {reversed:true}
 						    B2
@@ -1463,7 +1462,7 @@ describe( 'ListPropertiesEditing - converters', () => {
 						conversionApi.consumable.consume( data.item, evt.name );
 					}, { priority: 'highest' } );
 
-					setModelData( model,
+					_setModelData( model,
 						'<paragraph listIndent="0" listItemId="a" listType="numbered">a</paragraph>'
 					);
 
@@ -1471,7 +1470,7 @@ describe( 'ListPropertiesEditing - converters', () => {
 						writer.setAttribute( 'listReversed', true, modelRoot.getChild( 0 ) );
 					} );
 
-					expect( getViewData( editor.editing.view, { withoutSelection: true } ) ).to.equal(
+					expect( _getViewData( editor.editing.view, { withoutSelection: true } ) ).to.equal(
 						'<ol>' +
 							'<li><span class="ck-list-bogus-paragraph">a</span></li>' +
 						'</ol>'
@@ -1756,7 +1755,7 @@ describe( 'ListPropertiesEditing - converters', () => {
 
 			describe( 'copy and getSelectedContent()', () => {
 				it( 'should be able to downcast part of a nested list', () => {
-					setModelData( model, modelList( `
+					_setModelData( model, modelList( `
 						# A
 						  # [B1 {start:4}
 						    B2
@@ -1782,7 +1781,7 @@ describe( 'ListPropertiesEditing - converters', () => {
 				} );
 
 				it( 'should be able to downcast part of a deep nested list', () => {
-					setModelData( model, modelList( `
+					_setModelData( model, modelList( `
 						# A
 						  # B1 {start:4}
 						    B2
@@ -2138,7 +2137,7 @@ describe( 'ListPropertiesEditing - converters', () => {
 						conversionApi.consumable.consume( data.item, evt.name );
 					}, { priority: 'highest' } );
 
-					setModelData( model,
+					_setModelData( model,
 						'<paragraph listIndent="0" listItemId="a" listType="numbered">a</paragraph>'
 					);
 
@@ -2146,7 +2145,7 @@ describe( 'ListPropertiesEditing - converters', () => {
 						writer.setAttribute( 'listStart', 4, modelRoot.getChild( 0 ) );
 					} );
 
-					expect( getViewData( editor.editing.view, { withoutSelection: true } ) ).to.equal(
+					expect( _getViewData( editor.editing.view, { withoutSelection: true } ) ).to.equal(
 						'<ol>' +
 							'<li><span class="ck-list-bogus-paragraph">a</span></li>' +
 						'</ol>'

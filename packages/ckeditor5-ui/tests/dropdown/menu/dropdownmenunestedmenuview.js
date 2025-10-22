@@ -3,16 +3,16 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import ClassicTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
-import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
+import { ClassicTestEditor } from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
+import { testUtils } from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
 import {
 	FocusTracker,
 	KeystrokeHandler,
 	Locale
 } from '@ckeditor/ckeditor5-utils';
 
-import DropdownMenuButtonView from '../../../src/dropdown/menu/dropdownmenubuttonview.js';
-import DropdownMenuNestedMenuPanelView from '../../../src/dropdown/menu/dropdownmenunestedmenupanelview.js';
+import { DropdownMenuButtonView } from '../../../src/dropdown/menu/dropdownmenubuttonview.js';
+import { DropdownMenuNestedMenuPanelView } from '../../../src/dropdown/menu/dropdownmenunestedmenupanelview.js';
 import { DropdownMenuNestedMenuView, DropdownMenuPanelPositioningFunctions } from '../../../src/index.js';
 import { DropdownMenuBehaviors } from '../../../src/dropdown/menu/dropdownmenubehaviors.js';
 
@@ -139,7 +139,7 @@ describe( 'DropdownMenuNestedMenuView', () => {
 			sinon.assert.calledWithExactly( focusTrackerAddSpy.secondCall, menuView.panelView.element );
 		} );
 
-		// https://github.com/cksource/ckeditor5-commercial/issues/6633
+		// https://github.com/ckeditor/ckeditor5-commercial/issues/6633
 		it( 'should add the #listView to the focus tracker to allow for linking focus trackers and sharing state of nested menus', () => {
 			const focusTrackerAddSpy = sinon.spy( menuView.focusTracker, 'add' );
 

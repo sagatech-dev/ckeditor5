@@ -5,11 +5,11 @@
 
 import { FullPage, HtmlComment, HtmlPageDataProcessor } from '../src/index.js';
 
-import VirtualTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/virtualtesteditor.js';
-import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
+import { VirtualTestEditor } from '@ckeditor/ckeditor5-core/tests/_utils/virtualtesteditor.js';
+import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
 import { ClipboardPipeline } from '@ckeditor/ckeditor5-clipboard';
 
-import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
+import { testUtils } from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
 
 describe( 'FullPage', () => {
 	let editor;
@@ -30,8 +30,12 @@ describe( 'FullPage', () => {
 		expect( FullPage.isOfficialPlugin ).to.be.true;
 	} );
 
-	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
-		expect( FullPage.isPremiumPlugin ).to.be.false;
+	it( 'should have `isPremiumPlugin` static flag set to `true`', () => {
+		expect( FullPage.isPremiumPlugin ).to.be.true;
+	} );
+
+	it( 'should have `licenseFeatureCode` static flag set to `FPH`', () => {
+		expect( FullPage.licenseFeatureCode ).to.equal( 'FPH' );
 	} );
 
 	it( 'should set editor.data.processor', async () => {

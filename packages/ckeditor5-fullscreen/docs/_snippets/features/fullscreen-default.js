@@ -3,17 +3,19 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
+import './fullscreen-default.css';
 import {
 	TOKEN_URL,
+	querySnippetCSSUrl,
 	getViewportTopOffsetConfig,
 	attachTourBalloon,
 	findToolbarItem
 } from '@snippets/index.js';
 
 import { handleDocIdInUrl } from './_utils/document-id-in-url.js';
-import buildUserTokenUrl from './_utils/buildusertokenurl.js';
-import generateComments from './_utils/generatecomments.js';
-import generateSuggestions from './_utils/generatesuggestions.js';
+import { buildUserTokenUrl } from './_utils/buildusertokenurl.js';
+import { generateComments } from './_utils/generatecomments.js';
+import { generateSuggestions } from './_utils/generatesuggestions.js';
 import { randomUserFromAPI } from './_utils/randomuser.js';
 
 import { FullscreenEditor } from './fullscreen-build.js';
@@ -242,7 +244,7 @@ generateComments( csConfig, channelId, initialCommentsData )
 						'|',
 						'exportPdf', 'exportWord', 'importWord',
 						'|',
-						'formatPainter', 'findAndReplace', 'selectAll', 'wproofreader',
+						'formatPainter', 'findAndReplace', 'selectAll',
 						'|',
 						'heading',
 						'|',
@@ -283,16 +285,16 @@ generateComments( csConfig, channelId, initialCommentsData )
 						'../assets/pagination-fonts.css',
 						'../assets/ckeditor5/ckeditor5.css',
 						'../assets/ckeditor5-premium-features/ckeditor5-premium-features.css',
-						'../assets/pagination.css'
+						querySnippetCSSUrl( 'fullscreen-default' )
 					],
 					fileName: 'export-pdf-demo.pdf',
 					appID: 'cke5-docs',
 					converterOptions: {
-						format: 'Tabloid',
+						format: 'A4',
 						margin_top: '20mm',
 						margin_bottom: '20mm',
-						margin_right: '24mm',
-						margin_left: '24mm',
+						margin_right: '12mm',
+						margin_left: '12mm',
 						page_orientation: 'portrait'
 					},
 					tokenUrl: false
@@ -669,11 +671,6 @@ generateComments( csConfig, channelId, initialCommentsData )
 				},
 				documentOutline: {
 					container: document.querySelector( '#default_document-outline-container' )
-				},
-				wproofreader: {
-					serviceId: '1:Eebp63-lWHbt2-ASpHy4-AYUpy2-fo3mk4-sKrza1-NsuXy4-I1XZC2-0u2F54-aqYWd1-l3Qf14-umd',
-					lang: 'auto',
-					srcUrl: 'https://svc.webspellchecker.net/spellcheck31/wscbundle/wscbundle.js'
 				},
 				ckbox: {
 					tokenUrl: TOKEN_URL,

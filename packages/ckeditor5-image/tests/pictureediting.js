@@ -3,26 +3,25 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import VirtualTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/virtualtesteditor.js';
-import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
-import ItalicEditing from '@ckeditor/ckeditor5-basic-styles/src/italic/italicediting.js';
-import Plugin from '@ckeditor/ckeditor5-core/src/plugin.js';
-import LinkImageEditing from '@ckeditor/ckeditor5-link/src/linkimageediting.js';
+import { VirtualTestEditor } from '@ckeditor/ckeditor5-core/tests/_utils/virtualtesteditor.js';
+import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
+import { ItalicEditing } from '@ckeditor/ckeditor5-basic-styles';
+import { Plugin } from '@ckeditor/ckeditor5-core';
+import { LinkImageEditing } from '@ckeditor/ckeditor5-link';
 
-import global from '@ckeditor/ckeditor5-utils/src/dom/global.js';
-import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
-import { getData as getModelData } from '@ckeditor/ckeditor5-engine/src/dev-utils/model.js';
-import { getData as getViewData } from '@ckeditor/ckeditor5-engine/src/dev-utils/view.js';
+import { global } from '@ckeditor/ckeditor5-utils';
+import { testUtils } from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
+import { _getModelData, _getViewData } from '@ckeditor/ckeditor5-engine';
 import { NativeFileReaderMock, UploadAdapterMock } from '@ckeditor/ckeditor5-upload/tests/_utils/mocks.js';
 
-import ImageInlineEditing from '../src/image/imageinlineediting.js';
-import ImageBlockEditing from '../src/image/imageblockediting.js';
-import PictureEditing from '../src/pictureediting.js';
-import ImageEditing from '../src/image/imageediting.js';
-import ImageUtils from '../src/imageutils.js';
-import ImageResizeEditing from '../src/imageresize/imageresizeediting.js';
-import ImageCaptionEditing from '../src/imagecaption/imagecaptionediting.js';
-import ImageUploadEditing from '../src/imageupload/imageuploadediting.js';
+import { ImageInlineEditing } from '../src/image/imageinlineediting.js';
+import { ImageBlockEditing } from '../src/image/imageblockediting.js';
+import { PictureEditing } from '../src/pictureediting.js';
+import { ImageEditing } from '../src/image/imageediting.js';
+import { ImageUtils } from '../src/imageutils.js';
+import { ImageResizeEditing } from '../src/imageresize/imageresizeediting.js';
+import { ImageCaptionEditing } from '../src/imagecaption/imagecaptionediting.js';
+import { ImageUploadEditing } from '../src/imageupload/imageuploadediting.js';
 
 describe( 'PictureEditing', () => {
 	let editor, model, modelDocument, view, imageUtils;
@@ -119,7 +118,7 @@ describe( 'PictureEditing', () => {
 						'</p>'
 					);
 
-					expect( getModelData( model ) ).to.equal(
+					expect( _getModelData( model ) ).to.equal(
 						'<paragraph>[]' +
 							'foo' +
 							'<imageInline sources="[object Object],[object Object]" src="/assets/sample.png"></imageInline>' +
@@ -154,7 +153,7 @@ describe( 'PictureEditing', () => {
 						'</p>'
 					);
 
-					expect( getModelData( model ) ).to.equal(
+					expect( _getModelData( model ) ).to.equal(
 						'<paragraph>[]' +
 							'foo' +
 							'<imageInline sources="[object Object],[object Object]" src="/assets/sample.png"></imageInline>' +
@@ -187,7 +186,7 @@ describe( 'PictureEditing', () => {
 						'</p>'
 					);
 
-					expect( getModelData( model ) ).to.equal(
+					expect( _getModelData( model ) ).to.equal(
 						'<paragraph>[]' +
 							'foo' +
 							'<imageInline src="/assets/sample.png"></imageInline>' +
@@ -206,7 +205,7 @@ describe( 'PictureEditing', () => {
 						'</p>'
 					);
 
-					expect( getModelData( model ) ).to.equal(
+					expect( _getModelData( model ) ).to.equal(
 						'<paragraph>[]' +
 							'foo' +
 							'<imageInline linkHref="http://ckeditor.com" sources="[object Object]" src="/assets/sample.png">' +
@@ -235,7 +234,7 @@ describe( 'PictureEditing', () => {
 						'</p>'
 					);
 
-					expect( getModelData( model ) ).to.equal(
+					expect( _getModelData( model ) ).to.equal(
 						'<paragraph>[]' +
 							'foo' +
 							'<imageInline resizedWidth="123px" sources="[object Object]" src="/assets/sample.png"></imageInline>' +
@@ -264,7 +263,7 @@ describe( 'PictureEditing', () => {
 						'</p>'
 					);
 
-					expect( getModelData( model ) ).to.equal(
+					expect( _getModelData( model ) ).to.equal(
 						'<paragraph>[]' +
 							'foo' +
 							'<imageInline sources="[object Object]" src="/assets/sample.png"></imageInline>' +
@@ -288,7 +287,7 @@ describe( 'PictureEditing', () => {
 						'</p>'
 					);
 
-					expect( getModelData( model ) ).to.equal(
+					expect( _getModelData( model ) ).to.equal(
 						'<paragraph>[]' +
 							'foo' +
 							'<imageInline src="/assets/sample.png"></imageInline>' +
@@ -310,7 +309,7 @@ describe( 'PictureEditing', () => {
 						'</figure>'
 					);
 
-					expect( getModelData( model ) ).to.equal(
+					expect( _getModelData( model ) ).to.equal(
 						'[<imageBlock sources="[object Object],[object Object]" src="/assets/sample.png">' +
 						'</imageBlock>]'
 					);
@@ -345,7 +344,7 @@ describe( 'PictureEditing', () => {
 						'</figure>'
 					);
 
-					expect( getModelData( model ) ).to.equal(
+					expect( _getModelData( model ) ).to.equal(
 						'[<imageBlock sources="[object Object],[object Object]" src="/assets/sample.png">' +
 							'<caption>Text of the caption</caption>' +
 						'</imageBlock>]'
@@ -381,7 +380,7 @@ describe( 'PictureEditing', () => {
 						'</figure>'
 					);
 
-					expect( getModelData( model ) ).to.equal(
+					expect( _getModelData( model ) ).to.equal(
 						'[<imageBlock sources="[object Object],[object Object]" src="/assets/sample.png">' +
 							'<caption>Text of the caption</caption>' +
 						'</imageBlock>]'
@@ -419,7 +418,7 @@ describe( 'PictureEditing', () => {
 						'</figure>'
 					);
 
-					expect( getModelData( model ) ).to.equal(
+					expect( _getModelData( model ) ).to.equal(
 						'[<imageBlock linkHref="https://cksource.com" sources="[object Object],[object Object]" src="/assets/sample.png">' +
 							'<caption>Text of the caption</caption>' +
 						'</imageBlock>]'
@@ -455,7 +454,7 @@ describe( 'PictureEditing', () => {
 						'</figure>'
 					);
 
-					expect( getModelData( model ) ).to.equal(
+					expect( _getModelData( model ) ).to.equal(
 						'[<imageBlock ' +
 							'resizedWidth="123px" ' +
 							'sources="[object Object],[object Object]" ' +
@@ -497,7 +496,7 @@ describe( 'PictureEditing', () => {
 						'</figure>'
 					);
 
-					expect( getModelData( model ) ).to.equal(
+					expect( _getModelData( model ) ).to.equal(
 						'[<imageBlock ' +
 							'linkHref="https://cksource.com" ' +
 							'resizedWidth="123px" ' +
@@ -522,7 +521,7 @@ describe( 'PictureEditing', () => {
 						'</figure>'
 					);
 
-					expect( getModelData( model ) ).to.equal(
+					expect( _getModelData( model ) ).to.equal(
 						'[<imageBlock src="/assets/sample.png"></imageBlock>]'
 					);
 				} );
@@ -544,7 +543,7 @@ describe( 'PictureEditing', () => {
 						'</p>'
 					);
 
-					expect( getModelData( model ) ).to.equal( '<paragraph>[]foobar</paragraph>' );
+					expect( _getModelData( model ) ).to.equal( '<paragraph>[]foobar</paragraph>' );
 				} );
 
 				it( 'should not upcast individual <source> attributes if already consumed by other converters', () => {
@@ -564,7 +563,7 @@ describe( 'PictureEditing', () => {
 						'</p>'
 					);
 
-					expect( getModelData( model ) ).to.equal(
+					expect( _getModelData( model ) ).to.equal(
 						'<paragraph>[]' +
 							'foo' +
 							'<imageInline sources="[object Object],[object Object]" src="/assets/sample.png"></imageInline>' +
@@ -600,7 +599,7 @@ describe( 'PictureEditing', () => {
 						'</p>'
 					);
 
-					expect( getModelData( model ) ).to.equal( '<paragraph>[]foobar</paragraph>' );
+					expect( _getModelData( model ) ).to.equal( '<paragraph>[]foobar</paragraph>' );
 				} );
 
 				it( 'should upcast <picture> (and not throw) if the <img> inside was broken (without src attribute)', () => {
@@ -620,7 +619,7 @@ describe( 'PictureEditing', () => {
 						'</p>'
 					);
 
-					expect( getModelData( model ) ).to.equal(
+					expect( _getModelData( model ) ).to.equal(
 						'<paragraph>[]' +
 							'foo' +
 							'<imageInline alt="alt text" sources="[object Object],[object Object]">' +
@@ -646,7 +645,7 @@ describe( 'PictureEditing', () => {
 							'</p>'
 						);
 
-						expect( getViewData( view ) ).to.equal(
+						expect( _getViewData( view ) ).to.equal(
 							'<p>' +
 								'{}foo' +
 								'<span class="ck-widget image-inline" contenteditable="false">' +
@@ -681,7 +680,7 @@ describe( 'PictureEditing', () => {
 							'</p>'
 						);
 
-						expect( getViewData( view ) ).to.equal(
+						expect( _getViewData( view ) ).to.equal(
 							'<p>' +
 								'{}foo' +
 								'<a href="http://ckeditor.com">' +
@@ -713,7 +712,7 @@ describe( 'PictureEditing', () => {
 							'</p>'
 						);
 
-						expect( getViewData( view ) ).to.equal(
+						expect( _getViewData( view ) ).to.equal(
 							'<p>' +
 								'{}foo' +
 								'<span class="ck-widget image-inline image_resized" contenteditable="false" style="width:321px">' +
@@ -760,7 +759,7 @@ describe( 'PictureEditing', () => {
 								);
 							} );
 
-							expect( getViewData( view ) ).to.equal(
+							expect( _getViewData( view ) ).to.equal(
 								'<p>' +
 									'{}foo' +
 									'<span class="ck-widget image-inline" contenteditable="false">' +
@@ -797,7 +796,7 @@ describe( 'PictureEditing', () => {
 								);
 							} );
 
-							expect( getViewData( view ) ).to.equal(
+							expect( _getViewData( view ) ).to.equal(
 								'<p>' +
 									'{}foo' +
 									'<a href="http://ckeditor.com">' +
@@ -834,7 +833,7 @@ describe( 'PictureEditing', () => {
 								);
 							} );
 
-							expect( getViewData( view ) ).to.equal(
+							expect( _getViewData( view ) ).to.equal(
 								'<p>' +
 									'{}foo' +
 									'<span class="ck-widget image-inline image_resized" contenteditable="false" style="width:321px">' +
@@ -873,7 +872,7 @@ describe( 'PictureEditing', () => {
 								writer.removeAttribute( 'sources', modelDocument.getRoot().getChild( 0 ).getChild( 1 ) );
 							} );
 
-							expect( getViewData( view ) ).to.equal(
+							expect( _getViewData( view ) ).to.equal(
 								'<p>' +
 									'{}foo' +
 									'<span class="ck-widget image-inline" contenteditable="false">' +
@@ -898,7 +897,7 @@ describe( 'PictureEditing', () => {
 								writer.removeAttribute( 'sources', modelDocument.getRoot().getChild( 0 ).getChild( 1 ) );
 							} );
 
-							expect( getViewData( view ) ).to.equal(
+							expect( _getViewData( view ) ).to.equal(
 								'<p>' +
 									'{}foo' +
 									'<a href="http://ckeditor.com">' +
@@ -925,7 +924,7 @@ describe( 'PictureEditing', () => {
 								writer.removeAttribute( 'sources', modelDocument.getRoot().getChild( 0 ).getChild( 1 ) );
 							} );
 
-							expect( getViewData( view ) ).to.equal(
+							expect( _getViewData( view ) ).to.equal(
 								'<p>' +
 									'{}foo' +
 									'<span class="ck-widget image-inline image_resized" contenteditable="false" style="width:123px">' +
@@ -963,7 +962,7 @@ describe( 'PictureEditing', () => {
 								);
 							} );
 
-							expect( getViewData( view ) ).to.equal(
+							expect( _getViewData( view ) ).to.equal(
 								'<p>' +
 									'{}foo' +
 									'<span class="ck-widget image-inline" contenteditable="false">' +
@@ -977,7 +976,7 @@ describe( 'PictureEditing', () => {
 								writer.removeAttribute( 'sources', modelDocument.getRoot().getChild( 0 ).getChild( 1 ) );
 							} );
 
-							expect( getViewData( view ) ).to.equal(
+							expect( _getViewData( view ) ).to.equal(
 								'<p>' +
 									'{}foo' +
 									'<span class="ck-widget image-inline" contenteditable="false">' +
@@ -1002,7 +1001,7 @@ describe( 'PictureEditing', () => {
 							'</figure>'
 						);
 
-						expect( getViewData( view ) ).to.equal(
+						expect( _getViewData( view ) ).to.equal(
 							'[<figure class="ck-widget image" contenteditable="false">' +
 								'<picture>' +
 									'<source ' +
@@ -1035,7 +1034,7 @@ describe( 'PictureEditing', () => {
 							'</figure>'
 						);
 
-						expect( getViewData( view ) ).to.equal(
+						expect( _getViewData( view ) ).to.equal(
 							'[<figure class="ck-widget image" contenteditable="false">' +
 								'<picture>' +
 									'<source ' +
@@ -1087,7 +1086,7 @@ describe( 'PictureEditing', () => {
 							'</figure>'
 						);
 
-						expect( getViewData( view ) ).to.equal(
+						expect( _getViewData( view ) ).to.equal(
 							'[<figure class="ck-widget image" contenteditable="false">' +
 								'<a href="https://ckeditor.com">' +
 									'<picture>' +
@@ -1125,7 +1124,7 @@ describe( 'PictureEditing', () => {
 							writer.setAttribute( 'linkHref', 'https://ckeditor.com', modelDocument.getRoot().getChild( 0 ) );
 						} );
 
-						expect( getViewData( view ) ).to.equal(
+						expect( _getViewData( view ) ).to.equal(
 							'[<figure class="ck-widget image" contenteditable="false">' +
 								'<a href="https://ckeditor.com">' +
 									'<picture>' +
@@ -1173,7 +1172,7 @@ describe( 'PictureEditing', () => {
 							writer.removeAttribute( 'linkHref', modelDocument.getRoot().getChild( 0 ) );
 						} );
 
-						expect( getViewData( view ) ).to.equal(
+						expect( _getViewData( view ) ).to.equal(
 							'[<figure class="ck-widget image" contenteditable="false">' +
 								'<picture>' +
 									'<source ' +
@@ -1208,7 +1207,7 @@ describe( 'PictureEditing', () => {
 							'</figure>'
 						);
 
-						expect( getViewData( view ) ).to.equal(
+						expect( _getViewData( view ) ).to.equal(
 							'[<figure class="ck-widget image image_resized" contenteditable="false" style="width:123px">' +
 								'<picture>' +
 									'<source ' +
@@ -1259,7 +1258,7 @@ describe( 'PictureEditing', () => {
 								);
 							} );
 
-							expect( getViewData( view ) ).to.equal(
+							expect( _getViewData( view ) ).to.equal(
 								'[<figure class="ck-widget image" contenteditable="false">' +
 									'<picture>' +
 										'<source srcset="/assets/sample.png"></source>' +
@@ -1290,7 +1289,7 @@ describe( 'PictureEditing', () => {
 								);
 							} );
 
-							expect( getViewData( view ) ).to.equal(
+							expect( _getViewData( view ) ).to.equal(
 								'[<figure class="ck-widget image" contenteditable="false">' +
 									'<a href="https://ckeditor.com">' +
 										'<picture>' +
@@ -1321,7 +1320,7 @@ describe( 'PictureEditing', () => {
 								);
 							} );
 
-							expect( getViewData( view ) ).to.equal(
+							expect( _getViewData( view ) ).to.equal(
 								'[<figure class="ck-widget image image_resized" contenteditable="false" style="width:123px">' +
 									'<picture>' +
 										'<source srcset="/assets/sample.png"></source>' +
@@ -1356,7 +1355,7 @@ describe( 'PictureEditing', () => {
 								writer.removeAttribute( 'sources', modelDocument.getRoot().getChild( 0 ) );
 							} );
 
-							expect( getViewData( view ) ).to.equal(
+							expect( _getViewData( view ) ).to.equal(
 								'[<figure class="ck-widget image" contenteditable="false">' +
 									'<img src="/assets/sample.png"></img>' +
 								'</figure>]'
@@ -1387,7 +1386,7 @@ describe( 'PictureEditing', () => {
 								writer.removeAttribute( 'sources', modelDocument.getRoot().getChild( 0 ) );
 							} );
 
-							expect( getViewData( view ) ).to.equal(
+							expect( _getViewData( view ) ).to.equal(
 								'[<figure class="ck-widget image" contenteditable="false">' +
 									'<img src="/assets/sample.png"></img>' +
 									'<figcaption ' +
@@ -1432,7 +1431,7 @@ describe( 'PictureEditing', () => {
 								writer.removeAttribute( 'sources', modelDocument.getRoot().getChild( 0 ) );
 							} );
 
-							expect( getViewData( view ) ).to.equal(
+							expect( _getViewData( view ) ).to.equal(
 								'[<figure class="ck-widget image" contenteditable="false">' +
 									'<a href="https://cksource.com">' +
 										'<img src="/assets/sample.png"></img>' +
@@ -1477,7 +1476,7 @@ describe( 'PictureEditing', () => {
 								writer.removeAttribute( 'sources', modelDocument.getRoot().getChild( 0 ) );
 							} );
 
-							expect( getViewData( view ) ).to.equal(
+							expect( _getViewData( view ) ).to.equal(
 								'[<figure class="ck-widget image image_resized" contenteditable="false" style="width:123px">' +
 									'<img src="/assets/sample.png"></img>' +
 									'<figcaption ' +
@@ -1889,7 +1888,7 @@ describe( 'PictureEditing', () => {
 						);
 					} );
 
-					expect( getViewData( view, { withoutSelection: true } ) ).to.equal(
+					expect( _getViewData( view, { withoutSelection: true } ) ).to.equal(
 						'<figure class="ck-widget image" contenteditable="false">' +
 							'<picture>' +
 								'<source srcset="/assets/sample2.png"></source>' +
@@ -1933,7 +1932,7 @@ describe( 'PictureEditing', () => {
 						);
 					} );
 
-					expect( getViewData( view, { withoutSelection: true } ) ).to.equal(
+					expect( _getViewData( view, { withoutSelection: true } ) ).to.equal(
 						'<figure class="ck-widget image" contenteditable="false">' +
 							'<a href="https://ckeditor.com">' +
 								'<picture>' +
@@ -1999,7 +1998,7 @@ describe( 'PictureEditing', () => {
 						);
 					} );
 
-					expect( getViewData( view, { withoutSelection: true } ) ).to.equal(
+					expect( _getViewData( view, { withoutSelection: true } ) ).to.equal(
 						'<figure class="ck-widget image" contenteditable="false">' +
 							'<picture class="test-class">' +
 								'<source srcset="/assets/sample2.png"></source>' +
@@ -2071,7 +2070,7 @@ describe( 'PictureEditing', () => {
 				} );
 			} );
 
-			expect( getModelData( editor.model ) ).to.equal(
+			expect( _getModelData( editor.model ) ).to.equal(
 				'<paragraph>' +
 					'[<imageInline sources="[object Object],[object Object]" src="image.png"></imageInline>]' +
 					'foo' +
@@ -2108,7 +2107,7 @@ describe( 'PictureEditing', () => {
 				} );
 			} );
 
-			expect( getModelData( editor.model ) ).to.equal(
+			expect( _getModelData( editor.model ) ).to.equal(
 				'<paragraph>' +
 					'[<imageInline src="image.png"></imageInline>]' +
 					'foo' +

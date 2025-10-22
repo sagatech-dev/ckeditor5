@@ -3,8 +3,7 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import Model from '@ckeditor/ckeditor5-engine/src/model/model.js';
-import { parse as parseModel } from '@ckeditor/ckeditor5-engine/src/dev-utils/model.js';
+import { Model, _parseModel } from '@ckeditor/ckeditor5-engine';
 import { modelList, stringifyList } from '../_utils/utils.js';
 
 describe( 'mockList()', () => {
@@ -556,7 +555,7 @@ describe( 'stringifyList()', () => {
 
 	describe( 'bulleted list', () => {
 		it( 'flat list', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="foo" listType="bulleted">aaa</paragraph>' +
 				'<paragraph listIndent="0" listItemId="bar" listType="bulleted">bbb</paragraph>',
 				model.schema
@@ -569,7 +568,7 @@ describe( 'stringifyList()', () => {
 		} );
 
 		it( 'flat list with multi-block items', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="foo" listType="bulleted">aaa</paragraph>' +
 				'<paragraph listIndent="0" listItemId="foo" listType="bulleted">bbb</paragraph>' +
 				'<paragraph listIndent="0" listItemId="bar" listType="bulleted">ccc</paragraph>',
@@ -584,7 +583,7 @@ describe( 'stringifyList()', () => {
 		} );
 
 		it( 'nested list with multi-block items', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="a" listType="bulleted">aaa</paragraph>' +
 				'<paragraph listIndent="1" listItemId="b" listType="bulleted">bbb</paragraph>' +
 				'<paragraph listIndent="0" listItemId="a" listType="bulleted">ccc</paragraph>',
@@ -599,7 +598,7 @@ describe( 'stringifyList()', () => {
 		} );
 
 		it( 'nested list with many items', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="a" listType="bulleted">aaa</paragraph>' +
 				'<paragraph listIndent="1" listItemId="b" listType="bulleted">bbb</paragraph>' +
 				'<paragraph listIndent="1" listItemId="c" listType="bulleted">ccc</paragraph>' +
@@ -616,7 +615,7 @@ describe( 'stringifyList()', () => {
 		} );
 
 		it( 'many indentations', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="a" listType="bulleted">aaa</paragraph>' +
 				'<paragraph listIndent="1" listItemId="b" listType="bulleted">bbb</paragraph>' +
 				'<paragraph listIndent="2" listItemId="c" listType="bulleted">ccc</paragraph>' +
@@ -633,7 +632,7 @@ describe( 'stringifyList()', () => {
 		} );
 
 		it( 'many indentations with multiple blocks', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="a" listType="bulleted">aaa</paragraph>' +
 				'<paragraph listIndent="0" listItemId="a" listType="bulleted">aaa</paragraph>' +
 				'<paragraph listIndent="1" listItemId="b" listType="bulleted">bbb</paragraph>' +
@@ -658,7 +657,7 @@ describe( 'stringifyList()', () => {
 		} );
 
 		it( 'nested multi-blocks item', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="a" listType="bulleted">aaa</paragraph>' +
 				'<paragraph listIndent="1" listItemId="b" listType="bulleted">bbb</paragraph>' +
 				'<paragraph listIndent="1" listItemId="b" listType="bulleted">ccc</paragraph>',
@@ -673,7 +672,7 @@ describe( 'stringifyList()', () => {
 		} );
 
 		it( 'nested multi-blocks item followed by a list item', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="a" listType="bulleted">aaa</paragraph>' +
 				'<paragraph listIndent="1" listItemId="b" listType="bulleted">bbb</paragraph>' +
 				'<paragraph listIndent="1" listItemId="b" listType="bulleted">ccc</paragraph>' +
@@ -690,7 +689,7 @@ describe( 'stringifyList()', () => {
 		} );
 
 		it( 'single list item', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="a" listType="bulleted">a</paragraph>',
 				model.schema
 			);
@@ -701,7 +700,7 @@ describe( 'stringifyList()', () => {
 		} );
 
 		it( 'empty list item', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="a" listType="bulleted"></paragraph>',
 				model.schema
 			);
@@ -714,7 +713,7 @@ describe( 'stringifyList()', () => {
 
 	describe( 'numbered list', () => {
 		it( 'flat list', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="foo" listType="numbered">aaa</paragraph>' +
 				'<paragraph listIndent="0" listItemId="bar" listType="numbered">bbb</paragraph>',
 				model.schema
@@ -727,7 +726,7 @@ describe( 'stringifyList()', () => {
 		} );
 
 		it( 'flat list with multi-block items', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="foo" listType="numbered">aaa</paragraph>' +
 				'<paragraph listIndent="0" listItemId="foo" listType="numbered">bbb</paragraph>' +
 				'<paragraph listIndent="0" listItemId="bar" listType="numbered">ccc</paragraph>',
@@ -742,7 +741,7 @@ describe( 'stringifyList()', () => {
 		} );
 
 		it( 'nested list with multi-block items', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="a" listType="numbered">aaa</paragraph>' +
 				'<paragraph listIndent="1" listItemId="b" listType="numbered">bbb</paragraph>' +
 				'<paragraph listIndent="0" listItemId="a" listType="numbered">ccc</paragraph>',
@@ -757,7 +756,7 @@ describe( 'stringifyList()', () => {
 		} );
 
 		it( 'nested list with many items', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="a" listType="numbered">aaa</paragraph>' +
 				'<paragraph listIndent="1" listItemId="b" listType="numbered">bbb</paragraph>' +
 				'<paragraph listIndent="1" listItemId="c" listType="numbered">ccc</paragraph>' +
@@ -774,7 +773,7 @@ describe( 'stringifyList()', () => {
 		} );
 
 		it( 'many indentations', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="a" listType="numbered">aaa</paragraph>' +
 				'<paragraph listIndent="1" listItemId="b" listType="numbered">bbb</paragraph>' +
 				'<paragraph listIndent="2" listItemId="c" listType="numbered">ccc</paragraph>' +
@@ -791,7 +790,7 @@ describe( 'stringifyList()', () => {
 		} );
 
 		it( 'many indentations with multiple blocks', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="a" listType="numbered">aaa</paragraph>' +
 				'<paragraph listIndent="0" listItemId="a" listType="numbered">aaa</paragraph>' +
 				'<paragraph listIndent="1" listItemId="b" listType="numbered">bbb</paragraph>' +
@@ -816,7 +815,7 @@ describe( 'stringifyList()', () => {
 		} );
 
 		it( 'nested multi-blocks item', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="a" listType="numbered">aaa</paragraph>' +
 				'<paragraph listIndent="1" listItemId="b" listType="numbered">bbb</paragraph>' +
 				'<paragraph listIndent="1" listItemId="b" listType="numbered">ccc</paragraph>',
@@ -831,7 +830,7 @@ describe( 'stringifyList()', () => {
 		} );
 
 		it( 'nested multi-blocks item followed by a list item', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="a" listType="numbered">aaa</paragraph>' +
 				'<paragraph listIndent="1" listItemId="b" listType="numbered">bbb</paragraph>' +
 				'<paragraph listIndent="1" listItemId="b" listType="numbered">ccc</paragraph>' +
@@ -848,7 +847,7 @@ describe( 'stringifyList()', () => {
 		} );
 
 		it( 'single list item', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="a" listType="numbered">a</paragraph>',
 				model.schema
 			);
@@ -859,7 +858,7 @@ describe( 'stringifyList()', () => {
 		} );
 
 		it( 'empty list item', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="a" listType="numbered"></paragraph>',
 				model.schema
 			);
@@ -872,7 +871,7 @@ describe( 'stringifyList()', () => {
 
 	describe( 'mixed lists', () => {
 		it( 'bulleted and numbered list', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="a" listType="bulleted">a</paragraph>' +
 				'<paragraph listIndent="0" listItemId="b" listType="numbered">0</paragraph>',
 				model.schema
@@ -885,7 +884,7 @@ describe( 'stringifyList()', () => {
 		} );
 
 		it( 'numbered list item with nested bulleted list item', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="0" listType="numbered">0</paragraph>' +
 				'<paragraph listIndent="1" listItemId="1" listType="bulleted">a</paragraph>',
 				model.schema
@@ -898,7 +897,7 @@ describe( 'stringifyList()', () => {
 		} );
 
 		it( 'bulleted list item with nested numbered list item', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="0" listType="bulleted">a</paragraph>' +
 				'<paragraph listIndent="1" listItemId="1" listType="numbered">0</paragraph>',
 				model.schema
@@ -911,7 +910,7 @@ describe( 'stringifyList()', () => {
 		} );
 
 		it( 'numbered list with many blocks and nested bulleted list item', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="0" listType="numbered">0</paragraph>' +
 				'<paragraph listIndent="0" listItemId="0" listType="numbered">1</paragraph>' +
 				'<paragraph listIndent="1" listItemId="1" listType="bulleted">a</paragraph>',
@@ -926,7 +925,7 @@ describe( 'stringifyList()', () => {
 		} );
 
 		it( 'bulleted list with many blocks and nested numbered list item', () => {
-			const input = parseModel(
+			const input = _parseModel(
 				'<paragraph listIndent="0" listItemId="0" listType="bulleted">a</paragraph>' +
 				'<paragraph listIndent="0" listItemId="0" listType="bulleted">b</paragraph>' +
 				'<paragraph listIndent="1" listItemId="1" listType="numbered">0</paragraph>',
@@ -944,7 +943,7 @@ describe( 'stringifyList()', () => {
 			modelList.defaultBlock = 'listItem';
 			model.schema.register( 'listItem', { inheritAllFrom: '$block' } );
 
-			const input = parseModel(
+			const input = _parseModel(
 				'<listItem listIndent="0" listItemId="0" listType="bulleted">a</listItem>' +
 				'<listItem listIndent="0" listItemId="1" listType="numbered">b</listItem>' +
 				'<paragraph listIndent="0" listItemId="2" listType="numbered">c</paragraph>',

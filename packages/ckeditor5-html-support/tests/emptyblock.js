@@ -3,18 +3,17 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import ClassicTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
-import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
-import TableEditing from '@ckeditor/ckeditor5-table/src/tableediting.js';
-import Heading from '@ckeditor/ckeditor5-heading/src/heading.js';
-import ListEditing from '@ckeditor/ckeditor5-list/src/list/listediting.js';
-import BlockQuote from '@ckeditor/ckeditor5-block-quote/src/blockquote.js';
-import Clipboard from '@ckeditor/ckeditor5-clipboard/src/clipboard.js';
-import GeneralHtmlSupport from '../src/generalhtmlsupport.js';
-import { getData as getModelData, setData as setModelData } from '@ckeditor/ckeditor5-engine/src/dev-utils/model.js';
-import { INLINE_FILLER } from '@ckeditor/ckeditor5-engine/src/view/filler.js';
+import { ClassicTestEditor } from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
+import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
+import { TableEditing } from '@ckeditor/ckeditor5-table';
+import { Heading } from '@ckeditor/ckeditor5-heading';
+import { ListEditing } from '@ckeditor/ckeditor5-list';
+import { BlockQuote } from '@ckeditor/ckeditor5-block-quote';
+import { Clipboard } from '@ckeditor/ckeditor5-clipboard';
+import { GeneralHtmlSupport } from '../src/generalhtmlsupport.js';
+import { _getModelData, _setModelData, _VIEW_INLINE_FILLER } from '@ckeditor/ckeditor5-engine';
 
-import EmptyBlock from '../src/emptyblock.js';
+import { EmptyBlock } from '../src/emptyblock.js';
 import { toWidget, viewToModelPositionOutsideModelElement } from '@ckeditor/ckeditor5-widget';
 
 describe( 'EmptyBlock', () => {
@@ -75,7 +74,7 @@ describe( 'EmptyBlock', () => {
 				'<p>foo</p>'
 			);
 
-			expect( getModelData( model, { withoutSelection: true } ) ).to.equal(
+			expect( _getModelData( model, { withoutSelection: true } ) ).to.equal(
 				'<paragraph>foo</paragraph>'
 			);
 
@@ -89,7 +88,7 @@ describe( 'EmptyBlock', () => {
 				'<p>&nbsp;</p>'
 			);
 
-			expect( getModelData( model, { withoutSelection: true } ) ).to.equal(
+			expect( _getModelData( model, { withoutSelection: true } ) ).to.equal(
 				'<paragraph></paragraph>'
 			);
 
@@ -103,7 +102,7 @@ describe( 'EmptyBlock', () => {
 				'<p>   &nbsp;   </p>'
 			);
 
-			expect( getModelData( model, { withoutSelection: true } ) ).to.equal(
+			expect( _getModelData( model, { withoutSelection: true } ) ).to.equal(
 				'<paragraph></paragraph>'
 			);
 
@@ -117,7 +116,7 @@ describe( 'EmptyBlock', () => {
 				'<p></p>'
 			);
 
-			expect( getModelData( model, { withoutSelection: true } ) ).to.equal(
+			expect( _getModelData( model, { withoutSelection: true } ) ).to.equal(
 				'<paragraph htmlEmptyBlock="true"></paragraph>'
 			);
 
@@ -131,7 +130,7 @@ describe( 'EmptyBlock', () => {
 				'<p> </p>'
 			);
 
-			expect( getModelData( model, { withoutSelection: true } ) ).to.equal(
+			expect( _getModelData( model, { withoutSelection: true } ) ).to.equal(
 				'<paragraph htmlEmptyBlock="true"></paragraph>'
 			);
 
@@ -151,7 +150,7 @@ describe( 'EmptyBlock', () => {
 				'</p>'
 			);
 
-			expect( getModelData( model, { withoutSelection: true } ) ).to.equal(
+			expect( _getModelData( model, { withoutSelection: true } ) ).to.equal(
 				'<paragraph>Hello<placeholder></placeholder>World</paragraph>'
 			);
 		} );
@@ -165,7 +164,7 @@ describe( 'EmptyBlock', () => {
 				}, { priority: 'highest' } );
 			} );
 
-			expect( getModelData( model, { withoutSelection: true } ) ).to.equal(
+			expect( _getModelData( model, { withoutSelection: true } ) ).to.equal(
 				'<paragraph htmlEmptyBlock="true"></paragraph>' +
 				'<paragraph>foo</paragraph>'
 			);
@@ -179,7 +178,7 @@ describe( 'EmptyBlock', () => {
 					'<figure class="table"><table><tbody><tr><td></td></tr></tbody></table></figure>'
 				);
 
-				expect( getModelData( model, { withoutSelection: true } ) ).to.equal(
+				expect( _getModelData( model, { withoutSelection: true } ) ).to.equal(
 					'<table><tableRow>' +
 						'<tableCell htmlEmptyBlock="true"><paragraph htmlEmptyBlock="true"></paragraph></tableCell>' +
 					'</tableRow></table>'
@@ -193,7 +192,7 @@ describe( 'EmptyBlock', () => {
 					'<figure class="table"><table><tbody><tr><td>foo</td><td></td><td>&nbsp;</td></tr></tbody></table></figure>'
 				);
 
-				expect( getModelData( model, { withoutSelection: true } ) ).to.equal(
+				expect( _getModelData( model, { withoutSelection: true } ) ).to.equal(
 					'<table>' +
 						'<tableRow>' +
 							'<tableCell><paragraph>foo</paragraph></tableCell>' +
@@ -211,7 +210,7 @@ describe( 'EmptyBlock', () => {
 			it( 'should preserve empty cells on table cell with whitespace', () => {
 				editor.setData( '<figure class="table"><table><tbody><tr><td> </td></tr></tbody></table></figure>' );
 
-				expect( getModelData( model, { withoutSelection: true } ) ).to.equal(
+				expect( _getModelData( model, { withoutSelection: true } ) ).to.equal(
 					'<table>' +
 						'<tableRow>' +
 							'<tableCell htmlEmptyBlock="true"><paragraph htmlEmptyBlock="true"></paragraph></tableCell>' +
@@ -229,7 +228,7 @@ describe( 'EmptyBlock', () => {
 					'<figure class="table"><table><tbody><tr><td><p>&nbsp;</p></td><td><p></p></td></tr></tbody></table></figure>'
 				);
 
-				expect( getModelData( model, { withoutSelection: true } ) ).to.equal(
+				expect( _getModelData( model, { withoutSelection: true } ) ).to.equal(
 					'<table>' +
 						'<tableRow>' +
 						'<tableCell><paragraph></paragraph></tableCell>' +
@@ -255,7 +254,7 @@ describe( 'EmptyBlock', () => {
 					'</ul>'
 				);
 
-				expect( editor.getData() ).to.equal(
+				expect( editor.getData( { skipListItemIds: true } ) ).to.equal(
 					'<ul>' +
 						'<li>foo</li>' +
 						'<li>&nbsp;</li>' +
@@ -275,7 +274,7 @@ describe( 'EmptyBlock', () => {
 					'<h2>&nbsp;</h2>'
 				);
 
-				expect( getModelData( model, { withoutSelection: true } ) ).to.equal(
+				expect( _getModelData( model, { withoutSelection: true } ) ).to.equal(
 					'<heading1>foo</heading1>' +
 					'<heading1 htmlEmptyBlock="true"></heading1>' +
 					'<heading1 htmlEmptyBlock="true"></heading1>' +
@@ -301,7 +300,7 @@ describe( 'EmptyBlock', () => {
 					'</blockquote>'
 				);
 
-				expect( getModelData( model, { withoutSelection: true } ) ).to.equal(
+				expect( _getModelData( model, { withoutSelection: true } ) ).to.equal(
 					'<paragraph>foo</paragraph>' +
 					'<blockQuote>' +
 						'<paragraph htmlEmptyBlock="true"></paragraph>' +
@@ -340,7 +339,7 @@ describe( 'EmptyBlock', () => {
 			const domRoot = editor.editing.view.getDomRoot();
 
 			expect( domRoot.innerHTML ).to.equal(
-				'<p>' + INLINE_FILLER + '</p>' +
+				'<p>' + _VIEW_INLINE_FILLER + '</p>' +
                 '<p>foo</p>'
 			);
 		} );
@@ -398,7 +397,7 @@ describe( 'EmptyBlock', () => {
 			it( 'should not add block filler to copied empty paragraphs', () => {
 				const dataTransferMock = createDataTransfer();
 
-				setModelData( model,
+				_setModelData( model,
 					'[<paragraph htmlEmptyBlock="true"></paragraph>' +
 					'<paragraph></paragraph>]'
 				);
@@ -428,7 +427,7 @@ describe( 'EmptyBlock', () => {
 					method: 'paste'
 				} );
 
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph htmlEmptyBlock="true"></paragraph>' +
 					'<paragraph>Foo[]</paragraph>'
 				);
@@ -449,7 +448,7 @@ describe( 'EmptyBlock', () => {
 					method: 'paste'
 				} );
 
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph></paragraph>' +
 					'<paragraph>Foo[]</paragraph>'
 				);
@@ -481,7 +480,7 @@ describe( 'EmptyBlock', () => {
 				'<div></div><div>foo</div>'
 			);
 
-			expect( getModelData( model, { withoutSelection: true } ) ).to.equal(
+			expect( _getModelData( model, { withoutSelection: true } ) ).to.equal(
 				'<htmlDivParagraph htmlEmptyBlock="true"></htmlDivParagraph>' +
 				'<htmlDivParagraph>foo</htmlDivParagraph>'
 			);

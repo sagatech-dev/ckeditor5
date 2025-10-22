@@ -4,7 +4,6 @@ meta-title: Update to version 45.x | CKEditor 5 Documentation
 meta-description: Follow the guide to update CKEditor 5 to version 45.x, including key changes, migration tips, and compatibility considerations.
 menu-title: Update to v45.x
 order: 79
-modified_at: 2025-05-08
 ---
 
 # Update to CKEditor&nbsp;5 v45.x
@@ -14,6 +13,19 @@ modified_at: 2025-05-08
 
 	You may try removing the `package-lock.json` or `yarn.lock` files (if applicable) and reinstalling all packages before rebuilding the editor. For best results, make sure you use the most recent package versions.
 </info-box>
+
+## Update to CKEditor&nbsp;5 v45.2.2
+
+Released on 3 September, 2025. ([See full release notes](https://github.com/ckeditor/ckeditor5/releases/tag/v45.2.2))
+
+A Cross-Site Scripting (XSS) vulnerability has been discovered in the CKEditor&nbsp;5 clipboard package (`CVE-2025-58064`). This vulnerability could be triggered by a specific user action, leading to unauthorized JavaScript code execution, if the attacker managed to insert malicious content into the editor, which might happen with a specific editor configuration.
+
+This vulnerability affects **only** installations where the editor configuration meets one of the following criteria:
+
+* The [HTML embed plugin](https://ckeditor.com/docs/ckeditor5/latest/features/html/html-embed.html) is enabled
+* A custom plugin introducing an editable element that implements the view [RawElement](https://ckeditor.com/docs/ckeditor5/latest/api/module_engine_view_rawelement-ViewRawElement.html) is enabled
+
+For more details, please refer to the relevant [security advisory](https://github.com/ckeditor/ckeditor5/security/advisories/GHSA-x9gp-vjh6-3wv6) and [contact us](https://ckeditor.com/contact/) if you have more questions.
 
 ## Update to CKEditor&nbsp;5 v45.2.1
 

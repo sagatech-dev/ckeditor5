@@ -3,14 +3,13 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import InsertTextObserver from '../src/inserttextobserver.js';
+import { InsertTextObserver } from '../src/inserttextobserver.js';
 import { fireBeforeInputDomEvent, fireCompositionEndDomEvent } from './_utils/utils.js';
 
-import View from '@ckeditor/ckeditor5-engine/src/view/view.js';
-import createViewRoot from '@ckeditor/ckeditor5-engine/tests/view/_utils/createroot.js';
-import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
-import { setData as viewSetData } from '@ckeditor/ckeditor5-engine/src/dev-utils/view.js';
-import env from '@ckeditor/ckeditor5-utils/src/env.js';
+import { EditingView, _setViewData } from '@ckeditor/ckeditor5-engine';
+import { createViewRoot } from '@ckeditor/ckeditor5-engine/tests/view/_utils/createroot.js';
+import { testUtils } from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
+import { env } from '@ckeditor/ckeditor5-utils';
 
 describe( 'InsertTextObserver', () => {
 	let view, viewDocument, insertTextEventSpy;
@@ -21,7 +20,7 @@ describe( 'InsertTextObserver', () => {
 	beforeEach( () => {
 		domRoot = document.createElement( 'div' );
 
-		view = new View();
+		view = new EditingView();
 		viewDocument = view.document;
 		createViewRoot( viewDocument );
 		view.attachDomRoot( domRoot );
@@ -37,7 +36,7 @@ describe( 'InsertTextObserver', () => {
 
 	it( 'can be initialized', () => {
 		expect( () => {
-			view = new View();
+			view = new EditingView();
 			viewDocument = view.document;
 			createViewRoot( viewDocument );
 			view.attachDomRoot( document.createElement( 'div' ) );
@@ -109,7 +108,7 @@ describe( 'InsertTextObserver', () => {
 	} );
 
 	it( 'should never preventDefault() the beforeinput event', () => {
-		viewSetData( view, '<p>fo{}o</p>' );
+		_setViewData( view, '<p>fo{}o</p>' );
 
 		const viewRange = view.document.selection.getFirstRange();
 		const domRange = view.domConverter.viewRangeToDom( viewRange );
@@ -131,7 +130,7 @@ describe( 'InsertTextObserver', () => {
 	} );
 
 	it( 'should handle the insertText input type and fire the insertText event', () => {
-		viewSetData( view, '<p>fo{}o</p>' );
+		_setViewData( view, '<p>fo{}o</p>' );
 
 		const viewRange = view.document.selection.getFirstRange();
 		const domRange = view.domConverter.viewRangeToDom( viewRange );
@@ -153,7 +152,7 @@ describe( 'InsertTextObserver', () => {
 	} );
 
 	it( 'should handle the insertText input type and fire the insertText event while composing', () => {
-		viewSetData( view, '<p>fo{}o</p>' );
+		_setViewData( view, '<p>fo{}o</p>' );
 
 		const viewRange = view.document.selection.getFirstRange();
 		const domRange = view.domConverter.viewRangeToDom( viewRange );
@@ -176,7 +175,7 @@ describe( 'InsertTextObserver', () => {
 	} );
 
 	it( 'should handle the insertReplacementText input type and fire the insertText event', () => {
-		viewSetData( view, '<p>fo{}o</p>' );
+		_setViewData( view, '<p>fo{}o</p>' );
 
 		const viewRange = view.document.selection.getFirstRange();
 		const domRange = view.domConverter.viewRangeToDom( viewRange );
@@ -197,7 +196,7 @@ describe( 'InsertTextObserver', () => {
 	} );
 
 	it( 'should handle the compositionend event and fire the insertText event', () => {
-		viewSetData( view, '<p>fo{}o</p>' );
+		_setViewData( view, '<p>fo{}o</p>' );
 
 		fireCompositionEndDomEvent( domRoot, {
 			data: 'bar'
@@ -213,7 +212,7 @@ describe( 'InsertTextObserver', () => {
 	} );
 
 	it( 'should ignore the empty compositionend event (without any data)', () => {
-		viewSetData( view, '<p>fo{}o</p>' );
+		_setViewData( view, '<p>fo{}o</p>' );
 
 		fireCompositionEndDomEvent( domRoot, {
 			data: ''
@@ -224,7 +223,7 @@ describe( 'InsertTextObserver', () => {
 
 	// See https://github.com/ckeditor/ckeditor5/issues/14569.
 	it( 'should flush focus observer to enable selection rendering', () => {
-		viewSetData( view, '<p>fo{}o</p>' );
+		_setViewData( view, '<p>fo{}o</p>' );
 
 		const flushSpy = testUtils.sinon.spy( view.getObserver( InsertTextObserver ).focusObserver, 'flush' );
 
@@ -256,7 +255,7 @@ describe( 'InsertTextObserver', () => {
 
 			domRoot = document.createElement( 'div' );
 
-			view = new View();
+			view = new EditingView();
 			viewDocument = view.document;
 			createViewRoot( viewDocument );
 			view.attachDomRoot( domRoot );
@@ -271,7 +270,7 @@ describe( 'InsertTextObserver', () => {
 		} );
 
 		it( 'should handle the insertCompositionText input type and fire the insertText event', () => {
-			viewSetData( view, '<p>f{o}o</p>' );
+			_setViewData( view, '<p>f{o}o</p>' );
 
 			const viewRange = view.document.selection.getFirstRange();
 			const domRange = view.domConverter.viewRangeToDom( viewRange );

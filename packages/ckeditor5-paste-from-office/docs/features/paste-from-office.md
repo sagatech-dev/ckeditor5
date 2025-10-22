@@ -1,14 +1,17 @@
 ---
+category: features-pasting
 menu-title: Paste from Office
 meta-title: Paste from Office | CKEditor 5 Documentation
 meta-description: CKEditor 5 lets you handle content that you paste from Word and paste from Excel.
-category: features-pasting
 order: 10
+badges: [ premium ]
 ---
 
 # Paste from Office
 
 Paste from Office features let you paste content from Microsoft Word and Microsoft Excel and preserve its original structure and formatting. This is the basic, open-source Paste from Office feature. You can also try the more advanced, premium {@link features/paste-from-office-enhanced enhanced Paste from Office} feature.
+
+{@snippet getting-started/unlock-feature}
 
 ## Demo
 
@@ -21,9 +24,9 @@ To test pasting from Office, download the sample documents and open them in Micr
 
 {@snippet features/paste-from-office}
 
-<info-box info>
+<snippet-footer>
 	This demo presents a limited set of features. Visit the {@link examples/builds/full-featured-editor feature-rich editor example} to see more in action.
-</info-box>
+</snippet-footer>
 
 ## Enhanced paste from Office
 
@@ -63,12 +66,6 @@ With CKEditor&nbsp;5 you do not need to worry about pasting messy content from M
 This means that if you did not enable, for instance, {@link features/font font family and font size} features, this sort of formatting will be automatically stripped off when you paste content from Microsoft Word and other sources (like other websites).
 
 ## Installation
-
-<info-box info>
-	⚠️ **New import paths**
-
-	Starting with {@link updating/update-to-42 version 42.0.0}, we changed the format of import paths. This guide uses the new, shorter format. Refer to the {@link getting-started/legacy-getting-started/legacy-imports Packages in the legacy setup} guide if you use an older version of CKEditor&nbsp;5.
-</info-box>
 
 After {@link getting-started/integrations-cdn/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
 

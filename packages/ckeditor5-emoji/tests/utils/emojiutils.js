@@ -3,9 +3,9 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
-import EmojiUtils from '../../src/emojiutils.ts';
-import ClassicTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
+import { testUtils } from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
+import { EmojiUtils } from '../../src/emojiutils.ts';
+import { ClassicTestEditor } from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
 
 describe( 'EmojiUtils', () => {
 	let editor, emojiUtils, editorElement;
@@ -214,7 +214,65 @@ describe( 'EmojiUtils', () => {
 		} );
 	} );
 
-	describe( '_isEmojiZwjSupported()', () => {
+	describe( 'isEmojiZwjSupported()', () => {
+		it( 'uses fast-path by default', async () => {
+			sinon.stub( emojiUtils, 'getNodeWidthUsingCanvas' ).onFirstCall().returns( 30 );
+
+			const getNodeWidthSpy = sinon.spy( emojiUtils, 'getNodeWidth' );
+
+			emojiUtils.isEmojiZwjSupported(
+				{ emoji: '' },
+				document.createElement( 'div' )
+			);
+
+			expect( emojiUtils.getNodeWidthUsingCanvas.called ).to.be.true;
+			expect( getNodeWidthSpy.called ).to.be.false;
+		} );
+
+		it( 'falls back to slow-path if fast-path returns size larger than expected', async () => {
+			sinon.stub( emojiUtils, 'getNodeWidthUsingCanvas' ).onFirstCall().returns( Infinity );
+
+			const getNodeWidthSpy = sinon.spy( emojiUtils, 'getNodeWidth' );
+
+			emojiUtils.isEmojiZwjSupported(
+				{ emoji: '' },
+				document.createElement( 'div' )
+			);
+
+			expect( emojiUtils.getNodeWidthUsingCanvas.called ).to.be.true;
+			expect( getNodeWidthSpy.called ).to.be.true;
+		} );
+	} );
+
+	describe( 'getNodeWidthUsingCanvas()', () => {
+		it( 'should return true when emoji is standard width', async () => {
+			const container = document.createElement( 'div' );
+			const emojiItem = { emoji: '🙂' };
+
+			document.body.appendChild( container );
+
+			const result = emojiUtils.isEmojiZwjSupported( emojiItem, container );
+
+			expect( result ).to.be.true;
+
+			container.remove();
+		} );
+
+		it( 'should return false when emoji is abnormally wide (size larger than 2 emoji)', async () => {
+			const container = document.createElement( 'div' );
+			const emojiItem = { emoji: '🙂🙂🙂' };
+
+			document.body.appendChild( container );
+
+			const result = emojiUtils.isEmojiZwjSupported( emojiItem, container );
+
+			expect( result ).to.be.false;
+
+			container.remove();
+		} );
+	} );
+
+	describe( 'getNodeWidth()', () => {
 		it( 'should return true when emoji is standard width', async () => {
 			const container = document.createElement( 'div' );
 			const emojiItem = { emoji: '🙂' };

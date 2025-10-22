@@ -3,20 +3,21 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import EmptyElement from '../../src/view/emptyelement.js';
-import Element from '../../src/view/element.js';
-import Document from '../../src/view/document.js';
+import { ViewEmptyElement } from '../../src/view/emptyelement.js';
+import { ViewElement } from '../../src/view/element.js';
+import { ViewDocument } from '../../src/view/document.js';
 
 import { expectToThrowCKEditorError } from '@ckeditor/ckeditor5-utils/tests/_utils/utils.js';
 import { StylesProcessor } from '../../src/view/stylesmap.js';
+import { ViewRootEditableElement } from '../../src/index.js';
 
-describe( 'EmptyElement', () => {
+describe( 'ViewEmptyElement', () => {
 	let element, emptyElement, document;
 
 	beforeEach( () => {
-		document = new Document( new StylesProcessor() );
-		element = new Element( document, 'b' );
-		emptyElement = new EmptyElement( document, 'img', {
+		document = new ViewDocument( new StylesProcessor() );
+		element = new ViewElement( document, 'b' );
+		emptyElement = new ViewEmptyElement( document, 'img', {
 			alt: 'alternative text',
 			style: 'margin-top: 2em;color: white;',
 			class: 'image big'
@@ -27,7 +28,7 @@ describe( 'EmptyElement', () => {
 		let el;
 
 		before( () => {
-			el = new EmptyElement( document, 'p' );
+			el = new ViewEmptyElement( document, 'p' );
 		} );
 
 		it( 'should return true for emptyElement/element, also with correct name and element name', () => {
@@ -62,10 +63,10 @@ describe( 'EmptyElement', () => {
 	} );
 
 	it( 'should throw if child elements are passed to constructor', () => {
-		const el = new Element( document, 'i' );
+		const el = new ViewElement( document, 'i' );
 
 		expectToThrowCKEditorError( () => {
-			new EmptyElement( document, 'img', null, [ el ] ); // eslint-disable-line no-new
+			new ViewEmptyElement( document, 'img', null, [ el ] ); // eslint-disable-line no-new
 		}, 'view-emptyelement-cannot-add', el );
 	} );
 
@@ -102,6 +103,26 @@ describe( 'EmptyElement', () => {
 	describe( 'getFillerOffset', () => {
 		it( 'should return null', () => {
 			expect( emptyElement.getFillerOffset() ).to.be.null;
+		} );
+	} );
+
+	describe( 'toJSON()', () => {
+		it( 'should provide node type, root name, path', () => {
+			const emptyElement = new ViewEmptyElement( document, 'span' );
+			const paragraph = new ViewElement( document, 'p', null );
+			const root = new ViewRootEditableElement( document, 'div' );
+			paragraph._appendChild( emptyElement );
+			root._appendChild( paragraph );
+
+			const json = JSON.stringify( emptyElement );
+			const parsed = JSON.parse( json );
+
+			expect( parsed ).to.deep.equal( {
+				name: 'span',
+				path: [ 0, 0 ],
+				root: 'main',
+				type: 'EmptyElement'
+			} );
 		} );
 	} );
 } );

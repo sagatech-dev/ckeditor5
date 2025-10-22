@@ -3,21 +3,22 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import PasteFromOffice from '../src/pastefromoffice.js';
-import ClipboardPipeline from '@ckeditor/ckeditor5-clipboard/src/clipboardpipeline.js';
-import ClassicTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
-import HtmlDataProcessor from '@ckeditor/ckeditor5-engine/src/dataprocessor/htmldataprocessor.js';
+import { PasteFromOffice } from '../src/pastefromoffice.js';
+import { ClipboardPipeline } from '@ckeditor/ckeditor5-clipboard';
+import { ClassicTestEditor } from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
+import {
+	HtmlDataProcessor,
+	StylesProcessor,
+	ViewDocument,
+	ViewDocumentFragment,
+	_setModelData,
+	ViewDomConverter
+} from '@ckeditor/ckeditor5-engine';
 import { createDataTransfer } from './_utils/utils.js';
-import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
-import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
-import { StylesProcessor } from '@ckeditor/ckeditor5-engine/src/view/stylesmap.js';
-import ViewDocument from '@ckeditor/ckeditor5-engine/src/view/document.js';
-import ViewDocumentFragment from '@ckeditor/ckeditor5-engine/src/view/documentfragment.js';
-import CodeBlockUI from '@ckeditor/ckeditor5-code-block/src/codeblockui.js';
-import CodeBlockEditing from '@ckeditor/ckeditor5-code-block/src/codeblockediting.js';
-import { setData as setModelData } from '@ckeditor/ckeditor5-engine/src/dev-utils/model.js';
+import { testUtils } from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
+import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
+import { CodeBlockUI, CodeBlockEditing } from '@ckeditor/ckeditor5-code-block';
 import { priorities } from '@ckeditor/ckeditor5-utils';
-import { DomConverter } from '@ckeditor/ckeditor5-engine';
 
 describe( 'PasteFromOffice', () => {
 	const htmlDataProcessor = new HtmlDataProcessor( new ViewDocument( new StylesProcessor() ) );
@@ -54,8 +55,12 @@ describe( 'PasteFromOffice', () => {
 		expect( PasteFromOffice.isOfficialPlugin ).to.be.true;
 	} );
 
-	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
-		expect( PasteFromOffice.isPremiumPlugin ).to.be.false;
+	it( 'should have `isPremiumPlugin` static flag set to `true`', () => {
+		expect( PasteFromOffice.isPremiumPlugin ).to.be.true;
+	} );
+
+	it( 'should have `licenseFeatureCode` static flag set to `PFO`', () => {
+		expect( PasteFromOffice.licenseFeatureCode ).to.equal( 'PFO' );
 	} );
 
 	it( 'should load Clipboard plugin', () => {
@@ -70,7 +75,7 @@ describe( 'PasteFromOffice', () => {
 		clipboardPipeline.on( 'inputTransformation', ( evt, data ) => {
 			const domParser = new DOMParser();
 			const htmlDocument = domParser.parseFromString( '<p>Existing data</p>', 'text/html' );
-			const domConverter = new DomConverter( viewDocument, { renderingMode: 'data' } );
+			const domConverter = new ViewDomConverter( viewDocument, { renderingMode: 'data' } );
 			const fragment = htmlDocument.createDocumentFragment();
 
 			data._parsedData = {
@@ -160,7 +165,7 @@ describe( 'PasteFromOffice', () => {
 			} );
 
 			it( 'should process data for codeBlock', () => {
-				setModelData( editor.model, '<codeBlock language="plaintext">[]</codeBlock>' );
+				_setModelData( editor.model, '<codeBlock language="plaintext">[]</codeBlock>' );
 
 				const data = setUpData( '<p id="docs-internal-guid-12345678-1234-1234-1234-1234567890ab"></p>' );
 				const getDataSpy = sinon.spy( data.dataTransfer, 'getData' );

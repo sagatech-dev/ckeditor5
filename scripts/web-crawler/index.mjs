@@ -6,7 +6,7 @@
  */
 
 import minimist from 'minimist';
-import { DEFAULT_CONCURRENCY, runCrawler, toArray, isUrlValid } from '@ckeditor/ckeditor5-dev-web-crawler';
+import { DEFAULT_CONCURRENCY, DEFAULT_TIMEOUT, runCrawler, toArray, isUrlValid } from '@ckeditor/ckeditor5-dev-web-crawler';
 
 const options = parseArguments( process.argv.slice( 2 ) );
 
@@ -31,7 +31,8 @@ function parseArguments( args ) {
 			'url',
 			'depth',
 			'exclusions',
-			'concurrency'
+			'concurrency',
+			'timeout'
 		],
 
 		boolean: [
@@ -44,7 +45,8 @@ function parseArguments( args ) {
 			u: 'url',
 			d: 'depth',
 			e: 'exclusions',
-			c: 'concurrency'
+			c: 'concurrency',
+			t: 'timeout'
 		},
 
 		default: {
@@ -59,17 +61,15 @@ function parseArguments( args ) {
 	}
 
 	const defaultOptionsForDocs = minimist( [
-		'-u', 'http://fake.ckeditor.com:8080/ckeditor5/latest/',
+		'-u', 'https://fake.ckeditor.com:8080/ckeditor5/latest/',
 		'-e', '/ckfinder/',
 		'-e', '/api/',
-		'-e', '/assets/',
-		'-c', DEFAULT_CONCURRENCY
+		'-e', '/assets/'
 	], config );
 
 	const defaultOptionsForManual = minimist( [
 		'-u', 'http://localhost:8125/',
-		'-d', 1,
-		'-c', DEFAULT_CONCURRENCY
+		'-d', 1
 	], config );
 
 	const options = {};
@@ -94,7 +94,9 @@ function parseArguments( args ) {
 		url: options.url,
 		depth: options.depth ? Number( options.depth ) : Infinity,
 		exclusions: options.exclusions ? toArray( options.exclusions ).filter( exclusion => exclusion.length > 0 ) : [],
-		concurrency: options.concurrency ? Number( options.concurrency ) : 1,
-		silent: options.silent
+		timeout: options.timeout ? Number( options.timeout ) : DEFAULT_TIMEOUT,
+		concurrency: options.concurrency ? Number( options.concurrency ) : Math.min( DEFAULT_CONCURRENCY, 12 ),
+		silent: options.silent,
+		ignoreHTTPSErrors: true
 	};
 }

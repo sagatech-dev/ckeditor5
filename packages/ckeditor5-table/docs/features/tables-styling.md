@@ -5,13 +5,16 @@ meta-description: Style tables in CKEditor 5 with custom classes, alignment, and
 category: tables
 order: 20
 modified_at: 2022-05-19
+badges: [ premium ]
 ---
 
 # Table and cell styling tools
 
-{@snippet features/build-table-source}
+{@snippet features/build-table-source empty}
 
 CKEditor&nbsp;5 comes with some additional tools that help you change the look of tables and table cells. You can control border color and style, background color, padding, or text alignment.
+
+{@snippet getting-started/unlock-feature}
 
 ## Demo
 
@@ -21,17 +24,11 @@ Put the caret anywhere inside the table to open the table toolbar. Click the tab
 
 {@snippet features/table-styling}
 
-<info-box info>
+<snippet-footer>
 	This demo presents a limited set of features. Visit the {@link examples/builds/full-featured-editor feature-rich editor example} to see more in action.
-</info-box>
+</snippet-footer>
 
 ## Installation
-
-<info-box info>
-	⚠️ **New import paths**
-
-	Starting with {@link updating/update-to-42 version 42.0.0}, we changed the format of import paths. This guide uses the new, shorter format. Refer to the {@link getting-started/legacy-getting-started/legacy-imports Packages in the legacy setup} guide if you use an older version of CKEditor&nbsp;5.
-</info-box>
 
 After {@link getting-started/integrations-cdn/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
 
@@ -153,19 +150,22 @@ The **“Table properties”** and **“Table cell properties”** buttons in th
 The style sheet for the editor displayed below looks as follows:
 
 ```css
-.ck-content .table {
+.ck-content figure.table:not(.layout-table) {
 	float: left;
 	width: 550px;
 	height: 450px;
 }
 
-.ck-content .table table {
+.ck-content figure.table:not(.layout-table) > table {
 	border-style: dashed;
 	border-color: hsl(90, 75%, 60%);
 	border-width: 3px;
 }
 
-.ck-content .table table td {
+.ck-content figure.table:not(.layout-table) > table  > tbody > tr > td,
+.ck-content figure.table:not(.layout-table) > table  > tbody > tr > th,
+.ck-content figure.table:not(.layout-table) > table  > thead > tr > td,
+.ck-content figure.table:not(.layout-table) > table  > thead > tr > th {
 	text-align: center;
 	vertical-align: bottom;
 	padding: 10px

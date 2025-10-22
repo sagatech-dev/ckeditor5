@@ -5,9 +5,9 @@
 
 import { Client, expectClients, syncClients, clearBuffer } from './utils.js';
 
-import DocumentFragment from '../../../../src/model/documentfragment.js';
-import Element from '../../../../src/model/element.js';
-import Text from '../../../../src/model/text.js';
+import { ModelDocumentFragment } from '../../../../src/model/documentfragment.js';
+import { ModelElement } from '../../../../src/model/element.js';
+import { ModelText } from '../../../../src/model/text.js';
 
 describe( 'transform', () => {
 	describe( 'undo', () => {
@@ -682,7 +682,7 @@ describe( 'transform', () => {
 			expectClients( '<heading1>FooFoobarbar</heading1>' );
 
 			function getPastedContent() {
-				return new Element( 'heading1', null, new Text( 'Foobar' ) );
+				return new ModelElement( 'heading1', null, new ModelText( 'Foobar' ) );
 			}
 		} );
 
@@ -716,9 +716,9 @@ describe( 'transform', () => {
 
 			function pasteContent() {
 				john.editor.model.insertContent(
-					new DocumentFragment( [
-						new Element( 'heading1', null, new Text( 'Foo' ) ),
-						new Element( 'paragraph', null, new Text( 'Bar' ) )
+					new ModelDocumentFragment( [
+						new ModelElement( 'heading1', null, new ModelText( 'Foo' ) ),
+						new ModelElement( 'paragraph', null, new ModelText( 'Bar' ) )
 					] )
 				);
 			}
@@ -730,9 +730,9 @@ describe( 'transform', () => {
 			john.setData( '<paragraph>Ab[]cd</paragraph><paragraph>Wxyz</paragraph>' );
 
 			john.editor.model.insertContent(
-				new DocumentFragment( [
-					new Element( 'paragraph', null, new Text( 'Foo' ) ),
-					new Element( 'paragraph', null, new Text( 'Bar' ) )
+				new ModelDocumentFragment( [
+					new ModelElement( 'paragraph', null, new ModelText( 'Foo' ) ),
+					new ModelElement( 'paragraph', null, new ModelText( 'Bar' ) )
 				] )
 			);
 
@@ -798,7 +798,7 @@ describe( 'transform', () => {
 			expectClients( '<paragraph>Foo</paragraph><paragraph>Bar</paragraph>' );
 		} );
 
-		// https://github.com/cksource/ckeditor5-commercial/issues/4371.
+		// https://github.com/ckeditor/ckeditor5-commercial/issues/4371.
 		it( 'add paragraphs and marker, remove marker, undo on both clients', async () => {
 			const kate = await Client.get( 'kate' );
 
@@ -844,7 +844,7 @@ describe( 'transform', () => {
 			return kate.destroy();
 		} );
 
-		// https://github.com/cksource/ckeditor5-commercial/issues/4341
+		// https://github.com/ckeditor/ckeditor5-commercial/issues/4341
 		it( 'split, type, remove on another client, undo, redo', async () => {
 			const kate = await Client.get( 'kate' );
 
@@ -879,7 +879,7 @@ describe( 'transform', () => {
 			return kate.destroy();
 		} );
 
-		// https://github.com/cksource/ckeditor5-commercial/issues/1939
+		// https://github.com/ckeditor/ckeditor5-commercial/issues/1939
 		it( 'two intersecting removes through multiple elements, then undo', async () => {
 			const kate = await Client.get( 'kate' );
 
@@ -944,6 +944,46 @@ describe( 'transform', () => {
 			john.redo();
 
 			expectClients( '<paragraph>ABCD</paragraph>' );
+		} );
+
+		// https://github.com/ckeditor/ckeditor5/issues/18740
+		it( 'unwrap, merge first element, undo, undo', () => {
+			john.setData( '<paragraph>A</paragraph><blockQuote><paragraph>[B</paragraph><paragraph>C]</paragraph></blockQuote>' );
+
+			// For some reason the command value is not correctly refreshed.
+			john.editor.commands.get( 'blockQuote' ).refresh();
+			john._processExecute( 'blockQuote' );
+			john.merge( [ 1 ] );
+
+			expectClients( '<paragraph>AB</paragraph><paragraph>C</paragraph>' );
+
+			john.undo();
+
+			expectClients( '<paragraph>A</paragraph><paragraph>B</paragraph><paragraph>C</paragraph>' );
+
+			john.undo();
+
+			expectClients( '<paragraph>A</paragraph><blockQuote><paragraph>B</paragraph><paragraph>C</paragraph></blockQuote>' );
+		} );
+
+		// https://github.com/ckeditor/ckeditor5/issues/18740
+		it( 'unwrap, merge last element, undo, undo', () => {
+			john.setData( '<paragraph>A</paragraph><blockQuote><paragraph>[B</paragraph><paragraph>C]</paragraph></blockQuote>' );
+
+			// For some reason the command value is not correctly refreshed.
+			john.editor.commands.get( 'blockQuote' ).refresh();
+			john._processExecute( 'blockQuote' );
+			john.merge( [ 2 ] );
+
+			expectClients( '<paragraph>A</paragraph><paragraph>BC</paragraph>' );
+
+			john.undo();
+
+			expectClients( '<paragraph>A</paragraph><paragraph>B</paragraph><paragraph>C</paragraph>' );
+
+			john.undo();
+
+			expectClients( '<paragraph>A</paragraph><blockQuote><paragraph>B</paragraph><paragraph>C</paragraph></blockQuote>' );
 		} );
 	} );
 } );

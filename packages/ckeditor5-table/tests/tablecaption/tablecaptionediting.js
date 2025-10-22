@@ -3,14 +3,13 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
-import VirtualTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/virtualtesteditor.js';
-import { getData as getModelData, setData as setModelData } from '@ckeditor/ckeditor5-engine/src/dev-utils/model.js';
-import { getData as getViewData } from '@ckeditor/ckeditor5-engine/src/dev-utils/view.js';
-import Plugin from '@ckeditor/ckeditor5-core/src/plugin.js';
+import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
+import { VirtualTestEditor } from '@ckeditor/ckeditor5-core/tests/_utils/virtualtesteditor.js';
+import { _getModelData, _setModelData, _getViewData } from '@ckeditor/ckeditor5-engine';
+import { Plugin } from '@ckeditor/ckeditor5-core';
 
-import TableCaptionEditing from '../../src/tablecaption/tablecaptionediting.js';
-import TableEditing from '../../src/tableediting.js';
+import { TableCaptionEditing } from '../../src/tablecaption/tablecaptionediting.js';
+import { TableEditing } from '../../src/tableediting.js';
 
 describe( 'TableCaptionEditing', () => {
 	let editor, model, view;
@@ -105,7 +104,7 @@ describe( 'TableCaptionEditing', () => {
 						plugins: [ TableEditing, TableCaptionEditing, Paragraph, TableCaptionEditing, FakePlugin ]
 					} );
 
-				setModelData( editor.model,
+				_setModelData( editor.model,
 					'<foo>' +
 						'<caption>Foo caption</caption>' +
 					'</foo>'
@@ -119,7 +118,7 @@ describe( 'TableCaptionEditing', () => {
 			} );
 
 			it( 'should convert to figure > table + figcaption', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<table>' +
 						'<tableRow>' +
 							'<tableCell>' +
@@ -145,7 +144,7 @@ describe( 'TableCaptionEditing', () => {
 			} );
 
 			it( 'should merge many captions into one', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<table>' +
 						'<tableRow>' +
 							'<tableCell>' +
@@ -172,7 +171,7 @@ describe( 'TableCaptionEditing', () => {
 			} );
 
 			it( 'should place new caption at the end of the table model', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<table>' +
 						'<tableRow>' +
 							'<tableCell>' +
@@ -221,7 +220,7 @@ describe( 'TableCaptionEditing', () => {
 					'</table>'
 				);
 
-				expect( getModelData( model, { withoutSelection: true } ) )
+				expect( _getModelData( model, { withoutSelection: true } ) )
 					.to.equal( String(
 						'<table>' +
 							'<tableRow>' +
@@ -250,7 +249,7 @@ describe( 'TableCaptionEditing', () => {
 					'</figure>'
 				);
 
-				expect( getModelData( model, { withoutSelection: true } ) )
+				expect( _getModelData( model, { withoutSelection: true } ) )
 					.to.equal( String(
 						'<table>' +
 							'<tableRow>' +
@@ -281,7 +280,7 @@ describe( 'TableCaptionEditing', () => {
 					'</figure>'
 				);
 
-				expect( getModelData( model, { withoutSelection: true } ) )
+				expect( _getModelData( model, { withoutSelection: true } ) )
 					.to.equal( String(
 						'<table>' +
 							'<tableRow>' +
@@ -299,11 +298,11 @@ describe( 'TableCaptionEditing', () => {
 	describe( 'editing pipeline', () => {
 		describe( 'model to view', () => {
 			it( 'should convert caption element to figcaption contenteditable', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<table><tableRow><tableCell><paragraph>xyz</paragraph></tableCell></tableRow><caption>Foo caption</caption></table>'
 				);
 
-				expect( getViewData( view, { withoutSelection: true } ) ).to.equal(
+				expect( _getViewData( view, { withoutSelection: true } ) ).to.equal(
 					'<figure class="ck-widget ck-widget_with-selection-handle table" contenteditable="false">' +
 						'<div class="ck ck-widget__selection-handle"></div>' +
 						'<table>' +
@@ -320,6 +319,91 @@ describe( 'TableCaptionEditing', () => {
 								'contenteditable="true" data-placeholder="Enter table caption" role="textbox" tabindex="-1">' +
 							'Foo caption' +
 						'</figcaption>' +
+					'</figure>'
+				);
+			} );
+		} );
+	} );
+} );
+
+describe( 'TableCaptionEditing - useCaptionElement = true', () => {
+	let editor, model, view;
+
+	beforeEach( () => {
+		return VirtualTestEditor
+			.create( {
+				plugins: [ TableEditing, TableCaptionEditing, Paragraph, TableCaptionEditing ],
+				table: {
+					tableCaption: {
+						useCaptionElement: true
+					}
+				}
+			} )
+			.then( newEditor => {
+				editor = newEditor;
+				view = editor.editing.view;
+				model = editor.model;
+			} );
+	} );
+
+	afterEach( async () => {
+		await editor.destroy();
+	} );
+
+	describe( 'data pipeline', () => {
+		describe( 'model to view', () => {
+			it( 'should convert to figure > table + figcaption', () => {
+				_setModelData( model,
+					'<table>' +
+						'<tableRow>' +
+							'<tableCell>' +
+								'<paragraph>foobar</paragraph>' +
+							'</tableCell>' +
+						'</tableRow>' +
+						'<caption>Foo caption</caption>' +
+					'</table>'
+				);
+
+				expect( editor.getData() ).to.equal(
+					'<figure class="table">' +
+						'<table>' +
+							'<tbody>' +
+								'<tr>' +
+									'<td>foobar</td>' +
+								'</tr>' +
+							'</tbody>' +
+							'<caption>Foo caption</caption>' +
+						'</table>' +
+					'</figure>'
+				);
+			} );
+		} );
+	} );
+
+	describe( 'editing pipeline', () => {
+		describe( 'model to view', () => {
+			it( 'should convert caption element to figcaption contenteditable', () => {
+				_setModelData( model,
+					'<table><tableRow><tableCell><paragraph>xyz</paragraph></tableCell></tableRow><caption>Foo caption</caption></table>'
+				);
+
+				expect( _getViewData( view, { withoutSelection: true } ) ).to.equal(
+					'<figure class="ck-widget ck-widget_with-selection-handle table" contenteditable="false">' +
+						'<div class="ck ck-widget__selection-handle"></div>' +
+						'<table>' +
+							'<tbody>' +
+								'<tr>' +
+									'<td class="ck-editor__editable ck-editor__nested-editable" contenteditable="true"' +
+										' tabindex="-1">' +
+										'<span class="ck-table-bogus-paragraph">xyz</span>' +
+									'</td>' +
+								'</tr>' +
+							'</tbody>' +
+							'<caption class="ck-editor__editable ck-editor__nested-editable" ' +
+								'contenteditable="true" data-placeholder="Enter table caption" role="textbox" tabindex="-1">' +
+								'Foo caption' +
+							'</caption>' +
+						'</table>' +
 					'</figure>'
 				);
 			} );

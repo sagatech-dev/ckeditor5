@@ -23,11 +23,13 @@ import type { ColorOption, ColorPickerConfig } from 'ckeditor5/src/ui.js';
  * ```
  *
  * See {@link module:core/editor/editorconfig~EditorConfig all editor options}.
+ *
+ * @internal
  */
 export interface TableConfig {
 
 	/**
-	 * Number of rows and columns to render by default as table heading when inserting new tables.
+	 * Number of rows and columns to render by table heading when inserting new tables.
 	 *
 	 * You can configure it like this:
 	 *
@@ -219,6 +221,17 @@ export interface TableConfig {
 	 * ```
 	 */
 	tableLayout?: TableLayoutConfig;
+
+	/**
+	 * Configuration of the table caption feature.
+	 *
+	 * ```ts
+	 * const tableConfig = {
+	 * 	tableCaption: ... // Table caption feature config.
+	 * };
+	 * ```
+	 */
+	tableCaption?: TableCaptionConfig;
 }
 
 /**
@@ -408,6 +421,52 @@ export interface TableLayoutConfig {
 	 * ```
 	 */
 	preferredExternalTableType: TableType;
+}
+
+/**
+ * The configuration of the table caption feature.
+ */
+export interface TableCaptionConfig {
+
+	/**
+	 * Sets the preferred HTML structure for table captions.
+	 *
+	 * When this option is `false` (the default) the structure is like this:
+	 *
+	 * ```html
+	 * <figure class="table">
+	 * 	<table>
+	 * 		<tbody> ... </tbody>
+	 * 	</table>
+	 * 	<figcaption> ... </figcaption>
+	 * </figure>
+	 * ```
+	 *
+	 * When this option is `true` the structure is like this:
+	 *
+	 * ```html
+	 * <figure class="table">
+	 * 	<table>
+	 * 		<tbody> ... </tbody>
+	 * 		<caption> ... </caption>
+	 * 	</table>
+	 * </figure>
+	 * ```
+	 *
+	 * ```ts
+	 * ClassicEditor
+	 * 	.create( {
+	 * 		table: {
+	 * 			tableCaption: {
+	 * 				useCaptionElement: true
+	 * 			}
+	 * 		}
+	 * 	} )
+	 * 	.then( ... )
+	 * 	.catch( ... );
+	 * ```
+	 */
+	useCaptionElement?: boolean;
 }
 
 /**

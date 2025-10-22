@@ -10,23 +10,27 @@
 import { Plugin } from '@ckeditor/ckeditor5-core';
 
 import {
+	PointerObserver,
 	MouseObserver,
-	TreeWalker,
-	type DomEventData,
+	ModelTreeWalker,
+	type ViewDocumentDomEventData,
 	type DowncastSelectionEvent,
-	type DowncastWriter,
-	type Element,
-	type Node,
+	type ViewDowncastWriter,
+	type ModelElement,
+	type ModelNode,
 	type ViewDocumentArrowKeyEvent,
+	type ViewDocumentPointerDownEvent,
 	type ViewDocumentMouseDownEvent,
 	type ViewElement,
-	type Schema,
-	type Position,
+	type ModelSchema,
+	type ModelPosition,
 	type EditingView,
 	type ViewDocumentTabEvent,
 	type ViewDocumentKeyDownEvent,
 	type ViewNode,
-	type ViewRange
+	type ViewRange,
+	type ViewPosition,
+	type ModelRange
 } from '@ckeditor/ckeditor5-engine';
 
 import { Delete, type ViewDocumentDeleteEvent } from '@ckeditor/ckeditor5-typing';
@@ -36,12 +40,13 @@ import {
 	keyCodes,
 	getLocalizedArrowKeyCodeDirection,
 	getRangeFromMouseEvent,
+	compareArrays,
 	type EventInfo,
 	type KeystrokeInfo
 } from '@ckeditor/ckeditor5-utils';
 
-import WidgetTypeAround from './widgettypearound/widgettypearound.js';
-import verticalNavigationHandler from './verticalnavigation.js';
+import { WidgetTypeAround } from './widgettypearound/widgettypearound.js';
+import { verticalWidgetNavigationHandler } from './verticalnavigation.js';
 import { getLabel, isWidget, WIDGET_SELECTED_CLASS_NAME } from './utils.js';
 
 import '../theme/widget.css';
@@ -55,11 +60,11 @@ import '../theme/widget.css';
  *
  * * The model to view selection converter for the editing pipeline (it handles widget custom selection rendering).
  * If a converted selection wraps around a widget element, that selection is marked as
- * {@link module:engine/view/selection~Selection#isFake fake}. Additionally, the `ck-widget_selected` CSS class
+ * {@link module:engine/view/selection~ViewSelection#isFake fake}. Additionally, the `ck-widget_selected` CSS class
  * is added to indicate that widget has been selected.
  * * The mouse and keyboard events handling on and around widget elements.
  */
-export default class Widget extends Plugin {
+export class Widget extends Plugin {
 	/**
 	 * Holds previously selected widgets.
 	 */
@@ -173,7 +178,9 @@ export default class Widget extends Plugin {
 
 		// If mouse down is pressed on widget - create selection over whole widget.
 		view.addObserver( MouseObserver );
+		view.addObserver( PointerObserver );
 		this.listenTo<ViewDocumentMouseDownEvent>( viewDocument, 'mousedown', ( ...args ) => this._onMousedown( ...args ) );
+		this.listenTo<ViewDocumentPointerDownEvent>( viewDocument, 'pointerdown', ( ...args ) => this._onPointerdown( ...args ) );
 
 		// There are two keydown listeners working on different priorities. This allows other
 		// features such as WidgetTypeAround or TableKeyboard to attach their listeners in between
@@ -197,7 +204,7 @@ export default class Widget extends Plugin {
 		this.listenTo<ViewDocumentArrowKeyEvent>(
 			viewDocument,
 			'arrowKey',
-			verticalNavigationHandler( this.editor.editing ),
+			verticalWidgetNavigationHandler( this.editor.editing ),
 			{ context: '$text' }
 		);
 
@@ -209,35 +216,17 @@ export default class Widget extends Plugin {
 			}
 		}, { context: '$root' } );
 
-		// Handle Tab key while a widget is selected.
+		// Handle Tab/Shift+Tab key.
 		this.listenTo<ViewDocumentTabEvent>( viewDocument, 'tab', ( evt, data ) => {
-			// This event could be triggered from inside the widget, but we are interested
-			// only when the widget is selected itself.
-			if ( evt.eventPhase != 'atTarget' ) {
-				return;
-			}
-
-			if ( data.shiftKey ) {
-				return;
-			}
-
-			if ( this._selectFirstNestedEditable() ) {
+			if ( this._selectNextEditable( data.shiftKey ? 'backward' : 'forward' ) ) {
+				view.scrollToTheSelection();
 				data.preventDefault();
 				evt.stop();
 			}
-		}, { context: isWidget, priority: 'low' } );
-
-		// Handle Shift+Tab key while caret inside a widget editable.
-		this.listenTo<ViewDocumentTabEvent>( viewDocument, 'tab', ( evt, data ) => {
-			if ( !data.shiftKey ) {
-				return;
-			}
-
-			if ( this._selectAncestorWidget() ) {
-				data.preventDefault();
-				evt.stop();
-			}
-		}, { priority: 'low' } );
+		}, {
+			context: node => isWidget( node ) || node.is( 'editableElement' ),
+			priority: 'low'
+		} );
 
 		// Handle Esc key while inside a nested editable.
 		this.listenTo<ViewDocumentKeyDownEvent>( viewDocument, 'keydown', ( evt, data ) => {
@@ -281,13 +270,10 @@ export default class Widget extends Plugin {
 	}
 
 	/**
-	 * Handles {@link module:engine/view/document~Document#event:mousedown mousedown} events on widget elements.
+	 * Handles {@link module:engine/view/document~ViewDocument#event:mousedown mousedown} events on widget elements.
 	 */
-	private _onMousedown( eventInfo: EventInfo, domEventData: DomEventData<MouseEvent> ) {
-		const editor = this.editor;
-		const view = editor.editing.view;
-		const viewDocument = view.document;
-		let element: ViewElement | null = domEventData.target;
+	private _onMousedown( eventInfo: EventInfo, domEventData: ViewDocumentDomEventData<MouseEvent> ) {
+		const element: ViewElement | null = domEventData.target;
 
 		// Some of DOM elements have no view element representation so it may be null.
 		if ( !element ) {
@@ -299,7 +285,24 @@ export default class Widget extends Plugin {
 			if ( this._selectBlockContent( element ) ) {
 				domEventData.preventDefault();
 			}
+		}
+	}
 
+	/**
+	 * Handles {@link module:engine/view/document~ViewDocument#event:pointerdown pointerdown} events on widget elements.
+	 */
+	private _onPointerdown( eventInfo: EventInfo, domEventData: ViewDocumentDomEventData<PointerEvent> ) {
+		if ( !domEventData.domEvent.isPrimary ) {
+			return;
+		}
+
+		const editor = this.editor;
+		const view = editor.editing.view;
+		const viewDocument = view.document;
+		let element: ViewElement | null = domEventData.target;
+
+		// Some of DOM elements have no view element representation so it may be null.
+		if ( !element ) {
 			return;
 		}
 
@@ -325,9 +328,10 @@ export default class Widget extends Plugin {
 			}
 		}
 
-		// On Android selection would jump to the first table cell, on other devices
+		// On Android and iOS selection would jump to the first table cell, on other devices
 		// we can't block it (and don't need to) because of drag and drop support.
-		if ( env.isAndroid ) {
+		// In iOS drag and drop works anyway on a long press.
+		if ( env.isAndroid || env.isiOS ) {
 			domEventData.preventDefault();
 		}
 
@@ -375,7 +379,7 @@ export default class Widget extends Plugin {
 	}
 
 	/**
-	 * Handles {@link module:engine/view/document~Document#event:keydown keydown} events and changes
+	 * Handles {@link module:engine/view/document~ViewDocument#event:keydown keydown} events and changes
 	 * the model selection when:
 	 *
 	 * * arrow key is pressed when the widget is selected,
@@ -383,7 +387,7 @@ export default class Widget extends Plugin {
 	 *
 	 * See {@link #_preventDefaultOnArrowKeyPress}.
 	 */
-	private _handleSelectionChangeOnArrowKeyPress( eventInfo: EventInfo, domEventData: DomEventData & KeystrokeInfo ) {
+	private _handleSelectionChangeOnArrowKeyPress( eventInfo: EventInfo, domEventData: ViewDocumentDomEventData & KeystrokeInfo ) {
 		const keyCode = domEventData.keyCode;
 
 		const model = this.editor.model;
@@ -455,13 +459,13 @@ export default class Widget extends Plugin {
 	}
 
 	/**
-	 * Handles {@link module:engine/view/document~Document#event:keydown keydown} events and prevents
+	 * Handles {@link module:engine/view/document~ViewDocument#event:keydown keydown} events and prevents
 	 * the default browser behavior to make sure the fake selection is not being moved from a fake selection
 	 * container.
 	 *
 	 * See {@link #_handleSelectionChangeOnArrowKeyPress}.
 	 */
-	private _preventDefaultOnArrowKeyPress( eventInfo: EventInfo, domEventData: DomEventData ) {
+	private _preventDefaultOnArrowKeyPress( eventInfo: EventInfo, domEventData: ViewDocumentDomEventData ) {
 		const model = this.editor.model;
 		const schema = model.schema;
 		const objectElement = model.document.selection.getSelectedElement();
@@ -504,7 +508,7 @@ export default class Widget extends Plugin {
 					const nodeToRemove = previousNode;
 					previousNode = nodeToRemove.parent!;
 
-					writer.remove( nodeToRemove as Element );
+					writer.remove( nodeToRemove as ModelElement );
 				}
 
 				this._setSelectionOverElement( objectElement );
@@ -515,25 +519,25 @@ export default class Widget extends Plugin {
 	}
 
 	/**
-	 * Sets {@link module:engine/model/selection~Selection document's selection} over given element.
+	 * Sets {@link module:engine/model/selection~ModelSelection document's selection} over given element.
 	 *
 	 * @internal
 	 */
-	public _setSelectionOverElement( element: Node ): void {
+	public _setSelectionOverElement( element: ModelNode ): void {
 		this.editor.model.change( writer => {
 			writer.setSelection( writer.createRangeOn( element ) );
 		} );
 	}
 
 	/**
-	 * Checks if {@link module:engine/model/element~Element element} placed next to the current
-	 * {@link module:engine/model/selection~Selection model selection} exists and is marked in
-	 * {@link module:engine/model/schema~Schema schema} as `object`.
+	 * Checks if {@link module:engine/model/element~ModelElement element} placed next to the current
+	 * {@link module:engine/model/selection~ModelSelection model selection} exists and is marked in
+	 * {@link module:engine/model/schema~ModelSchema schema} as `object`.
 	 *
 	 * @internal
 	 * @param forward Direction of checking.
 	 */
-	public _getObjectElementNextToSelection( forward: boolean ): Element | null {
+	public _getObjectElementNextToSelection( forward: boolean ): ModelElement | null {
 		const model = this.editor.model;
 		const schema = model.schema;
 		const modelSelection = model.document.selection;
@@ -551,7 +555,7 @@ export default class Widget extends Plugin {
 		const objectElement = forward ? probe.focus!.nodeBefore : probe.focus!.nodeAfter;
 
 		if ( !!objectElement && schema.isObject( objectElement ) ) {
-			return objectElement as Element;
+			return objectElement as ModelElement;
 		}
 
 		return null;
@@ -560,7 +564,7 @@ export default class Widget extends Plugin {
 	/**
 	 * Removes CSS class from previously selected widgets.
 	 */
-	private _clearPreviouslySelectedWidgets( writer: DowncastWriter ) {
+	private _clearPreviouslySelectedWidgets( writer: ViewDowncastWriter ) {
 		for ( const widget of this._previouslySelected ) {
 			writer.removeClass( WIDGET_SELECTED_CLASS_NAME, widget );
 		}
@@ -569,34 +573,117 @@ export default class Widget extends Plugin {
 	}
 
 	/**
-	 * Moves the document selection into the first nested editable.
+	 * Moves the document selection into the next editable or block widget.
 	 */
-	private _selectFirstNestedEditable(): boolean {
-		const editor = this.editor;
-		const view = this.editor.editing.view;
-		const viewDocument = view.document;
+	private _selectNextEditable( direction: 'backward' | 'forward' ): boolean {
+		const editing = this.editor.editing;
+		const view = editing.view;
+		const model = this.editor.model;
+		const viewSelection = view.document.selection;
+		const modelSelection = model.document.selection;
 
-		for ( const item of viewDocument.selection.getFirstRange()!.getItems() ) {
-			if ( item.is( 'editableElement' ) ) {
-				const modelElement = editor.editing.mapper.toModelElement( item );
+		// Find start position.
+		let startPosition: ViewPosition;
 
-				/* istanbul ignore next -- @preserve */
-				if ( !modelElement ) {
-					continue;
-				}
+		// Multiple table cells are selected - use focus cell.
+		if ( modelSelection.rangeCount > 1 ) {
+			const selectionRange = modelSelection.isBackward ?
+				modelSelection.getFirstRange()! :
+				modelSelection.getLastRange()!;
 
-				const position = editor.model.createPositionAt( modelElement, 0 );
-				const newRange = editor.model.schema.getNearestSelectionRange( position, 'forward' );
+			startPosition = editing.mapper.toViewPosition(
+				direction == 'forward' ?
+					selectionRange.end :
+					selectionRange.start
+			);
+		} else {
+			startPosition = direction == 'forward' ?
+				viewSelection.getFirstPosition()! :
+				viewSelection.getLastPosition()!;
+		}
 
-				editor.model.change( writer => {
-					writer.setSelection( newRange );
-				} );
+		const modelRange = this._findNextFocusRange( startPosition, direction );
 
-				return true;
-			}
+		if ( modelRange ) {
+			model.change( writer => {
+				writer.setSelection( modelRange );
+			} );
+
+			return true;
 		}
 
 		return false;
+	}
+
+	/**
+	 * Looks for next focus point in the document starting from the given view position and direction.
+	 * The focus point is either a block widget or an editable.
+	 *
+	 * @internal
+	 */
+	public _findNextFocusRange( startPosition: ViewPosition, direction: 'backward' | 'forward' ): ModelRange | null {
+		const editing = this.editor.editing;
+		const view = editing.view;
+		const model = this.editor.model;
+		const viewSelection = view.document.selection;
+
+		const editableElement = viewSelection.editableElement!;
+		const editablePath = editableElement.getPath();
+
+		let selectedElement = viewSelection.getSelectedElement();
+
+		if ( selectedElement && !isWidget( selectedElement ) ) {
+			selectedElement = null;
+		}
+
+		// Look for the next editable.
+		const viewRange = direction == 'forward' ?
+			view.createRange( startPosition, view.createPositionAt( startPosition.root as ViewNode, 'end' ) ) :
+			view.createRange( view.createPositionAt( startPosition.root as ViewNode, 0 ), startPosition );
+
+		for ( const { nextPosition } of viewRange.getWalker( { direction } ) ) {
+			const item = nextPosition.parent as ViewNode;
+
+			// Ignore currently selected editable or widget.
+			if ( item == editableElement || item == selectedElement ) {
+				continue;
+			}
+
+			// Some widget along the way.
+			if ( isWidget( item ) ) {
+				const modelElement = editing.mapper.toModelElement( item as ViewElement )!;
+
+				// Do not select inline widgets.
+				if ( !model.schema.isBlock( modelElement ) ) {
+					continue;
+				}
+
+				// Do not select widget itself when going out of widget or iterating over sibling elements in a widget.
+				if ( compareArrays( editablePath, item.getPath() ) != 'extension' ) {
+					return model.createRangeOn( modelElement );
+				}
+			}
+			// Encountered an editable element.
+			else if ( item.is( 'editableElement' ) ) {
+				const modelPosition = editing.mapper.toModelPosition( nextPosition );
+				let newRange = model.schema.getNearestSelectionRange( modelPosition, direction );
+
+				// There is nothing to select so just jump to the next one.
+				if ( !newRange ) {
+					continue;
+				}
+
+				// Select the content of editable element when iterating over sibling editable elements
+				// or going deeper into nested widgets.
+				if ( compareArrays( editablePath, item.getPath() ) != 'extension' ) {
+					newRange = model.createRangeIn( modelPosition.parent );
+				}
+
+				return newRange;
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -661,7 +748,7 @@ function findClosestEditableOrWidgetAncestor( element: ViewElement ): ViewElemen
  * @param domEventData The DOM event data containing the mouse event.
  * @returns The ViewElement associated with the mouse event, or null if not found.
  */
-function getElementFromMouseEvent( view: EditingView, domEventData: DomEventData<MouseEvent> ): ViewElement | null {
+function getElementFromMouseEvent( view: EditingView, domEventData: ViewDocumentDomEventData<MouseEvent> ): ViewElement | null {
 	const domRange = getRangeFromMouseEvent( domEventData.domEvent );
 	let viewRange: ViewRange | null = null;
 
@@ -722,10 +809,10 @@ function isChild( element: ViewElement, parent: ViewElement | null ) {
 /**
  * Returns nearest text block ancestor.
  */
-function findTextBlockAncestor( modelElement: Element, schema: Schema ): Element | null {
+function findTextBlockAncestor( modelElement: ModelElement, schema: ModelSchema ): ModelElement | null {
 	for ( const element of modelElement.getAncestors( { includeSelf: true, parentFirst: true } ) ) {
-		if ( schema.checkChild( element as Element, '$text' ) ) {
-			return element as Element;
+		if ( schema.checkChild( element as ModelElement, '$text' ) ) {
+			return element as ModelElement;
 		}
 
 		// Do not go beyond nested editable.
@@ -740,8 +827,8 @@ function findTextBlockAncestor( modelElement: Element, schema: Schema ): Element
 /**
  * Returns next text block where could put selection.
  */
-function findNextTextBlock( position: Position, schema: Schema ): Element | null {
-	const treeWalker = new TreeWalker( { startPosition: position } );
+function findNextTextBlock( position: ModelPosition, schema: ModelSchema ): ModelElement | null {
+	const treeWalker = new ModelTreeWalker( { startPosition: position } );
 
 	for ( const { item } of treeWalker ) {
 		if ( schema.isLimit( item ) || !item.is( 'element' ) ) {

@@ -3,28 +3,26 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import ClipboardPipeline from '../src/clipboardpipeline.js';
-import DragDrop from '../src/dragdrop.js';
-import DragDropTarget from '../src/dragdroptarget.js';
-import PastePlainText from '../src/pasteplaintext.js';
-import DragDropBlockToolbar from '../src/dragdropblocktoolbar.js';
+import { ClipboardPipeline } from '../src/clipboardpipeline.js';
+import { DragDrop } from '../src/dragdrop.js';
+import { DragDropTarget } from '../src/dragdroptarget.js';
+import { PastePlainText } from '../src/pasteplaintext.js';
+import { DragDropBlockToolbar } from '../src/dragdropblocktoolbar.js';
 
-import Widget from '@ckeditor/ckeditor5-widget/src/widget.js';
-import WidgetToolbarRepository from '@ckeditor/ckeditor5-widget/src/widgettoolbarrepository.js';
-import ClassicTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
-import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
-import Table from '@ckeditor/ckeditor5-table/src/table.js';
-import HorizontalLine from '@ckeditor/ckeditor5-horizontal-line/src/horizontalline.js';
-import ShiftEnter from '@ckeditor/ckeditor5-enter/src/shiftenter.js';
-import BlockQuote from '@ckeditor/ckeditor5-block-quote/src/blockquote.js';
-import Bold from '@ckeditor/ckeditor5-basic-styles/src/bold.js';
+import { ClassicTestEditor } from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
+import { testUtils } from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
+
+import { Widget, WidgetToolbarRepository } from '@ckeditor/ckeditor5-widget';
+import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
+import { Table } from '@ckeditor/ckeditor5-table';
+import { HorizontalLine } from '@ckeditor/ckeditor5-horizontal-line';
+import { ShiftEnter } from '@ckeditor/ckeditor5-enter';
+import { BlockQuote } from '@ckeditor/ckeditor5-block-quote';
+import { Bold } from '@ckeditor/ckeditor5-basic-styles';
 import { Image, ImageCaption } from '@ckeditor/ckeditor5-image';
-import env from '@ckeditor/ckeditor5-utils/src/env.js';
-import { Rect } from '@ckeditor/ckeditor5-utils';
+import { env, Rect } from '@ckeditor/ckeditor5-utils';
 
-import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
-import { getData as getModelData, setData as setModelData } from '@ckeditor/ckeditor5-engine/src/dev-utils/model.js';
-import { getData as getViewData, stringify as stringifyView } from '@ckeditor/ckeditor5-engine/src/dev-utils/view.js';
+import { _getModelData, _setModelData, _getViewData, _stringifyView } from '@ckeditor/ckeditor5-engine';
 
 import { CustomTitle } from './utils/customtitleplugin.js';
 
@@ -108,7 +106,7 @@ describe( 'Drag and Drop', () => {
 
 			env.isGecko = false;
 
-			setModelData( model, '<paragraph>[foo]bar</paragraph>' );
+			_setModelData( model, '<paragraph>[foo]bar</paragraph>' );
 
 			const clock = sinon.useFakeTimers();
 			const dataTransferMock = createDataTransfer();
@@ -130,7 +128,7 @@ describe( 'Drag and Drop', () => {
 			clock.tick( 100 );
 
 			expectDraggingMarker( targetPosition );
-			expect( getViewData( view, { renderUIElements: true } ) ).to.equal(
+			expect( _getViewData( view, { renderUIElements: true } ) ).to.equal(
 				'<p>{foo}<span class="ck ck-clipboard-drop-target-position">\u2060<span></span>\u2060</span>bar</p>'
 			);
 
@@ -142,7 +140,7 @@ describe( 'Drag and Drop', () => {
 			clock.tick( 100 );
 
 			expectDraggingMarker( targetPosition );
-			expect( getViewData( view, { renderUIElements: true } ) ).to.equal(
+			expect( _getViewData( view, { renderUIElements: true } ) ).to.equal(
 				'<p>{foo}ba<span class="ck ck-clipboard-drop-target-position">\u2060<span></span>\u2060</span>r</p>'
 			);
 
@@ -161,8 +159,8 @@ describe( 'Drag and Drop', () => {
 			fireDragEnd( dataTransferMock );
 			expectFinalized();
 
-			expect( getModelData( model ) ).to.equal( '<paragraph>barfoo[]</paragraph>' );
-			expect( getViewData( view ) ).to.equal( '<p>barfoo{}</p>' );
+			expect( _getModelData( model ) ).to.equal( '<paragraph>barfoo[]</paragraph>' );
+			expect( _getViewData( view ) ).to.equal( '<p>barfoo{}</p>' );
 
 			env.isGecko = originalEnvGecko;
 		} );
@@ -172,7 +170,7 @@ describe( 'Drag and Drop', () => {
 
 			env.isGecko = true;
 
-			setModelData( model, '<paragraph>[foo]bar</paragraph>' );
+			_setModelData( model, '<paragraph>[foo]bar</paragraph>' );
 
 			const clock = sinon.useFakeTimers();
 			const dataTransferMock = createDataTransfer();
@@ -195,7 +193,7 @@ describe( 'Drag and Drop', () => {
 			clock.tick( 100 );
 
 			expectDraggingMarker( targetPosition );
-			expect( getViewData( view, { renderUIElements: true } ) ).to.equal(
+			expect( _getViewData( view, { renderUIElements: true } ) ).to.equal(
 				'<p>{foo}<span class="ck ck-clipboard-drop-target-position">\u2060<span></span>\u2060</span>bar</p>'
 			);
 
@@ -206,7 +204,7 @@ describe( 'Drag and Drop', () => {
 			clock.tick( 100 );
 
 			expectDraggingMarker( targetPosition );
-			expect( getViewData( view, { renderUIElements: true } ) ).to.equal(
+			expect( _getViewData( view, { renderUIElements: true } ) ).to.equal(
 				'<p>{foo}ba<span class="ck ck-clipboard-drop-target-position">\u2060<span></span>\u2060</span>r</p>'
 			);
 
@@ -224,8 +222,8 @@ describe( 'Drag and Drop', () => {
 			fireDragEnd( dataTransferMock );
 			expectFinalized();
 
-			expect( getModelData( model ) ).to.equal( '<paragraph>barfoo[]</paragraph>' );
-			expect( getViewData( view ) ).to.equal( '<p>barfoo{}</p>' );
+			expect( _getModelData( model ) ).to.equal( '<paragraph>barfoo[]</paragraph>' );
+			expect( _getViewData( view ) ).to.equal( '<p>barfoo{}</p>' );
 
 			env.isGecko = originalEnvGecko;
 		} );
@@ -235,7 +233,7 @@ describe( 'Drag and Drop', () => {
 
 			env.isGecko = false;
 
-			setModelData( model, '<paragraph>[foo]bar</paragraph>' );
+			_setModelData( model, '<paragraph>[foo]bar</paragraph>' );
 
 			const clock = sinon.useFakeTimers();
 			const dataTransferMock = createDataTransfer();
@@ -257,7 +255,7 @@ describe( 'Drag and Drop', () => {
 			clock.tick( 100 );
 
 			expectDraggingMarker( targetPosition );
-			expect( getViewData( view, { renderUIElements: true } ) ).to.equal(
+			expect( _getViewData( view, { renderUIElements: true } ) ).to.equal(
 				'<p>{foo}<span class="ck ck-clipboard-drop-target-position">\u2060<span></span>\u2060</span>bar</p>'
 			);
 
@@ -265,7 +263,7 @@ describe( 'Drag and Drop', () => {
 			clock.tick( 100 );
 
 			expectDraggingMarker( targetPosition );
-			expect( getViewData( view, { renderUIElements: true } ) ).to.equal(
+			expect( _getViewData( view, { renderUIElements: true } ) ).to.equal(
 				'<p>{foo}<span class="ck ck-clipboard-drop-target-position">\u2060<span></span>\u2060</span>bar</p>'
 			);
 
@@ -284,8 +282,8 @@ describe( 'Drag and Drop', () => {
 			fireDragEnd( dataTransferMock );
 			expectFinalized();
 
-			expect( getModelData( model ) ).to.equal( '<paragraph>foobarfoo[]</paragraph>' );
-			expect( getViewData( view ) ).to.equal( '<p>foobarfoo{}</p>' );
+			expect( _getModelData( model ) ).to.equal( '<paragraph>foobarfoo[]</paragraph>' );
+			expect( _getViewData( view ) ).to.equal( '<p>foobarfoo{}</p>' );
 
 			env.isGecko = originalEnvGecko;
 		} );
@@ -295,7 +293,7 @@ describe( 'Drag and Drop', () => {
 
 			env.isGecko = true;
 
-			setModelData( model, '<paragraph>[foo]bar</paragraph>' );
+			_setModelData( model, '<paragraph>[foo]bar</paragraph>' );
 
 			const clock = sinon.useFakeTimers();
 			const dataTransferMock = createDataTransfer();
@@ -316,7 +314,7 @@ describe( 'Drag and Drop', () => {
 			clock.tick( 100 );
 
 			expectDraggingMarker( targetPosition );
-			expect( getViewData( view, { renderUIElements: true } ) ).to.equal(
+			expect( _getViewData( view, { renderUIElements: true } ) ).to.equal(
 				'<p>{foo}<span class="ck ck-clipboard-drop-target-position">\u2060<span></span>\u2060</span>bar</p>'
 			);
 
@@ -324,7 +322,7 @@ describe( 'Drag and Drop', () => {
 			clock.tick( 100 );
 
 			expectDraggingMarker( targetPosition );
-			expect( getViewData( view, { renderUIElements: true } ) ).to.equal(
+			expect( _getViewData( view, { renderUIElements: true } ) ).to.equal(
 				'<p>{foo}<span class="ck ck-clipboard-drop-target-position">\u2060<span></span>\u2060</span>bar</p>'
 			);
 
@@ -343,14 +341,14 @@ describe( 'Drag and Drop', () => {
 			fireDragEnd( dataTransferMock );
 			expectFinalized();
 
-			expect( getModelData( model ) ).to.equal( '<paragraph>foobarfoo[]</paragraph>' );
-			expect( getViewData( view ) ).to.equal( '<p>foobarfoo{}</p>' );
+			expect( _getModelData( model ) ).to.equal( '<paragraph>foobarfoo[]</paragraph>' );
+			expect( _getViewData( view ) ).to.equal( '<p>foobarfoo{}</p>' );
 
 			env.isGecko = originalEnvGecko;
 		} );
 
 		it( 'should move text to other place in the same editor (over some widget)', () => {
-			setModelData( model, '<paragraph>[foo]bar</paragraph><horizontalLine></horizontalLine>' );
+			_setModelData( model, '<paragraph>[foo]bar</paragraph><horizontalLine></horizontalLine>' );
 
 			const clock = sinon.useFakeTimers();
 			const dataTransferMock = createDataTransfer();
@@ -370,7 +368,7 @@ describe( 'Drag and Drop', () => {
 			clock.tick( 100 );
 
 			expectDraggingMarker( targetRange );
-			expect( getViewData( view ) ).to.equal(
+			expect( _getViewData( view ) ).to.equal(
 				'<p>{foo}bar</p>' +
 				'<div class="ck-horizontal-line ck-widget" contenteditable="false">' +
 					'<hr></hr>' +
@@ -391,7 +389,7 @@ describe( 'Drag and Drop', () => {
 			fireDragEnd( dataTransferMock );
 			expectFinalized();
 
-			expect( getModelData( model ) ).to.equal(
+			expect( _getModelData( model ) ).to.equal(
 				'<paragraph>bar</paragraph>' +
 				'<horizontalLine></horizontalLine>' +
 				'<paragraph>foo[]</paragraph>'
@@ -399,7 +397,7 @@ describe( 'Drag and Drop', () => {
 		} );
 
 		it( 'should do nothing if dropped on dragged range', () => {
-			setModelData( model, '<paragraph>[foo]bar</paragraph>' );
+			_setModelData( model, '<paragraph>[foo]bar</paragraph>' );
 
 			const clock = sinon.useFakeTimers();
 			const dataTransferMock = createDataTransfer();
@@ -425,12 +423,12 @@ describe( 'Drag and Drop', () => {
 			fireDragEnd( dataTransferMock );
 			expectFinalized();
 
-			expect( getModelData( model ) ).to.equal( '<paragraph>[foo]bar</paragraph>' );
-			expect( getViewData( view ) ).to.equal( '<p>{foo}bar</p>' );
+			expect( _getModelData( model ) ).to.equal( '<paragraph>[foo]bar</paragraph>' );
+			expect( _getViewData( view ) ).to.equal( '<p>{foo}bar</p>' );
 		} );
 
 		it( 'should copy text to from outside the editor', () => {
-			setModelData( model, '<paragraph>[]foobar</paragraph>' );
+			_setModelData( model, '<paragraph>[]foobar</paragraph>' );
 
 			const clock = sinon.useFakeTimers();
 			const dataTransferMock = createDataTransfer( { 'text/html': 'abc' } );
@@ -447,7 +445,7 @@ describe( 'Drag and Drop', () => {
 
 			expectDraggingMarker( targetPosition );
 			expect( dataTransferMock.dropEffect ).to.equal( 'copy' );
-			expect( getViewData( view, { renderUIElements: true } ) ).to.equal(
+			expect( _getViewData( view, { renderUIElements: true } ) ).to.equal(
 				'<p>{}fooba<span class="ck ck-clipboard-drop-target-position">\u2060<span></span>\u2060</span>r</p>'
 			);
 
@@ -466,12 +464,12 @@ describe( 'Drag and Drop', () => {
 			fireDragEnd( dataTransferMock );
 			expectFinalized();
 
-			expect( getModelData( model ) ).to.equal( '<paragraph>fooabc[]bar</paragraph>' );
-			expect( getViewData( view ) ).to.equal( '<p>fooabc{}bar</p>' );
+			expect( _getModelData( model ) ).to.equal( '<paragraph>fooabc[]bar</paragraph>' );
+			expect( _getViewData( view ) ).to.equal( '<p>fooabc{}bar</p>' );
 		} );
 
 		it( 'should not remove dragged range if it is from other drag session', () => {
-			setModelData( model, '<paragraph>[foo]bar</paragraph>' );
+			_setModelData( model, '<paragraph>[foo]bar</paragraph>' );
 
 			const clock = sinon.useFakeTimers();
 			let dataTransferMock = createDataTransfer();
@@ -493,7 +491,7 @@ describe( 'Drag and Drop', () => {
 			clock.tick( 100 );
 
 			expectDraggingMarker( targetPosition );
-			expect( getViewData( view, { renderUIElements: true } ) ).to.equal(
+			expect( _getViewData( view, { renderUIElements: true } ) ).to.equal(
 				'<p>{foo}<span class="ck ck-clipboard-drop-target-position">\u2060<span></span>\u2060</span>bar</p>'
 			);
 
@@ -512,8 +510,8 @@ describe( 'Drag and Drop', () => {
 			fireDragEnd( dataTransferMock );
 			expectFinalized();
 
-			expect( getModelData( model ) ).to.equal( '<paragraph>fooabc[]bar</paragraph>' );
-			expect( getViewData( view ) ).to.equal( '<p>fooabc{}bar</p>' );
+			expect( _getModelData( model ) ).to.equal( '<paragraph>fooabc[]bar</paragraph>' );
+			expect( _getViewData( view ) ).to.equal( '<p>fooabc{}bar</p>' );
 		} );
 
 		it( 'should not remove dragged range if insert into drop target was not allowed', () => {
@@ -526,7 +524,7 @@ describe( 'Drag and Drop', () => {
 				model: 'caption'
 			} );
 
-			setModelData( model,
+			_setModelData( model,
 				'<caption>foo</caption>' +
 				'[<table><tableRow><tableCell><paragraph>bar</paragraph></tableCell></tableRow></table>]'
 			);
@@ -538,10 +536,12 @@ describe( 'Drag and Drop', () => {
 			const eventData = {
 				domTarget: domNode,
 				target: viewElement,
-				domEvent: {}
+				domEvent: {
+					isPrimary: true
+				}
 			};
 
-			viewDocument.fire( 'mousedown', {
+			viewDocument.fire( 'pointerdown', {
 				...eventData
 			} );
 
@@ -558,14 +558,14 @@ describe( 'Drag and Drop', () => {
 			const targetPosition = model.createPositionAt( root.getChild( 0 ), 2 );
 			fireDrop( dataTransferMock, targetPosition );
 
-			expect( getModelData( model ) ).to.equal(
+			expect( _getModelData( model ) ).to.equal(
 				'<caption>foo</caption>' +
 				'[<table><tableRow><tableCell><paragraph>bar</paragraph></tableCell></tableRow></table>]'
 			);
 		} );
 
 		it( 'should properly move content even if dragend event is not fired', () => {
-			setModelData( model, '<paragraph>[foo]bar</paragraph>' );
+			_setModelData( model, '<paragraph>[foo]bar</paragraph>' );
 
 			const clock = sinon.useFakeTimers();
 			const dataTransferMock = createDataTransfer();
@@ -586,7 +586,7 @@ describe( 'Drag and Drop', () => {
 			clock.tick( 100 );
 
 			expectDraggingMarker( targetPosition );
-			expect( getViewData( view, { renderUIElements: true } ) ).to.equal(
+			expect( _getViewData( view, { renderUIElements: true } ) ).to.equal(
 				'<p>{foo}<span class="ck ck-clipboard-drop-target-position">\u2060<span></span>\u2060</span>bar</p>'
 			);
 
@@ -597,7 +597,7 @@ describe( 'Drag and Drop', () => {
 			clock.tick( 100 );
 
 			expectDraggingMarker( targetPosition );
-			expect( getViewData( view, { renderUIElements: true } ) ).to.equal(
+			expect( _getViewData( view, { renderUIElements: true } ) ).to.equal(
 				'<p>{foo}ba<span class="ck ck-clipboard-drop-target-position">\u2060<span></span>\u2060</span>r</p>'
 			);
 
@@ -612,14 +612,14 @@ describe( 'Drag and Drop', () => {
 			expect( spyClipboardInput.firstCall.firstArg.method ).to.equal( 'drop' );
 			expect( spyClipboardInput.firstCall.firstArg.dataTransfer ).to.equal( dataTransferMock );
 
-			expect( getModelData( model ) ).to.equal( '<paragraph>barfoo[]</paragraph>' );
-			expect( getViewData( view ) ).to.equal( '<p>barfoo{}</p>' );
+			expect( _getModelData( model ) ).to.equal( '<paragraph>barfoo[]</paragraph>' );
+			expect( _getViewData( view ) ).to.equal( '<p>barfoo{}</p>' );
 
 			expectFinalized();
 		} );
 
 		it( 'should not allow dropping if the editor is read-only', () => {
-			setModelData( model, '<paragraph>[foo]bar</paragraph>' );
+			_setModelData( model, '<paragraph>[foo]bar</paragraph>' );
 
 			const clock = sinon.useFakeTimers();
 			const dataTransferMock = createDataTransfer();
@@ -640,7 +640,7 @@ describe( 'Drag and Drop', () => {
 			clock.tick( 100 );
 
 			expectDraggingMarker( targetPosition );
-			expect( getViewData( view, { renderUIElements: true } ) ).to.equal(
+			expect( _getViewData( view, { renderUIElements: true } ) ).to.equal(
 				'<p>{foo}<span class="ck ck-clipboard-drop-target-position">\u2060<span></span>\u2060</span>bar</p>'
 			);
 
@@ -654,7 +654,7 @@ describe( 'Drag and Drop', () => {
 
 			expect( dataTransferMock.dropEffect ).to.equal( 'none' );
 			expect( model.markers.has( 'drop-target' ) ).to.be.false;
-			expect( getViewData( view, { renderUIElements: true } ) ).to.equal( '<p>{foo}bar</p>' );
+			expect( _getViewData( view, { renderUIElements: true } ) ).to.equal( '<p>{foo}bar</p>' );
 
 			editor.disableReadOnlyMode( 'unit-test' );
 			// Dropping.
@@ -671,12 +671,12 @@ describe( 'Drag and Drop', () => {
 			fireDragEnd( dataTransferMock );
 			expectFinalized();
 
-			expect( getModelData( model ) ).to.equal( '<paragraph>foobarfoo[]</paragraph>' );
-			expect( getViewData( view ) ).to.equal( '<p>foobarfoo{}</p>' );
+			expect( _getModelData( model ) ).to.equal( '<paragraph>foobarfoo[]</paragraph>' );
+			expect( _getViewData( view ) ).to.equal( '<p>foobarfoo{}</p>' );
 		} );
 
 		it( 'should not allow dropping if the plugin is disabled', () => {
-			setModelData( model, '<paragraph>[foo]bar</paragraph>' );
+			_setModelData( model, '<paragraph>[foo]bar</paragraph>' );
 
 			const plugin = editor.plugins.get( 'DragDrop' );
 			const clock = sinon.useFakeTimers();
@@ -698,7 +698,7 @@ describe( 'Drag and Drop', () => {
 			clock.tick( 100 );
 
 			expectDraggingMarker( targetPosition );
-			expect( getViewData( view, { renderUIElements: true } ) ).to.equal(
+			expect( _getViewData( view, { renderUIElements: true } ) ).to.equal(
 				'<p>{foo}<span class="ck ck-clipboard-drop-target-position">\u2060<span></span>\u2060</span>bar</p>'
 			);
 
@@ -712,7 +712,7 @@ describe( 'Drag and Drop', () => {
 
 			expect( dataTransferMock.dropEffect ).to.equal( 'none' );
 			expect( model.markers.has( 'drop-target' ) ).to.be.false;
-			expect( getViewData( view, { renderUIElements: true } ) ).to.equal( '<p>{foo}bar</p>' );
+			expect( _getViewData( view, { renderUIElements: true } ) ).to.equal( '<p>{foo}bar</p>' );
 
 			plugin.clearForceDisabled( 'test' );
 			// Dropping.
@@ -729,14 +729,14 @@ describe( 'Drag and Drop', () => {
 			fireDragEnd( dataTransferMock );
 			expectFinalized();
 
-			expect( getModelData( model ) ).to.equal( '<paragraph>foobarfoo[]</paragraph>' );
-			expect( getViewData( view ) ).to.equal( '<p>foobarfoo{}</p>' );
+			expect( _getModelData( model ) ).to.equal( '<paragraph>foobarfoo[]</paragraph>' );
+			expect( _getViewData( view ) ).to.equal( '<p>foobarfoo{}</p>' );
 		} );
 
 		it( 'should do nothing if dragging on Android', () => {
 			env.isAndroid = true;
 
-			setModelData( model, '<paragraph>[foo]bar</paragraph>' );
+			_setModelData( model, '<paragraph>[foo]bar</paragraph>' );
 
 			const dataTransferMock = createDataTransfer();
 			const spyClipboardInput = sinon.spy();
@@ -755,7 +755,7 @@ describe( 'Drag and Drop', () => {
 
 		describe( 'dragstart', () => {
 			it( 'should not start dragging if the selection is collapsed', () => {
-				setModelData( model, '<paragraph>foo[]bar</paragraph>' );
+				_setModelData( model, '<paragraph>foo[]bar</paragraph>' );
 
 				const dataTransferMock = createDataTransfer();
 				const spyClipboardOutput = sinon.spy();
@@ -770,7 +770,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'should not start dragging if the root editable would be dragged itself', () => {
-				setModelData( model, '<paragraph>[foo]bar</paragraph>' );
+				_setModelData( model, '<paragraph>[foo]bar</paragraph>' );
 
 				const dataTransferMock = createDataTransfer();
 				const spyClipboardOutput = sinon.spy();
@@ -781,8 +781,11 @@ describe( 'Drag and Drop', () => {
 				const eventData = prepareEventData( model.createPositionAt( root.getChild( 0 ), 3 ) );
 				eventData.domTarget = view.getDomRoot();
 				eventData.target = domConverter.mapDomToView( view.getDomRoot() );
+				eventData.domEvent = {
+					isPrimary: true
+				};
 
-				viewDocument.fire( 'mousedown', {
+				viewDocument.fire( 'pointerdown', {
 					...eventData
 				} );
 
@@ -799,7 +802,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'should not start dragging if the editable would be dragged itself', () => {
-				setModelData( model, '<table><tableRow><tableCell><paragraph>[foo]bar</paragraph></tableCell></tableRow></table>' );
+				_setModelData( model, '<table><tableRow><tableCell><paragraph>[foo]bar</paragraph></tableCell></tableRow></table>' );
 
 				const dataTransferMock = createDataTransfer();
 				const spyClipboardOutput = sinon.spy();
@@ -811,10 +814,13 @@ describe( 'Drag and Drop', () => {
 				const eventData = prepareEventData( model.createPositionAt( modelElement.getChild( 0 ), 3 ) );
 				eventData.target = mapper.toViewElement( modelElement );
 				eventData.domTarget = domConverter.mapViewToDom( eventData.target );
+				eventData.domEvent = {
+					isPrimary: true
+				};
 
 				expect( eventData.target.is( 'editableElement', 'td' ) ).to.be.true;
 
-				viewDocument.fire( 'mousedown', {
+				viewDocument.fire( 'pointerdown', {
 					...eventData
 				} );
 
@@ -831,7 +837,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'should mark allowed effect as "copy" if the editor is read-only', () => {
-				setModelData( model, '<paragraph>[foo]bar</paragraph>' );
+				_setModelData( model, '<paragraph>[foo]bar</paragraph>' );
 
 				const dataTransferMock = createDataTransfer();
 				const spyClipboardOutput = sinon.spy();
@@ -847,7 +853,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'should start dragging by grabbing the widget selection handle', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>[]foobar</paragraph>' +
 					'<table><tableRow><tableCell><paragraph>abc</paragraph></tableCell></tableRow></table>'
 				);
@@ -868,10 +874,12 @@ describe( 'Drag and Drop', () => {
 				const eventData = {
 					domTarget: domNode,
 					target: selectionHandleElement,
-					domEvent: {}
+					domEvent: {
+						isPrimary: true
+					}
 				};
 
-				viewDocument.fire( 'mousedown', {
+				viewDocument.fire( 'pointerdown', {
 					...eventData
 				} );
 
@@ -890,7 +898,7 @@ describe( 'Drag and Drop', () => {
 				expect( spyClipboardOutput.called ).to.be.true;
 				expect( spyClipboardOutput.firstCall.firstArg.method ).to.equal( 'dragstart' );
 				expect( spyClipboardOutput.firstCall.firstArg.dataTransfer ).to.equal( dataTransferMock );
-				expect( stringifyView( spyClipboardOutput.firstCall.firstArg.content ) ).to.equal(
+				expect( _stringifyView( spyClipboardOutput.firstCall.firstArg.content ) ).to.equal(
 					'<figure class="table"><table><tbody><tr><td><p>abc</p></td></tr></tbody></table></figure>'
 				);
 
@@ -905,14 +913,14 @@ describe( 'Drag and Drop', () => {
 				fireDragEnd( dataTransferMock );
 				expectFinalized();
 
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>foobar</paragraph>' +
 					'[<table><tableRow><tableCell><paragraph>abc</paragraph></tableCell></tableRow></table>]'
 				);
 			} );
 
 			it( 'should start dragging by grabbing the widget selection handle (in read only mode)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>[]foobar</paragraph>' +
 					'<table><tableRow><tableCell><paragraph>abc</paragraph></tableCell></tableRow></table>'
 				);
@@ -933,10 +941,12 @@ describe( 'Drag and Drop', () => {
 				const eventData = {
 					domTarget: domNode,
 					target: selectionHandleElement,
-					domEvent: {}
+					domEvent: {
+						isPrimary: true
+					}
 				};
 
-				viewDocument.fire( 'mousedown', {
+				viewDocument.fire( 'pointerdown', {
 					...eventData
 				} );
 
@@ -955,13 +965,13 @@ describe( 'Drag and Drop', () => {
 				expect( spyClipboardOutput.called ).to.be.true;
 				expect( spyClipboardOutput.firstCall.firstArg.method ).to.equal( 'dragstart' );
 				expect( spyClipboardOutput.firstCall.firstArg.dataTransfer ).to.equal( dataTransferMock );
-				expect( stringifyView( spyClipboardOutput.firstCall.firstArg.content ) ).to.equal(
+				expect( _stringifyView( spyClipboardOutput.firstCall.firstArg.content ) ).to.equal(
 					'<figure class="table"><table><tbody><tr><td><p>abc</p></td></tr></tbody></table></figure>'
 				);
 			} );
 
 			it( 'should start dragging by grabbing the widget element directly', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>[]foobar</paragraph>' +
 					'<horizontalLine></horizontalLine>'
 				);
@@ -979,10 +989,12 @@ describe( 'Drag and Drop', () => {
 				const eventData = {
 					domTarget: domNode,
 					target: widgetViewElement,
-					domEvent: {}
+					domEvent: {
+						isPrimary: true
+					}
 				};
 
-				viewDocument.fire( 'mousedown', {
+				viewDocument.fire( 'pointerdown', {
 					...eventData
 				} );
 
@@ -999,7 +1011,7 @@ describe( 'Drag and Drop', () => {
 				expect( spyClipboardOutput.called ).to.be.true;
 				expect( spyClipboardOutput.firstCall.firstArg.method ).to.equal( 'dragstart' );
 				expect( spyClipboardOutput.firstCall.firstArg.dataTransfer ).to.equal( dataTransferMock );
-				expect( stringifyView( spyClipboardOutput.firstCall.firstArg.content ) ).to.equal( '<hr></hr>' );
+				expect( _stringifyView( spyClipboardOutput.firstCall.firstArg.content ) ).to.equal( '<hr></hr>' );
 
 				dataTransferMock.dropEffect = 'move';
 				const targetPosition = model.createPositionAt( root.getChild( 0 ), 3 );
@@ -1012,14 +1024,14 @@ describe( 'Drag and Drop', () => {
 				fireDragEnd( dataTransferMock );
 				expectFinalized();
 
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>foobar</paragraph>' +
 					'[<horizontalLine></horizontalLine>]'
 				);
 			} );
 
 			it( 'should start dragging the selected text fragment', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>[foo]bar</paragraph>'
 				);
 
@@ -1033,10 +1045,12 @@ describe( 'Drag and Drop', () => {
 				const viewNode = viewDocument.getRoot().getChild( 0 ).getChild( 0 );
 				const domNode = domConverter.findCorrespondingDomText( viewNode );
 
-				viewDocument.fire( 'mousedown', {
+				viewDocument.fire( 'pointerdown', {
 					domTarget: domNode.parentNode,
 					target: viewNode.parent,
-					domEvent: {}
+					domEvent: {
+						isPrimary: true
+					}
 				} );
 
 				viewDocument.fire( 'dragstart', {
@@ -1052,7 +1066,7 @@ describe( 'Drag and Drop', () => {
 				expect( spyClipboardOutput.called ).to.be.true;
 				expect( spyClipboardOutput.firstCall.firstArg.method ).to.equal( 'dragstart' );
 				expect( spyClipboardOutput.firstCall.firstArg.dataTransfer ).to.equal( dataTransferMock );
-				expect( stringifyView( spyClipboardOutput.firstCall.firstArg.content ) ).to.equal( 'foo' );
+				expect( _stringifyView( spyClipboardOutput.firstCall.firstArg.content ) ).to.equal( 'foo' );
 
 				dataTransferMock.dropEffect = 'move';
 				const targetPosition = model.createPositionAt( root.getChild( 0 ), 4 );
@@ -1065,14 +1079,14 @@ describe( 'Drag and Drop', () => {
 				fireDragEnd( dataTransferMock );
 				expectFinalized();
 
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>bfoo[]ar</paragraph>'
 				);
 			} );
 
 			// TODO: what does it mean "(but not nested editable)"?
 			it( 'should start dragging by grabbing a widget nested element (but not nested editable)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>[]foobar</paragraph>' +
 					'<horizontalLine></horizontalLine>'
 				);
@@ -1093,10 +1107,12 @@ describe( 'Drag and Drop', () => {
 				const eventData = {
 					domTarget: domNode,
 					target: viewElement,
-					domEvent: {}
+					domEvent: {
+						isPrimary: true
+					}
 				};
 
-				viewDocument.fire( 'mousedown', {
+				viewDocument.fire( 'pointerdown', {
 					...eventData
 				} );
 
@@ -1113,7 +1129,7 @@ describe( 'Drag and Drop', () => {
 				expect( spyClipboardOutput.called ).to.be.true;
 				expect( spyClipboardOutput.firstCall.firstArg.method ).to.equal( 'dragstart' );
 				expect( spyClipboardOutput.firstCall.firstArg.dataTransfer ).to.equal( dataTransferMock );
-				expect( stringifyView( spyClipboardOutput.firstCall.firstArg.content ) ).to.equal( '<hr></hr>' );
+				expect( _stringifyView( spyClipboardOutput.firstCall.firstArg.content ) ).to.equal( '<hr></hr>' );
 
 				dataTransferMock.dropEffect = 'move';
 				const targetPosition = model.createPositionAt( root.getChild( 0 ), 3 );
@@ -1126,14 +1142,14 @@ describe( 'Drag and Drop', () => {
 				fireDragEnd( dataTransferMock );
 				expectFinalized();
 
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>foobar</paragraph>' +
 					'[<horizontalLine></horizontalLine>]'
 				);
 			} );
 
 			it( 'should not start dragging a widget if it is not a target for an event', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>foobar</paragraph>' +
 					'[<horizontalLine></horizontalLine>]'
 				);
@@ -1149,10 +1165,12 @@ describe( 'Drag and Drop', () => {
 				const eventData = {
 					domTarget: editableDomNode,
 					target: editableElement,
-					domEvent: {}
+					domEvent: {
+						isPrimary: true
+					}
 				};
 
-				viewDocument.fire( 'mousedown', {
+				viewDocument.fire( 'pointerdown', {
 					...eventData
 				} );
 
@@ -1169,7 +1187,7 @@ describe( 'Drag and Drop', () => {
 
 			// TODO: this test looks invalid, "this._draggedRange" in experimental in most cases is not undefined.
 			it.skip( 'should not start dragging a widget if it is not a target for an event (but it was selected)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>foobar</paragraph>' +
 					'[<horizontalLine></horizontalLine>]'
 				);
@@ -1185,10 +1203,12 @@ describe( 'Drag and Drop', () => {
 				const eventData = {
 					domTarget: targetDomNode,
 					target: targetElement,
-					domEvent: {}
+					domEvent: {
+						isPrimary: true
+					}
 				};
 
-				viewDocument.fire( 'mousedown', {
+				viewDocument.fire( 'pointerdown', {
 					...eventData
 				} );
 
@@ -1204,7 +1224,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'should drag parent paragraph if entire content is selected', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>foobar</paragraph>' +
 					'<table><tableRow><tableCell><paragraph>[<softBreak></softBreak>]</paragraph></tableCell></tableRow></table>'
 				);
@@ -1225,10 +1245,12 @@ describe( 'Drag and Drop', () => {
 				const eventData = {
 					domTarget: domNode,
 					target: viewElement,
-					domEvent: {}
+					domEvent: {
+						isPrimary: true
+					}
 				};
 
-				viewDocument.fire( 'mousedown', {
+				viewDocument.fire( 'pointerdown', {
 					...eventData
 				} );
 
@@ -1248,7 +1270,7 @@ describe( 'Drag and Drop', () => {
 				expect( spyClipboardOutput.called ).to.be.true;
 				expect( spyClipboardOutput.firstCall.firstArg.method ).to.equal( 'dragstart' );
 				expect( spyClipboardOutput.firstCall.firstArg.dataTransfer ).to.equal( dataTransferMock );
-				expect( stringifyView( spyClipboardOutput.firstCall.firstArg.content ) ).to.equal( '<p><br></br></p>' );
+				expect( _stringifyView( spyClipboardOutput.firstCall.firstArg.content ) ).to.equal( '<p><br></br></p>' );
 
 				dataTransferMock.dropEffect = 'move';
 				const targetPosition = model.createPositionAt( root.getChild( 0 ), 3 );
@@ -1261,14 +1283,14 @@ describe( 'Drag and Drop', () => {
 				fireDragEnd( dataTransferMock );
 				expectFinalized();
 
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>foobar</paragraph><paragraph><softBreak></softBreak> []</paragraph>' +
 					'<table><tableRow><tableCell><paragraph></paragraph></tableCell></tableRow></table>'
 				);
 			} );
 
 			it( 'should start dragging text from caption to paragraph', () => {
-				setModelData( model, trim`
+				_setModelData( model, trim`
 					<imageBlock src="">
 						<caption>[World]</caption>
 					</imageBlock>
@@ -1297,7 +1319,7 @@ describe( 'Drag and Drop', () => {
 					model.createPositionAt( root.getChild( 1 ), 5 )
 				);
 
-				expect( getModelData( model ) ).to.equal( trim`
+				expect( _getModelData( model ) ).to.equal( trim`
 					<imageBlock src="">
 						<caption></caption>
 					</imageBlock>
@@ -1306,7 +1328,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'should start dragging text from title to paragraph', () => {
-				setModelData( model, trim`
+				_setModelData( model, trim`
 					<title><title-content>[Foo] Bar</title-content></title>
 					<paragraph>Bar</paragraph>
 				` );
@@ -1333,14 +1355,14 @@ describe( 'Drag and Drop', () => {
 					model.createPositionAt( root.getChild( 1 ), 3 )
 				);
 
-				expect( getModelData( model ) ).to.equal( trim`
+				expect( _getModelData( model ) ).to.equal( trim`
 					<title><title-content> Bar</title-content></title>
 					<paragraph>BarFoo[]</paragraph>
 				` );
 			} );
 
 			it( 'should start dragging text from paragraph to title', () => {
-				setModelData( model, trim`
+				_setModelData( model, trim`
 					<title><title-content>Foo Bar</title-content></title>
 					<paragraph>[Baz]</paragraph>
 				` );
@@ -1365,14 +1387,14 @@ describe( 'Drag and Drop', () => {
 					model.createPositionAt( root.getChild( 0 ).getChild( 0 ), 3 )
 				);
 
-				expect( getModelData( model ) ).to.equal( trim`
+				expect( _getModelData( model ) ).to.equal( trim`
 					<paragraph>Baz[]</paragraph>
 					<title><title-content>Foo Bar</title-content></title>
 				` );
 			} );
 
 			it( 'should not drag parent paragraph when only portion of content is selected', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>foobar</paragraph>' +
 					'<table><tableRow><tableCell><paragraph>ba[<softBreak></softBreak>]z</paragraph></tableCell></tableRow></table>'
 				);
@@ -1393,10 +1415,12 @@ describe( 'Drag and Drop', () => {
 				const eventData = {
 					domTarget: domNode,
 					target: viewElement,
-					domEvent: {}
+					domEvent: {
+						isPrimary: true
+					}
 				};
 
-				viewDocument.fire( 'mousedown', {
+				viewDocument.fire( 'pointerdown', {
 					...eventData
 				} );
 
@@ -1416,7 +1440,7 @@ describe( 'Drag and Drop', () => {
 				expect( spyClipboardOutput.called ).to.be.true;
 				expect( spyClipboardOutput.firstCall.firstArg.method ).to.equal( 'dragstart' );
 				expect( spyClipboardOutput.firstCall.firstArg.dataTransfer ).to.equal( dataTransferMock );
-				expect( stringifyView( spyClipboardOutput.firstCall.firstArg.content ) ).to.equal( '<br></br>' );
+				expect( _stringifyView( spyClipboardOutput.firstCall.firstArg.content ) ).to.equal( '<br></br>' );
 
 				dataTransferMock.dropEffect = 'move';
 				const targetPosition = model.createPositionAt( root.getChild( 0 ), 3 );
@@ -1429,14 +1453,14 @@ describe( 'Drag and Drop', () => {
 				fireDragEnd( dataTransferMock );
 				expectFinalized();
 
-				expect( getModelData( model ) ).to.equal(
+				expect( _getModelData( model ) ).to.equal(
 					'<paragraph>foo<softBreak></softBreak>[]bar</paragraph>' +
 					'<table><tableRow><tableCell><paragraph>baz</paragraph></tableCell></tableRow></table>'
 				);
 			} );
 
-			it( 'should remove "draggable" attribute from widget element if mouseup before dragging start (selection handle)', () => {
-				setModelData( model,
+			it( 'should remove "draggable" attribute from widget element if pointerup before dragging start (selection handle)', () => {
+				_setModelData( model,
 					'<paragraph>[]foobar</paragraph>' +
 					'<table><tableRow><tableCell><paragraph>abc</paragraph></tableCell></tableRow></table>'
 				);
@@ -1451,23 +1475,25 @@ describe( 'Drag and Drop', () => {
 				const eventData = {
 					domTarget: domNode,
 					target: selectionHandleElement,
-					domEvent: {}
+					domEvent: {
+						isPrimary: true
+					}
 				};
 
-				viewDocument.fire( 'mousedown', {
+				viewDocument.fire( 'pointerdown', {
 					...eventData
 				} );
 
 				expect( widgetViewElement.getAttribute( 'draggable' ) ).to.equal( 'true' );
 
-				viewDocument.fire( 'mouseup' );
+				viewDocument.fire( 'pointerup' );
 				clock.tick( 50 );
 
 				expect( widgetViewElement.hasAttribute( 'draggable' ) ).to.be.false;
 			} );
 
-			it( 'should remove "draggable" attribute from widget element if mouseup before dragging start (widget)', () => {
-				setModelData( model,
+			it( 'should remove "draggable" attribute from widget element if pointerup before dragging start (widget)', () => {
+				_setModelData( model,
 					'<paragraph>[]foobar</paragraph>' +
 					'<horizontalLine></horizontalLine>'
 				);
@@ -1482,23 +1508,25 @@ describe( 'Drag and Drop', () => {
 				const eventData = {
 					domTarget: domNode,
 					target: viewElement,
-					domEvent: {}
+					domEvent: {
+						isPrimary: true
+					}
 				};
 
-				viewDocument.fire( 'mousedown', {
+				viewDocument.fire( 'pointerdown', {
 					...eventData
 				} );
 
 				expect( widgetViewElement.getAttribute( 'draggable' ) ).to.equal( 'true' );
 
-				viewDocument.fire( 'mouseup' );
+				viewDocument.fire( 'pointerup' );
 				clock.tick( 50 );
 
 				expect( widgetViewElement.hasAttribute( 'draggable' ) ).to.be.false;
 			} );
 
 			it( 'can drag multiple elements', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<blockQuote>' +
 						'[<paragraph>foo</paragraph>' +
 						'<paragraph>bar</paragraph>]' +
@@ -1518,7 +1546,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'should remove "draggable" attribute from editable element', () => {
-				setModelData( model, '<paragraph>[foo]bar</paragraph>' );
+				_setModelData( model, '<paragraph>[foo]bar</paragraph>' );
 
 				const clock = sinon.useFakeTimers();
 				const editableElement = viewDocument.getRoot();
@@ -1530,23 +1558,25 @@ describe( 'Drag and Drop', () => {
 				const eventData = {
 					domTarget: domNode,
 					target: viewElement,
-					domEvent: {}
+					domEvent: {
+						isPrimary: true
+					}
 				};
 
-				viewDocument.fire( 'mousedown', {
+				viewDocument.fire( 'pointerdown', {
 					...eventData
 				} );
 
 				expect( editableElement.getAttribute( 'draggable' ) ).to.equal( 'true' );
 
-				viewDocument.fire( 'mouseup' );
+				viewDocument.fire( 'pointerup' );
 				clock.tick( 50 );
 
 				expect( editableElement.hasAttribute( 'draggable' ) ).to.be.false;
 			} );
 
 			it( 'should only show one preview element when you drag element outside the editing root', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<blockQuote>' +
 						'[<paragraph>foo</paragraph>' +
 						'<paragraph>bar</paragraph>]' +
@@ -1572,7 +1602,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'should show preview with custom implementation if drag element outside the editing root', () => {
-				setModelData( editor.model, '<paragraph>[Foo.]</paragraph><horizontalLine></horizontalLine>' );
+				_setModelData( editor.model, '<paragraph>[Foo.]</paragraph><horizontalLine></horizontalLine>' );
 
 				const dataTransfer = createDataTransfer( {} );
 
@@ -1600,7 +1630,7 @@ describe( 'Drag and Drop', () => {
 					style: {
 						'padding-left': `${ domRect.left - clientX + paddingLeft }px`
 					},
-					className: 'ck ck-content',
+					className: 'ck ck-content ck-clipboard-preview',
 					firstChild: sinon.match( {
 						tagName: 'P',
 						innerHTML: 'Foo.'
@@ -1609,8 +1639,51 @@ describe( 'Drag and Drop', () => {
 				sinon.assert.calledOnce( spy );
 			} );
 
+			it( 'should show preview with custom implementation on iOS', () => {
+				const originalEnviOs = env.isiOS;
+
+				env.isiOS = true;
+				_setModelData( editor.model, '<paragraph>[Foo.]</paragraph><horizontalLine></horizontalLine>' );
+
+				const dataTransfer = createDataTransfer( {} );
+
+				const spy = sinon.spy( dataTransfer, 'setDragImage' );
+
+				const modelElement = root.getNodeByPath( [ 0 ] );
+				const viewElement = mapper.toViewElement( modelElement );
+				const domElement = domConverter.mapViewToDom( viewElement );
+
+				viewDocument.fire( 'dragstart', {
+					dataTransfer,
+					preventDefault: sinon.spy(),
+					stopPropagation: sinon.spy(),
+					domEvent: getMockedMousePosition( domElement ),
+					domTarget: domElement
+				} );
+
+				sinon.assert.calledOnce( spy );
+
+				sinon.assert.calledWith( spy, sinon.match( {
+					style: {
+						'padding': '10px',
+						'min-width': '200px',
+						'min-height': '20px',
+						'box-sizing': 'border-box',
+						'max-width': sinon.match( /px$/ ),
+						'background-color': 'var(--ck-color-base-background)'
+					},
+					className: 'ck ck-content ck-clipboard-preview',
+					firstChild: sinon.match( {
+						tagName: 'P',
+						innerHTML: 'Foo.'
+					} )
+				} ), 0, 0 );
+
+				env.isiOS = originalEnviOs;
+			} );
+
 			it( 'should show preview with browser implementation if drag element inside the editing root', () => {
-				setModelData( editor.model, '<paragraph>[Foo.]</paragraph><horizontalLine></horizontalLine>' );
+				_setModelData( editor.model, '<paragraph>[Foo.]</paragraph><horizontalLine></horizontalLine>' );
 
 				const dataTransfer = createDataTransfer( {} );
 
@@ -1654,7 +1727,7 @@ describe( 'Drag and Drop', () => {
 
 		describe( 'dragleave', () => {
 			it( 'should remove drop target marker', () => {
-				setModelData( model, '<paragraph>[foo]bar</paragraph>' );
+				_setModelData( model, '<paragraph>[foo]bar</paragraph>' );
 
 				const clock = sinon.useFakeTimers();
 				const dataTransferMock = createDataTransfer();
@@ -1673,7 +1746,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'should not remove drop target marker if dragging left some nested element', () => {
-				setModelData( model, '<paragraph>[foo]bar</paragraph>' );
+				_setModelData( model, '<paragraph>[foo]bar</paragraph>' );
 
 				const spy = sinon.spy();
 				const clock = sinon.useFakeTimers();
@@ -1719,7 +1792,7 @@ describe( 'Drag and Drop', () => {
 
 		describe( 'dragover', () => {
 			it( 'should put drop target marker inside a text node', () => {
-				setModelData( model, '<paragraph>[]foobar</paragraph>' );
+				_setModelData( model, '<paragraph>[]foobar</paragraph>' );
 
 				const dataTransferMock = createDataTransfer();
 				const targetPosition = model.createPositionAt( root.getChild( 0 ), 2 );
@@ -1731,7 +1804,7 @@ describe( 'Drag and Drop', () => {
 
 			// TODO: this should be fixed in code.
 			it.skip( 'cannot be dropped on non-editable place.', () => {
-				setModelData( model, '<paragraph>[]foobar</paragraph>' );
+				_setModelData( model, '<paragraph>[]foobar</paragraph>' );
 
 				const dataTransferMock = createDataTransfer();
 				const targetPosition = model.createPositionAt( root.getChild( 0 ), 2 );
@@ -1748,7 +1821,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'should put drop target marker inside and attribute element', () => {
-				setModelData( model, '<paragraph>[]foo<$text bold="true">bar</$text></paragraph>' );
+				_setModelData( model, '<paragraph>[]foo<$text bold="true">bar</$text></paragraph>' );
 
 				const dataTransferMock = createDataTransfer();
 
@@ -1769,7 +1842,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'should put marker before element when mouse position is on the upper half of it', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>[]foobar</paragraph>' +
 					'<table><tableRow><tableCell><paragraph>abc</paragraph></tableCell></tableRow></table>'
 				);
@@ -1792,7 +1865,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'should put marker after element when mouse position is on the bottom half of it', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>[]foobar</paragraph>' +
 					'<table><tableRow><tableCell><paragraph>abc</paragraph></tableCell></tableRow></table>'
 				);
@@ -1817,7 +1890,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'should find ancestor widget while hovering over inner content of widget (but not nested editable)', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>[]foobar</paragraph>' +
 					'<table><tableRow><tableCell><paragraph>abc</paragraph></tableCell></tableRow></table>'
 				);
@@ -1841,7 +1914,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'should find drop position while hovering over empty nested editable', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>[]foobar</paragraph>' +
 					'<table><tableRow><tableCell><paragraph></paragraph></tableCell></tableRow></table>'
 				);
@@ -1865,7 +1938,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'should find drop position while hovering over space between blocks', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>[]foobar</paragraph>' +
 					'<table><tableRow><tableCell><paragraph></paragraph></tableCell></tableRow></table>'
 				);
@@ -1894,7 +1967,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'should find drop position while hovering over table figure', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>[]foobar</paragraph>' +
 					'<table><tableRow><tableCell><paragraph>abc</paragraph></tableCell></tableRow></table>'
 				);
@@ -1920,7 +1993,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'should find drop position while hovering over table with target position inside after paragraph', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>[]foobar</paragraph>' +
 					'<table><tableRow><tableCell><paragraph>abc</paragraph></tableCell></tableRow></table>'
 				);
@@ -1946,7 +2019,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'should find drop position while hovering over space between blocks but the following element is not an object', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>[]foo</paragraph>' +
 					'<paragraph>bar</paragraph>'
 				);
@@ -1979,7 +2052,7 @@ describe( 'Drag and Drop', () => {
 
 				env.isGecko = false;
 
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>[]foo</paragraph>' +
 					'<horizontalLine></horizontalLine>' +
 					'<paragraph>bar</paragraph>'
@@ -2012,7 +2085,7 @@ describe( 'Drag and Drop', () => {
 
 				env.isGecko = true;
 
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>[]foo</paragraph>' +
 					'<blockQuote><horizontalLine></horizontalLine></blockQuote>' +
 					'<paragraph>bar</paragraph>'
@@ -2044,7 +2117,7 @@ describe( 'Drag and Drop', () => {
 
 		describe( 'dragend', () => {
 			it( 'should reset block dragging when dropped outside the editable', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>foobar</paragraph>' +
 					'[<horizontalLine></horizontalLine>]'
 				);
@@ -2075,7 +2148,7 @@ describe( 'Drag and Drop', () => {
 		describe( 'drop', () => {
 			// TODO: to be discussed.
 			it.skip( 'should update targetRanges', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<paragraph>[]foobar</paragraph>' +
 					'<horizontalLine></horizontalLine>'
 				);
@@ -2101,7 +2174,7 @@ describe( 'Drag and Drop', () => {
 
 		describe( 'extending selection range when all parent elements are selected', () => {
 			it( 'extends flat selection', () => {
-				setModelData( model, trim`
+				_setModelData( model, trim`
 					<blockQuote>
 						<paragraph>[one</paragraph>
 						<paragraph>two</paragraph>
@@ -2127,7 +2200,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'extends nested selection', () => {
-				setModelData( model, trim`
+				_setModelData( model, trim`
 					<blockQuote>
 						<paragraph>[one</paragraph>
 						<blockQuote>
@@ -2161,7 +2234,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'extends selection when it starts at different level than it ends', () => {
-				setModelData( model, trim`
+				_setModelData( model, trim`
 					<blockQuote>
 						<blockQuote>
 							<paragraph>[one</paragraph>
@@ -2193,7 +2266,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'extends selection when it ends at different level than it starts', () => {
-				setModelData( model, trim`
+				_setModelData( model, trim`
 					<blockQuote>
 						<paragraph>[one</paragraph>
 						<blockQuote>
@@ -2257,7 +2330,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'is enabled when starts dragging the text node', () => {
-				setModelData( editor.model, '<paragraph>[Foo.]</paragraph><horizontalLine></horizontalLine>' );
+				_setModelData( editor.model, '<paragraph>[Foo.]</paragraph><horizontalLine></horizontalLine>' );
 
 				const nodeModel = root.getNodeByPath( [ 0 ] );
 				const nodeView = mapper.toViewElement( nodeModel );
@@ -2275,7 +2348,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'is disabled when plugin is disabled', () => {
-				setModelData( editor.model, '<paragraph>Foo.</paragraph>[<horizontalLine></horizontalLine>]' );
+				_setModelData( editor.model, '<paragraph>Foo.</paragraph>[<horizontalLine></horizontalLine>]' );
 
 				const nodeModel = root.getNodeByPath( [ 0 ] );
 				const nodeView = mapper.toViewElement( nodeModel );
@@ -2296,7 +2369,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'is disabled when starts dragging the widget', () => {
-				setModelData( editor.model, '<paragraph>Foo.</paragraph>[<horizontalLine></horizontalLine>]' );
+				_setModelData( editor.model, '<paragraph>Foo.</paragraph>[<horizontalLine></horizontalLine>]' );
 
 				const nodeModel = root.getNodeByPath( [ 0 ] );
 				const nodeView = mapper.toViewElement( nodeModel );
@@ -2314,7 +2387,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'is enabled when ends dragging (drop in the editable)', () => {
-				setModelData( editor.model, '[<horizontalLine></horizontalLine>]' );
+				_setModelData( editor.model, '[<horizontalLine></horizontalLine>]' );
 
 				const dataTransfer = createDataTransfer( {} );
 
@@ -2348,7 +2421,7 @@ describe( 'Drag and Drop', () => {
 			} );
 
 			it( 'is enabled when ends dragging (drop outside the editable)', () => {
-				setModelData( editor.model, '[<horizontalLine></horizontalLine>]' );
+				_setModelData( editor.model, '[<horizontalLine></horizontalLine>]' );
 
 				const dataTransfer = createDataTransfer( {} );
 
@@ -2400,7 +2473,7 @@ describe( 'Drag and Drop', () => {
 		} );
 
 		it( 'handles paste', () => {
-			setModelData( model,
+			_setModelData( model,
 				'foo[]'
 			);
 
@@ -2410,11 +2483,11 @@ describe( 'Drag and Drop', () => {
 				preventDefault() {}
 			} );
 
-			expect( getModelData( model ) ).to.equal( 'foo<$text bold="true">bar[]</$text>' );
+			expect( _getModelData( model ) ).to.equal( 'foo<$text bold="true">bar[]</$text>' );
 		} );
 
 		it( 'stops `clipboardInput` event', () => {
-			setModelData( model,
+			_setModelData( model,
 				'foo[]'
 			);
 
@@ -2511,7 +2584,7 @@ describe( 'Drag and Drop', () => {
 	function fireDragStart( dataTransferMock, preventDefault = () => {}, domTarget ) {
 		const eventData = prepareEventData( model.document.selection.getLastPosition(), domTarget );
 
-		viewDocument.fire( 'mousedown', {
+		viewDocument.fire( 'pointerdown', {
 			...eventData,
 			preventDefault
 		} );
@@ -2592,7 +2665,7 @@ describe( 'Drag and Drop', () => {
 			expect( spyClipboardOutput.called ).to.be.true;
 			expect( spyClipboardOutput.firstCall.firstArg.method ).to.equal( 'dragstart' );
 			expect( spyClipboardOutput.firstCall.firstArg.dataTransfer ).to.equal( dataTransferMock );
-			expect( stringifyView( spyClipboardOutput.firstCall.firstArg.content ) ).to.equal( data );
+			expect( _stringifyView( spyClipboardOutput.firstCall.firstArg.content ) ).to.equal( data );
 		}
 	}
 

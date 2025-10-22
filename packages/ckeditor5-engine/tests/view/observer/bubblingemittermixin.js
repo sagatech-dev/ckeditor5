@@ -3,22 +3,25 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import BubblingEventInfo from '../../../src/view/observer/bubblingeventinfo.js';
-import { setData as setModelData } from '../../../src/dev-utils/model.js';
+import { BubblingEventInfo } from '../../../src/view/observer/bubblingeventinfo.js';
+import { _setModelData } from '../../../src/dev-utils/model.js';
 
-import VirtualTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/virtualtesteditor.js';
-import Paragraph from '@ckeditor/ckeditor5-paragraph/src/paragraph.js';
+import { VirtualTestEditor } from '@ckeditor/ckeditor5-core/tests/_utils/virtualtesteditor.js';
+import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
 
-import BlockQuoteEditing from '@ckeditor/ckeditor5-block-quote/src/blockquoteediting.js';
-import EventInfo from '@ckeditor/ckeditor5-utils/src/eventinfo.js';
-import CKEditorError from '@ckeditor/ckeditor5-utils/src/ckeditorerror.js';
+import { BlockQuoteEditing } from '@ckeditor/ckeditor5-block-quote';
+import { BoldEditing } from '@ckeditor/ckeditor5-basic-styles';
+import { EventInfo, CKEditorError } from '@ckeditor/ckeditor5-utils';
 import { expectToThrowCKEditorError } from '@ckeditor/ckeditor5-utils/tests/_utils/utils.js';
+import { testUtils } from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
 
 describe( 'BubblingEmitterMixin', () => {
 	let editor, model, view, viewDocument;
 
+	testUtils.createSinonSandbox();
+
 	beforeEach( async () => {
-		editor = await VirtualTestEditor.create( { plugins: [ Paragraph, BlockQuoteEditing ] } );
+		editor = await VirtualTestEditor.create( { plugins: [ Paragraph, BlockQuoteEditing, BoldEditing ] } );
 
 		model = editor.model;
 		view = editor.editing.view;
@@ -30,7 +33,7 @@ describe( 'BubblingEmitterMixin', () => {
 	} );
 
 	it( 'should allow providing multiple contexts in one listener binding', () => {
-		setModelData( model, '<paragraph>foo[]bar</paragraph>' );
+		_setModelData( model, '<paragraph>foo[]bar</paragraph>' );
 
 		const spy = sinon.spy();
 		const data = {};
@@ -44,7 +47,7 @@ describe( 'BubblingEmitterMixin', () => {
 	} );
 
 	it( 'should reuse existing context', () => {
-		setModelData( model, '<paragraph>foo[]bar</paragraph>' );
+		_setModelData( model, '<paragraph>foo[]bar</paragraph>' );
 
 		const spy1 = sinon.spy();
 		const spy2 = sinon.spy();
@@ -62,7 +65,7 @@ describe( 'BubblingEmitterMixin', () => {
 	} );
 
 	it( 'should unbind from contexts', () => {
-		setModelData( model, '<paragraph>foo[]bar</paragraph>' );
+		_setModelData( model, '<paragraph>foo[]bar</paragraph>' );
 
 		const spyContext = sinon.spy();
 		const spyGlobal = sinon.spy();
@@ -89,7 +92,7 @@ describe( 'BubblingEmitterMixin', () => {
 	} );
 
 	it( 'should not unbind from contexts if other event is off', () => {
-		setModelData( model, '<paragraph>foo[]bar</paragraph>' );
+		_setModelData( model, '<paragraph>foo[]bar</paragraph>' );
 
 		const spy = sinon.spy();
 		const data = {};
@@ -350,7 +353,7 @@ describe( 'BubblingEmitterMixin', () => {
 	describe( 'event bubbling', () => {
 		describe( 'bubbling starting from non collapsed selection', () => {
 			it( 'should start bubbling from the selection anchor position', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<blockQuote><paragraph>fo[o</paragraph></blockQuote>' +
 					'<paragraph>b]ar</paragraph>'
 				);
@@ -400,7 +403,7 @@ describe( 'BubblingEmitterMixin', () => {
 			} );
 
 			it( 'should start bubbling from the selection focus position', () => {
-				setModelData( model,
+				_setModelData( model,
 					'<blockQuote><paragraph>fo[o</paragraph></blockQuote>' +
 					'<paragraph>b]ar</paragraph>',
 					{ lastRangeBackward: true }
@@ -453,7 +456,7 @@ describe( 'BubblingEmitterMixin', () => {
 
 		describe( 'while the selection in the text node', () => {
 			it( 'should bubble events from $text to $root and to default handlers if not stopped', () => {
-				setModelData( model, '<blockQuote><paragraph>foo[]bar</paragraph></blockQuote>' );
+				_setModelData( model, '<blockQuote><paragraph>foo[]bar</paragraph></blockQuote>' );
 
 				const data = {};
 				const events = setListeners( true );
@@ -500,7 +503,7 @@ describe( 'BubblingEmitterMixin', () => {
 			} );
 
 			it( 'should not trigger listeners on the lower priority if stopped on the $document (default) context', () => {
-				setModelData( model, '<blockQuote><paragraph>foo[]bar</paragraph></blockQuote>' );
+				_setModelData( model, '<blockQuote><paragraph>foo[]bar</paragraph></blockQuote>' );
 
 				const data = {};
 				const events = setListeners();
@@ -546,7 +549,7 @@ describe( 'BubblingEmitterMixin', () => {
 			} );
 
 			it( 'should not trigger listeners on the lower priority if stopped on the $root context', () => {
-				setModelData( model, '<blockQuote><paragraph>foo[]bar</paragraph></blockQuote>' );
+				_setModelData( model, '<blockQuote><paragraph>foo[]bar</paragraph></blockQuote>' );
 
 				const data = {};
 				const events = setListeners();
@@ -586,7 +589,7 @@ describe( 'BubblingEmitterMixin', () => {
 			} );
 
 			it( 'should stop bubbling events if stopped on the blockquote context', () => {
-				setModelData( model, '<blockQuote><paragraph>foo[]bar</paragraph></blockQuote>' );
+				_setModelData( model, '<blockQuote><paragraph>foo[]bar</paragraph></blockQuote>' );
 
 				const data = {};
 				const events = setListeners();
@@ -620,7 +623,7 @@ describe( 'BubblingEmitterMixin', () => {
 			} );
 
 			it( 'should stop bubbling events if stopped on the p context', () => {
-				setModelData( model, '<blockQuote><paragraph>foo[]bar</paragraph></blockQuote>' );
+				_setModelData( model, '<blockQuote><paragraph>foo[]bar</paragraph></blockQuote>' );
 
 				const data = {};
 				const events = setListeners();
@@ -648,7 +651,7 @@ describe( 'BubblingEmitterMixin', () => {
 			} );
 
 			it( 'should stop bubbling events if stopped on the $text context', () => {
-				setModelData( model, '<blockQuote><paragraph>foo[]bar</paragraph></blockQuote>' );
+				_setModelData( model, '<blockQuote><paragraph>foo[]bar</paragraph></blockQuote>' );
 
 				const data = {};
 				const events = setListeners();
@@ -670,7 +673,7 @@ describe( 'BubblingEmitterMixin', () => {
 			} );
 
 			it( 'should not start bubbling events if stopped on the $capture context', () => {
-				setModelData( model, '<blockQuote><paragraph>foo[]bar</paragraph></blockQuote>' );
+				_setModelData( model, '<blockQuote><paragraph>foo[]bar</paragraph></blockQuote>' );
 
 				const data = {};
 				const events = setListeners();
@@ -683,6 +686,149 @@ describe( 'BubblingEmitterMixin', () => {
 					'$capture @ high',
 					'$capture @ normal'
 				] );
+			} );
+
+			it( 'should bubble events from $text if selected element does not have a custom context', () => {
+				_setModelData( model, '<paragraph>foo[<$text bold="true">123</$text>]bar</paragraph>' );
+
+				const data = {};
+				const events = setListeners( true );
+
+				fireBubblingEvent( 'fakeEvent', data );
+
+				expect( events ).to.deep.equal( [
+					'$capture @ highest (capturing @ $document)',
+					'$capture @ high (capturing @ $document)',
+					'$capture @ normal (capturing @ $document)',
+					'$capture @ low (capturing @ $document)',
+					'$capture @ lowest (capturing @ $document)',
+
+					'$text @ highest (atTarget @ strong)',
+					'$text @ high (atTarget @ strong)',
+					'$text @ normal (atTarget @ strong)',
+					'$text @ low (atTarget @ strong)',
+					'$text @ lowest (atTarget @ strong)',
+
+					'p @ highest (bubbling @ p)',
+					'p @ high (bubbling @ p)',
+					'p @ normal (bubbling @ p)',
+					'p @ low (bubbling @ p)',
+					'p @ lowest (bubbling @ p)',
+
+					'$root @ highest (bubbling @ $root)',
+					'$root @ high (bubbling @ $root)',
+					'$root @ normal (bubbling @ $root)',
+					'$root @ low (bubbling @ $root)',
+					'$root @ lowest (bubbling @ $root)',
+
+					'$document @ highest (bubbling @ $document)',
+					'$document @ high (bubbling @ $document)',
+					'$document @ normal (bubbling @ $document)',
+					'$document @ low (bubbling @ $document)',
+					'$document @ lowest (bubbling @ $document)'
+				] );
+			} );
+
+			it( 'should not trigger listeners on the lower priority if stopped on the custom context matching root element', () => {
+				_setModelData( model, '<paragraph>foo[]bar</paragraph>' );
+
+				const data = {};
+				const events = setListeners( true );
+
+				viewDocument.on( 'fakeEvent', event => event.stop(), { context: node => node.is( 'rootElement' ) } );
+				fireBubblingEvent( 'fakeEvent', data );
+
+				expect( events ).to.deep.equal( [
+					'$capture @ highest (capturing @ $document)',
+					'$capture @ high (capturing @ $document)',
+					'$capture @ normal (capturing @ $document)',
+					'$capture @ low (capturing @ $document)',
+					'$capture @ lowest (capturing @ $document)',
+
+					'$text @ highest (atTarget @ $text)',
+					'$text @ high (atTarget @ $text)',
+					'$text @ normal (atTarget @ $text)',
+					'$text @ low (atTarget @ $text)',
+					'$text @ lowest (atTarget @ $text)',
+
+					'p @ highest (bubbling @ p)',
+					'p @ high (bubbling @ p)',
+					'p @ normal (bubbling @ p)',
+					'p @ low (bubbling @ p)',
+					'p @ lowest (bubbling @ p)',
+
+					'$root @ highest (bubbling @ $root)',
+					'$root @ high (bubbling @ $root)',
+					'$root @ normal (bubbling @ $root)'
+				] );
+			} );
+
+			it( 'should call event callbacks in the context on view document instance', () => {
+				_setModelData( model, '<blockQuote><paragraph>foo[]bar</paragraph></blockQuote>' );
+
+				const data = {};
+				const events = setListeners( true );
+
+				const spyCapture = sinon.spy();
+				const spyText = sinon.spy();
+				const spyP = sinon.spy();
+				const spyBlockQuote = sinon.spy();
+				const spyRoot = sinon.spy();
+				const spyDocument = sinon.spy();
+
+				viewDocument.on( 'fakeEvent', spyCapture, { context: '$capture' } );
+				viewDocument.on( 'fakeEvent', spyText, { context: '$text' } );
+				viewDocument.on( 'fakeEvent', spyP, { context: 'p' } );
+				viewDocument.on( 'fakeEvent', spyBlockQuote, { context: 'blockquote' } );
+				viewDocument.on( 'fakeEvent', spyRoot, { context: '$root' } );
+				viewDocument.on( 'fakeEvent', spyDocument, { context: '$document' } );
+
+				fireBubblingEvent( 'fakeEvent', data );
+
+				expect( events ).to.deep.equal( [
+					'$capture @ highest (capturing @ $document)',
+					'$capture @ high (capturing @ $document)',
+					'$capture @ normal (capturing @ $document)',
+					'$capture @ low (capturing @ $document)',
+					'$capture @ lowest (capturing @ $document)',
+
+					'$text @ highest (atTarget @ $text)',
+					'$text @ high (atTarget @ $text)',
+					'$text @ normal (atTarget @ $text)',
+					'$text @ low (atTarget @ $text)',
+					'$text @ lowest (atTarget @ $text)',
+
+					'p @ highest (bubbling @ p)',
+					'p @ high (bubbling @ p)',
+					'p @ normal (bubbling @ p)',
+					'p @ low (bubbling @ p)',
+					'p @ lowest (bubbling @ p)',
+
+					'blockquote @ highest (bubbling @ blockquote)',
+					'blockquote @ high (bubbling @ blockquote)',
+					'blockquote @ normal (bubbling @ blockquote)',
+					'blockquote @ low (bubbling @ blockquote)',
+					'blockquote @ lowest (bubbling @ blockquote)',
+
+					'$root @ highest (bubbling @ $root)',
+					'$root @ high (bubbling @ $root)',
+					'$root @ normal (bubbling @ $root)',
+					'$root @ low (bubbling @ $root)',
+					'$root @ lowest (bubbling @ $root)',
+
+					'$document @ highest (bubbling @ $document)',
+					'$document @ high (bubbling @ $document)',
+					'$document @ normal (bubbling @ $document)',
+					'$document @ low (bubbling @ $document)',
+					'$document @ lowest (bubbling @ $document)'
+				] );
+
+				sinon.assert.calledOn( spyCapture, viewDocument );
+				sinon.assert.calledOn( spyText, viewDocument );
+				sinon.assert.calledOn( spyP, viewDocument );
+				sinon.assert.calledOn( spyBlockQuote, viewDocument );
+				sinon.assert.calledOn( spyRoot, viewDocument );
+				sinon.assert.calledOn( spyDocument, viewDocument );
 			} );
 		} );
 
@@ -697,7 +843,7 @@ describe( 'BubblingEmitterMixin', () => {
 			} );
 
 			it( 'should bubble events from $custom to $root (but without $text) and to default handlers if not stopped', () => {
-				setModelData( model, '<blockQuote><paragraph>foo[<object/>]bar</paragraph></blockQuote>' );
+				_setModelData( model, '<blockQuote><paragraph>foo[<object/>]bar</paragraph></blockQuote>' );
 
 				const data = {};
 				const events = setListeners( true );
@@ -744,7 +890,7 @@ describe( 'BubblingEmitterMixin', () => {
 			} );
 
 			it( 'should not trigger listeners on the lower priority if stopped on the $document (default) context', () => {
-				setModelData( model, '<blockQuote><paragraph>foo[<object/>]bar</paragraph></blockQuote>' );
+				_setModelData( model, '<blockQuote><paragraph>foo[<object/>]bar</paragraph></blockQuote>' );
 
 				const data = {};
 				const events = setListeners();
@@ -790,7 +936,7 @@ describe( 'BubblingEmitterMixin', () => {
 			} );
 
 			it( 'should not trigger listeners on the lower priority if stopped on the $root context', () => {
-				setModelData( model, '<blockQuote><paragraph>foo[<object/>]bar</paragraph></blockQuote>' );
+				_setModelData( model, '<blockQuote><paragraph>foo[<object/>]bar</paragraph></blockQuote>' );
 
 				const data = {};
 				const events = setListeners();
@@ -830,7 +976,7 @@ describe( 'BubblingEmitterMixin', () => {
 			} );
 
 			it( 'should stop bubbling events if stopped on the blockquote context', () => {
-				setModelData( model, '<blockQuote><paragraph>foo[<object/>]bar</paragraph></blockQuote>' );
+				_setModelData( model, '<blockQuote><paragraph>foo[<object/>]bar</paragraph></blockQuote>' );
 
 				const data = {};
 				const events = setListeners();
@@ -864,7 +1010,7 @@ describe( 'BubblingEmitterMixin', () => {
 			} );
 
 			it( 'should stop bubbling events if stopped on the p context', () => {
-				setModelData( model, '<blockQuote><paragraph>foo[<object/>]bar</paragraph></blockQuote>' );
+				_setModelData( model, '<blockQuote><paragraph>foo[<object/>]bar</paragraph></blockQuote>' );
 
 				const data = {};
 				const events = setListeners();
@@ -892,7 +1038,7 @@ describe( 'BubblingEmitterMixin', () => {
 			} );
 
 			it( 'should stop bubbling events if stopped on the custom context', () => {
-				setModelData( model, '<blockQuote><paragraph>foo[<object/>]bar</paragraph></blockQuote>' );
+				_setModelData( model, '<blockQuote><paragraph>foo[<object/>]bar</paragraph></blockQuote>' );
 
 				const data = {};
 				const events = setListeners();
@@ -913,8 +1059,78 @@ describe( 'BubblingEmitterMixin', () => {
 				] );
 			} );
 
+			it( 'should call all matching custom contexts', () => {
+				_setModelData( model, '<blockQuote><paragraph>foo[<object/>]bar</paragraph></blockQuote>' );
+
+				const data = {};
+				const events = setListeners();
+
+				viewDocument.on( 'fakeEvent', () => events.push( 'isOther @ highest' ), { context: isOther, priority: 'highest' } );
+				viewDocument.on( 'fakeEvent', () => events.push( 'isOther @ high' ), { context: isOther, priority: 'high' } );
+				viewDocument.on( 'fakeEvent', () => events.push( 'isOther @ normal' ), { context: isOther, priority: 'normal' } );
+				viewDocument.on( 'fakeEvent', () => events.push( 'isOther @ low' ), { context: isOther, priority: 'low' } );
+				viewDocument.on( 'fakeEvent', () => events.push( 'isOther @ lowest' ), { context: isOther, priority: 'lowest' } );
+
+				viewDocument.on( 'fakeEvent', event => event.stop(), { context: isOther } );
+
+				fireBubblingEvent( 'fakeEvent', data );
+
+				expect( events ).to.deep.equal( [
+					'$capture @ highest',
+					'$capture @ high',
+					'$capture @ normal',
+					'$capture @ low',
+					'$capture @ lowest',
+
+					'isCustomObject @ highest',
+					'isOther @ highest',
+					'isCustomObject @ high',
+					'isOther @ high',
+					'isCustomObject @ normal',
+					'isOther @ normal'
+				] );
+
+				function isOther( node ) {
+					return node.is( 'element', 'obj' );
+				}
+			} );
+
+			it( 'should stop bubbling events if stopped on the custom context with higher priority', () => {
+				_setModelData( model, '<blockQuote><paragraph>foo[<object/>]bar</paragraph></blockQuote>' );
+
+				const data = {};
+				const events = setListeners();
+
+				viewDocument.on( 'fakeEvent', () => events.push( 'isOther @ highest' ), { context: isOther, priority: 'highest' } );
+				viewDocument.on( 'fakeEvent', () => events.push( 'isOther @ high' ), { context: isOther, priority: 'high' } );
+				viewDocument.on( 'fakeEvent', () => events.push( 'isOther @ normal' ), { context: isOther, priority: 'normal' } );
+				viewDocument.on( 'fakeEvent', () => events.push( 'isOther @ low' ), { context: isOther, priority: 'low' } );
+				viewDocument.on( 'fakeEvent', () => events.push( 'isOther @ lowest' ), { context: isOther, priority: 'lowest' } );
+
+				viewDocument.on( 'fakeEvent', event => event.stop(), { context: isOther, priority: 'high' } );
+
+				fireBubblingEvent( 'fakeEvent', data );
+
+				expect( events ).to.deep.equal( [
+					'$capture @ highest',
+					'$capture @ high',
+					'$capture @ normal',
+					'$capture @ low',
+					'$capture @ lowest',
+
+					'isCustomObject @ highest',
+					'isOther @ highest',
+					'isCustomObject @ high',
+					'isOther @ high'
+				] );
+
+				function isOther( node ) {
+					return node.is( 'element', 'obj' );
+				}
+			} );
+
 			it( 'should not start bubbling events if stopped on the $capture context', () => {
-				setModelData( model, '<blockQuote><paragraph>foo[<object/>]bar</paragraph></blockQuote>' );
+				_setModelData( model, '<blockQuote><paragraph>foo[<object/>]bar</paragraph></blockQuote>' );
 
 				const data = {};
 				const events = setListeners();
@@ -928,10 +1144,22 @@ describe( 'BubblingEmitterMixin', () => {
 					'$capture @ normal'
 				] );
 			} );
+
+			it( 'should call event handler on custom context on view document instance', () => {
+				_setModelData( model, '<blockQuote><paragraph>foo[<object/>]bar</paragraph></blockQuote>' );
+
+				const data = {};
+				const spy = sinon.spy();
+
+				viewDocument.on( 'fakeEvent', spy, { context: isCustomObject } );
+				fireBubblingEvent( 'fakeEvent', data );
+
+				sinon.assert.calledOn( spy, viewDocument );
+			} );
 		} );
 
 		it( 'should bubble non bubbling event (but without event info bubbling data)', () => {
-			setModelData( model, '<blockQuote><paragraph>foo[]bar</paragraph></blockQuote>' );
+			_setModelData( model, '<blockQuote><paragraph>foo[]bar</paragraph></blockQuote>' );
 
 			const data = {};
 			const events = setListeners( true );
@@ -978,7 +1206,7 @@ describe( 'BubblingEmitterMixin', () => {
 		} );
 
 		it( 'should bubble from the provided view range', () => {
-			setModelData( model, '<paragraph>a[]bc</paragraph><blockQuote><paragraph>foobar</paragraph></blockQuote>' );
+			_setModelData( model, '<paragraph>a[]bc</paragraph><blockQuote><paragraph>foobar</paragraph></blockQuote>' );
 
 			const data = {};
 			const events = setListeners( true );

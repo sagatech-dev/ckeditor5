@@ -24,17 +24,11 @@ Fullscreen mode can also be toggled using the <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<
 
 {@snippet features/fullscreen-default}
 
-<info-box info>
+<snippet-footer>
 	This demo presents a limited set of features. Visit the {@link examples/builds/full-featured-editor feature-rich editor example} to see more in action.
-</info-box>
+</snippet-footer>
 
 ## Installation
-
-<info-box info>
-	⚠️ **New import paths**
-
-	Starting with {@link updating/update-to-42 version 42.0.0}, we changed the format of import paths. This guide uses the new, shorter format. Refer to the {@link getting-started/legacy-getting-started/legacy-imports Packages in the legacy setup} guide if you use an older version of CKEditor&nbsp;5.
-</info-box>
 
 After {@link getting-started/integrations-cdn/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
 
@@ -168,15 +162,15 @@ Below you will find a customized demo:
 
 This section covers how to provide fullscreen mode integration for other {@link getting-started/setup/editor-types editor types} than classic and decoupled. Please note that only these two editor types are officially supported, so the code snippets below are exemplary and may not solve all technical challenges.
 
-First, you need to create a custom class extending {@link module:fullscreen/handlers/abstracteditorhandler~AbstractEditorHandler `AbstractEditorHandler`}. Besides the optional typing improvements, the most important thing is to implement its custom {@link module:fullscreen/handlers/abstracteditorhandler~AbstractEditorHandler#defaultOnEnter `#defaultOnEnter()`} method. It should move the editor UI elements proper for your editor type to the fullscreen container, preferably using {@link module:fullscreen/handlers/abstracteditorhandler~AbstractEditorHandler#moveToFullscreen `#moveToFullscreen()`} helper - it will assure the elements are moved back in DOM when leaving fullscreen mode.
+First, you need to create a custom class extending {@link module:fullscreen/handlers/abstracteditorhandler~FullscreenAbstractEditorHandler `FullscreenAbstractEditorHandler`}. Besides the optional typing improvements, the most important thing is to implement its custom {@link module:fullscreen/handlers/abstracteditorhandler~FullscreenAbstractEditorHandler#defaultOnEnter `#defaultOnEnter()`} method. It should move the editor UI elements proper for your editor type to the fullscreen container, preferably using {@link module:fullscreen/handlers/abstracteditorhandler~FullscreenAbstractEditorHandler#moveToFullscreen `#moveToFullscreen()`} helper - it will assure the elements are moved back in DOM when leaving fullscreen mode.
 
 Then, in the editor's `toggleFullscreen` command, you will need to substitute the {@link module:fullscreen/fullscreencommand~FullscreenCommand#fullscreenHandler `#fullscreenHandler`} property with an instance of your custom class. It can be done by adding a custom plugin that should be later added to the editor configuration (see the full example below).
 
 ```ts
-import { AbstractEditorHandler, FullscreenEditing } from '@ckeditor/ckeditor5-fullscreen';
+import { FullscreenAbstractEditorHandler, FullscreenEditing } from '@ckeditor/ckeditor5-fullscreen';
 import { Plugin } from 'ckeditor5/src/core';
 
-class CustomEditorHandler extends AbstractEditorHandler {
+class CustomEditorHandler extends FullscreenAbstractEditorHandler {
 	// It's not mandatory to override `#_editor` property, but that will help TypeScript to properly handle the class.
 	// Skip if you are not using TS.
 	protected override readonly _editor: CustomEditorClass;

@@ -9,7 +9,6 @@ import { execSync } from 'child_process';
 import fs from 'fs/promises';
 import { glob } from 'glob';
 import minimist from 'minimist';
-import { CKEDITOR5_ROOT_PATH } from '../constants.mjs';
 
 main()
 	.catch( err => {
@@ -50,17 +49,19 @@ function runTests( { packageName, checkCoverage, attempts = 3 } ) {
 	const shortName = packageName.replace( /^ckeditor5?-/, '' );
 
 	const testCommand = [
-		'yarn',
+		'pnpm',
+		'run',
 		'test',
 		'--reporter=dots',
 		'--production',
+		'-b ChromeHeadless',
 		`-f ${ shortName }`,
 		checkCoverage ? '--coverage' : null
 	].filter( Boolean );
 
 	try {
 		execSync( testCommand.join( ' ' ), {
-			cwd: CKEDITOR5_ROOT_PATH,
+			cwd: process.cwd(),
 			stdio: 'inherit'
 		} );
 	} catch ( err ) {
@@ -80,13 +81,13 @@ function runTests( { packageName, checkCoverage, attempts = 3 } ) {
 
 function checkCodeCoverage() {
 	execSync( 'cp coverage/*/coverage-final.json .nyc_output', {
-		cwd: CKEDITOR5_ROOT_PATH,
+		cwd: process.cwd(),
 		stdio: 'inherit'
 	} );
 
 	try {
-		execSync( 'npx nyc check-coverage --branches 100 --functions 100 --lines 100 --statements 100', {
-			cwd: CKEDITOR5_ROOT_PATH,
+		execSync( 'pnpx nyc check-coverage --branches 100 --functions 100 --lines 100 --statements 100', {
+			cwd: process.cwd(),
 			stdio: 'inherit'
 		} );
 	} catch {

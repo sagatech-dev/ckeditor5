@@ -3,10 +3,10 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import Base64UploadAdapter from '../../src/adapters/base64uploadadapter.js';
-import FileRepository from '../../src/filerepository.js';
-import ClassicTestEditor from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
-import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
+import { Base64UploadAdapter } from '../../src/adapters/base64uploadadapter.js';
+import { FileRepository } from '../../src/filerepository.js';
+import { ClassicTestEditor } from '@ckeditor/ckeditor5-core/tests/_utils/classictesteditor.js';
+import { testUtils } from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
 import { createNativeFileMock } from '../_utils/mocks.js';
 
 describe( 'Base64UploadAdapter', () => {
@@ -48,8 +48,12 @@ describe( 'Base64UploadAdapter', () => {
 		expect( Base64UploadAdapter.isOfficialPlugin ).to.be.true;
 	} );
 
-	it( 'should have `isPremiumPlugin` static flag set to `false`', () => {
-		expect( Base64UploadAdapter.isPremiumPlugin ).to.be.false;
+	it( 'should have `isPremiumPlugin` static flag set to `true`', () => {
+		expect( Base64UploadAdapter.isPremiumPlugin ).to.be.true;
+	} );
+
+	it( 'should have `licenseFeatureCode` static flag set to `B64A`', () => {
+		expect( Base64UploadAdapter.licenseFeatureCode ).to.equal( 'B64A' );
 	} );
 
 	describe( 'init()', () => {

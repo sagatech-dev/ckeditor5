@@ -3,10 +3,9 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import VirtualTestEditor from '../tests/_utils/virtualtesteditor.js';
-import EditingKeystrokeHandler from '../src/editingkeystrokehandler.js';
-import { keyCodes } from '@ckeditor/ckeditor5-utils/src/keyboard.js';
-import env from '@ckeditor/ckeditor5-utils/src/env.js';
+import { VirtualTestEditor } from '../tests/_utils/virtualtesteditor.js';
+import { EditingKeystrokeHandler } from '../src/editingkeystrokehandler.js';
+import { keyCodes, env } from '@ckeditor/ckeditor5-utils';
 
 describe( 'EditingKeystrokeHandler', () => {
 	let editor, keystrokes, executeSpy;

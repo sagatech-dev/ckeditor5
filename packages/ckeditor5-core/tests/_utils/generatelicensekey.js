@@ -8,7 +8,7 @@ import { releaseDate, crc32 } from '@ckeditor/ckeditor5-utils';
 /**
  * Generates a license key for testing purposes.
  */
-export default function generateKey( options = {} ) {
+export function generateLicenseKey( options = {} ) {
 	const {
 		isExpired = false,
 		jtiExist = true,
@@ -31,7 +31,7 @@ export default function generateKey( options = {} ) {
 
 	const payload = {};
 
-	[ 'licensedHosts', 'licenseType', 'usageEndpoint', 'distributionChannel', 'whiteLabel' ].forEach( prop => {
+	[ 'licensedHosts', 'licenseType', 'usageEndpoint', 'distributionChannel', 'whiteLabel', 'removeFeatures' ].forEach( prop => {
 		if ( prop in options ) {
 			payload[ prop ] = options[ prop ];
 		}

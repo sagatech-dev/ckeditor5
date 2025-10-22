@@ -12,9 +12,7 @@ badges: [ premium ]
 
 CKBox is a dedicated asset manager supporting file and image upload. The CKBox feature lets you easily upload various files and insert images and links to other files into your content. It also offers image conversion and optimization capabilities and provides a {@link features/images-responsive responsive images mechanism} for CKEditor&nbsp;5.
 
-<info-box>
-	Unlock this feature with selected CKEditor Plans. [Sign up for a free trial](https://portal.ckeditor.com/checkout?plan=free), or [select the Plan](https://ckeditor.com/pricing/) that provides access to all the premium features you need.
-</info-box>
+{@snippet getting-started/unlock-feature}
 
 ## How CKBox enhances CKEditor&nbsp;5
 
@@ -26,10 +24,11 @@ As a full-fledged file manager, CKBox also replaces the basic CKEditor&nbsp;5 im
 * Provides [basic editing capabilities](https://ckeditor.com/docs/ckbox/latest/features/images/editing/editing.html), like crop, resize, rotate, and flip right from the {@link features/images-overview#image-contextual-toolbar image contextual toolbar} for images served by CKBox. Also provides trash can that makes reclaiming deleted images possible.
 * Provides responsive images handling.
 * Supports workspaces that allow separating assets for different users.
+* The CKBox On-premises version offers various storage options, from local filesystem, through MySQL and Postgres databases, to AWS S3 and Azure Blob Storage solutions. The SaaS version is using a blazing-fast CDN powered by AWS S3.
 
 With CKBox you no longer need to write server-side code to upload and scale images or manage uploaded files.
 
-To find out more about CKBox, the brand-new file manager and image editor, visit the [CKBox website](https://ckeditor.com/ckbox/) and read the dedicated [CKBox documentation page](https://ckeditor.com/docs/ckbox/latest/guides/index.html).
+To find out more about CKBox, the brand-new file manager and image editor, visit the [CKBox website](https://ckeditor.com/ckbox/) and read the dedicated [CKBox documentation page](https://ckeditor.com/docs/ckbox/latest/guides/index.html). You can read more about the storage options in the dedicated [CKBox Deployment](https://ckeditor.com/docs/cs/latest/onpremises/ckbox-onpremises/deployment.html) guide.
 
 ## Demo
 
@@ -39,21 +38,15 @@ Note that the image toolbar button {@icon @ckeditor/ckeditor5-icons/theme/icons/
 
 {@snippet features/ckbox}
 
-<info-box info>
+<snippet-footer>
 	This demo presents a limited set of features. Visit the {@link examples/builds/full-featured-editor feature-rich editor example} to see more in action.
-</info-box>
+</snippet-footer>
 
 Image files are inserted into the content as images that you can drag around and resize. Non-embeddable files (like PDF files) are inserted as links.
 
 You can also upload images by dragging them into your content. After you drag an image into the editor, it gets uploaded into the CKBox cloud storage and inserted into the content.
 
 ## Installation
-
-<info-box info>
-	⚠️ **New import paths**
-
-	Starting with {@link updating/update-to-42 version 42.0.0}, we changed the format of import paths. This guide uses the new, shorter format. Refer to the {@link getting-started/legacy-getting-started/legacy-imports Packages in the legacy setup} guide if you use an older version of CKEditor&nbsp;5.
-</info-box>
 
 To use this feature in your application, you must first load the CKBox library and then enable CKBox integration in your rich-text editor instance.
 
@@ -306,6 +299,10 @@ If you want to use the CKBox editing capabilities straight from the editor, the 
 <info-box>
 	We recommend using the official {@link framework/development-tools/inspector CKEditor&nbsp;5 inspector} for development and debugging. It will give you tons of useful information about the state of the editor such as internal data structures, selection, commands, and many more.
 </info-box>
+
+## REST API
+
+The CKBox REST API allows managing files and configuration of the drive. Read the [REST API documentation](https://api.ckbox.io/api/docs) to find out how to employ it in your implementation.
 
 ## What's next
 

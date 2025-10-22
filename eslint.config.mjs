@@ -3,19 +3,32 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
+import { readdirSync } from 'fs';
 import globals from 'globals';
 import { defineConfig } from 'eslint/config';
 import ckeditor5Rules from 'eslint-plugin-ckeditor5-rules';
 import ckeditor5Config from 'eslint-config-ckeditor5';
+import ts from 'typescript-eslint';
+import eslintPluginImport from 'eslint-plugin-import';
+import ckeditor5PkgJson from './packages/ckeditor5/package.json' with { type: 'json' };
+import { CKEDITOR5_PACKAGES_PATH } from './scripts/constants.mjs';
+
+const disallowedImports = Object.keys( ckeditor5PkgJson.devDependencies ).filter( pkgName => {
+	return pkgName.match( /^(@ckeditor\/)?ckeditor5-(?!dev-)/ );
+} );
+
+const projectPackages = readdirSync( CKEDITOR5_PACKAGES_PATH, { withFileTypes: true } )
+	.filter( dirent => dirent.isDirectory() )
+	.map( dirent => dirent.name );
 
 export default defineConfig( [
 	{
 		ignores: [
 			'.*/',
+			'!.changelog/',
 			'build/**',
 			'coverage/**',
 			'dist/**',
-			'external/**',
 			'packages/*/build/**',
 			'packages/*/dist/**',
 			'packages/*/src/lib/**',
@@ -23,7 +36,7 @@ export default defineConfig( [
 
 			// The CKEditor 5 core DLL build is created from JavaScript files.
 			// ESLint should not process compiled TypeScript.
-			'src/*.js',
+			'packages/ckeditor5/src/*.js',
 			'**/*.d.ts',
 
 			'packages/ckeditor5-emoji/src/utils/isemojisupported.ts',
@@ -60,35 +73,61 @@ export default defineConfig( [
 					' */'
 				]
 			} ],
-			'ckeditor5-rules/require-file-extensions-in-imports': [
-				'error',
-				{
-					extensions: [ '.ts', '.js', '.json' ]
-				}
-			]
+			'ckeditor5-rules/require-file-extensions-in-imports': [ 'error', {
+				extensions: [ '.ts', '.js', '.json' ]
+			} ]
 		}
 	},
 	{
 		files: [ 'packages/*/src/**/*.ts' ],
 
 		plugins: {
+			'ckeditor5-rules': ckeditor5Rules,
+			import: eslintPluginImport
+		},
+
+		rules: {
+			'import/no-default-export': 'error',
+			'ckeditor5-rules/allow-svg-imports-only-in-icons-package': 'error',
+			'ckeditor5-rules/ckeditor-plugin-flags': [ 'error', {
+				requiredFlags: [ {
+					name: 'isOfficialPlugin',
+					returnValue: true
+				} ]
+			} ]
+		}
+	},
+	{
+		files: [
+			'packages/*/@(src|tests)/**/*.js',
+			'src/**/*.js'
+		],
+
+		plugins: {
 			'ckeditor5-rules': ckeditor5Rules
 		},
 
 		rules: {
-			'ckeditor5-rules/allow-svg-imports-only-in-icons-package': 'error',
-			'ckeditor5-rules/ckeditor-plugin-flags': [
-				'error',
-				{
-					requiredFlags: [
-						{
-							name: 'isOfficialPlugin',
-							returnValue: true
-						}
-					],
-					disallowedFlags: [ 'isPremiumPlugin' ]
-				}
-			]
+			'no-restricted-imports': [ 'error', {
+				'paths': disallowedImports
+			} ]
+		}
+	},
+	{
+		files: [
+			'packages/*/@(src|tests)/**/*.ts',
+			'src/**/*.ts'
+		],
+
+		plugins: {
+			'ckeditor5-rules': ckeditor5Rules,
+			ts
+		},
+
+		rules: {
+			'@typescript-eslint/no-restricted-imports': [ 'error', {
+				'paths': disallowedImports
+			} ]
 		}
 	},
 	{
@@ -114,6 +153,7 @@ export default defineConfig( [
 		},
 
 		rules: {
+			'ckeditor5-rules/allow-imports-only-from-main-package-entry-point': 'error',
 			'ckeditor5-rules/ckeditor-imports': 'off',
 			'ckeditor5-rules/no-cross-package-imports': 'off',
 			'mocha/no-pending-tests': 'off'
@@ -143,6 +183,22 @@ export default defineConfig( [
 
 		rules: {
 			'ckeditor5-rules/ckeditor-imports': 'off'
+		}
+	},
+	{
+		extends: ckeditor5Config,
+
+		files: [ '.changelog/**/*.md' ],
+
+		plugins: {
+			'ckeditor5-rules': ckeditor5Rules
+		},
+
+		rules: {
+			'ckeditor5-rules/validate-changelog-entry': [ 'error', {
+				allowedScopes: projectPackages,
+				repositoryType: 'mono'
+			} ]
 		}
 	}
 ] );

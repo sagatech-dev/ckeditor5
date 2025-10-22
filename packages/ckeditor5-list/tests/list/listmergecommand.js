@@ -4,13 +4,12 @@
  */
 
 import { modelList } from './_utils/utils.js';
-import ListMergeCommand from '../../src/list/listmergecommand.js';
+import { ListMergeCommand } from '../../src/list/listmergecommand.js';
 
-import Editor from '@ckeditor/ckeditor5-core/src/editor/editor.js';
-import Model from '@ckeditor/ckeditor5-engine/src/model/model.js';
+import { Editor } from '@ckeditor/ckeditor5-core';
+import { Model, _setModelData, _getModelData } from '@ckeditor/ckeditor5-engine';
 
-import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
-import { setData, getData } from '@ckeditor/ckeditor5-engine/src/dev-utils/model.js';
+import { testUtils } from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
 
 describe( 'ListMergeCommand', () => {
 	let editor, model, doc, command;
@@ -63,13 +62,13 @@ describe( 'ListMergeCommand', () => {
 		describe( 'isEnabled', () => {
 			describe( 'collapsed selection', () => {
 				it( 'should be false when not in a list item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'a[]'
 					] ) );
 
 					expect( command.isEnabled ).to.be.false;
 
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'* a',
 						'[]b'
 					] ) );
@@ -78,7 +77,7 @@ describe( 'ListMergeCommand', () => {
 				} );
 
 				it( 'should be true when there is a preceding list item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'* a',
 						'* []'
 					] ) );
@@ -87,7 +86,7 @@ describe( 'ListMergeCommand', () => {
 				} );
 
 				it( 'should be false when there is no preceding list item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'* []'
 					] ) );
 
@@ -95,7 +94,7 @@ describe( 'ListMergeCommand', () => {
 				} );
 
 				it( 'should be false when there is a preceding block in the same list item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'* a',
 						'  []'
 					] ) );
@@ -106,7 +105,7 @@ describe( 'ListMergeCommand', () => {
 
 			describe( 'block object', () => {
 				it( 'should be false when not in a list item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'[<blockWidget></blockWidget>]'
 					] ) );
 
@@ -114,7 +113,7 @@ describe( 'ListMergeCommand', () => {
 				} );
 
 				it( 'should be true when there is a preceding list item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'* a',
 						'* [<blockWidget></blockWidget>]'
 					] ) );
@@ -123,7 +122,7 @@ describe( 'ListMergeCommand', () => {
 				} );
 
 				it( 'should be false when there is no preceding list item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'* [<blockWidget></blockWidget>]'
 					] ) );
 
@@ -131,7 +130,7 @@ describe( 'ListMergeCommand', () => {
 				} );
 
 				it( 'should be false when there is a preceding block in the same list item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'* a',
 						'  [<blockWidget></blockWidget>]'
 					] ) );
@@ -142,7 +141,7 @@ describe( 'ListMergeCommand', () => {
 
 			describe( 'inline object', () => {
 				it( 'should be false when not in a list item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'<paragraph>[<inlineWidget></inlineWidget>]</paragraph>'
 					] ) );
 
@@ -150,7 +149,7 @@ describe( 'ListMergeCommand', () => {
 				} );
 
 				it( 'should be false when there is a preceding list item but the selection stays in a single item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'* a',
 						'* <paragraph>[<inlineWidget></inlineWidget>]</paragraph>'
 					] ) );
@@ -159,7 +158,7 @@ describe( 'ListMergeCommand', () => {
 				} );
 
 				it( 'should be false when there is no preceding list item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'* <paragraph>[<inlineWidget></inlineWidget>]</paragraph>'
 					] ) );
 
@@ -167,7 +166,7 @@ describe( 'ListMergeCommand', () => {
 				} );
 
 				it( 'should be false when there is a preceding block in the same list item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'* a',
 						'  <paragraph>[<inlineWidget></inlineWidget>]</paragraph>'
 					] ) );
@@ -178,7 +177,7 @@ describe( 'ListMergeCommand', () => {
 
 			describe( 'non-collapsed selection', () => {
 				it( 'should be false if the selection starts and ends in the same list item but nothing precedes', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'* [a]b'
 					] ) );
 
@@ -186,7 +185,7 @@ describe( 'ListMergeCommand', () => {
 				} );
 
 				it( 'should be false if the selection focuses in a non-list item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'* [a',
 						'b]'
 					] ) );
@@ -195,14 +194,14 @@ describe( 'ListMergeCommand', () => {
 				} );
 
 				it( 'should be true if the selection focuses in a list item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'* [a',
 						'* b]'
 					] ) );
 
 					expect( command.isEnabled ).to.be.true;
 
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'[a',
 						'* b]'
 					] ) );
@@ -214,7 +213,7 @@ describe( 'ListMergeCommand', () => {
 
 		describe( 'execute()', () => {
 			it( 'should use parent batch', () => {
-				setData( model, modelList( [
+				_setModelData( model, modelList( [
 					'* a',
 					'* []'
 				] ) );
@@ -1156,13 +1155,13 @@ describe( 'ListMergeCommand', () => {
 		describe( 'isEnabled', () => {
 			describe( 'collapsed selection', () => {
 				it( 'should be false when not in a list item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'a[]'
 					] ) );
 
 					expect( command.isEnabled ).to.be.false;
 
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'[]a',
 						'* b'
 					] ) );
@@ -1171,7 +1170,7 @@ describe( 'ListMergeCommand', () => {
 				} );
 
 				it( 'should be true when there is a following list item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'* []',
 						'* a'
 					] ) );
@@ -1180,7 +1179,7 @@ describe( 'ListMergeCommand', () => {
 				} );
 
 				it( 'should be false when there is no following list item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'* []'
 					] ) );
 
@@ -1188,7 +1187,7 @@ describe( 'ListMergeCommand', () => {
 				} );
 
 				it( 'should be false when there is a following block in the same list item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'* []',
 						'  a'
 					] ) );
@@ -1199,7 +1198,7 @@ describe( 'ListMergeCommand', () => {
 
 			describe( 'block object', () => {
 				it( 'should be false when not in a list item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'[<blockWidget></blockWidget>]'
 					] ) );
 
@@ -1207,7 +1206,7 @@ describe( 'ListMergeCommand', () => {
 				} );
 
 				it( 'should be true when there is a following list item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'* [<blockWidget></blockWidget>]',
 						'* a'
 					] ) );
@@ -1216,7 +1215,7 @@ describe( 'ListMergeCommand', () => {
 				} );
 
 				it( 'should be false when there is no following list item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'* [<blockWidget></blockWidget>]'
 					] ) );
 
@@ -1224,7 +1223,7 @@ describe( 'ListMergeCommand', () => {
 				} );
 
 				it( 'should be false when there is a following block in the same list item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'* [<blockWidget></blockWidget>]',
 						'  a'
 					] ) );
@@ -1235,7 +1234,7 @@ describe( 'ListMergeCommand', () => {
 
 			describe( 'non-collapsed selection', () => {
 				it( 'should be false if the selection focuses in a non-list item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'* [a',
 						'b]'
 					] ) );
@@ -1244,14 +1243,14 @@ describe( 'ListMergeCommand', () => {
 				} );
 
 				it( 'should be true if the selection focuses in a list item', () => {
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'* [a',
 						'* b]'
 					] ) );
 
 					expect( command.isEnabled ).to.be.true;
 
-					setData( model, modelList( [
+					_setModelData( model, modelList( [
 						'[a',
 						'* b]'
 					] ) );
@@ -1264,7 +1263,7 @@ describe( 'ListMergeCommand', () => {
 
 		describe( 'execute()', () => {
 			it( 'should use parent batch', () => {
-				setData( model, modelList( [
+				_setModelData( model, modelList( [
 					'* []',
 					'* a'
 				] ) );
@@ -3035,7 +3034,7 @@ describe( 'ListMergeCommand', () => {
 	// @param {Iterable.<String>} expected
 	// @param {Array.<Number>} changedBlocks Indexes of changed blocks.
 	function runTest( { input, commandOptions, expected, changedBlocks = [] } ) {
-		setData( model, modelList( input ) );
+		_setModelData( model, modelList( input ) );
 
 		if ( !command.isEnabled ) {
 			throw new Error( 'Yikes. The command is disabled but should be executed.' );
@@ -3043,7 +3042,7 @@ describe( 'ListMergeCommand', () => {
 
 		command.execute( commandOptions );
 
-		expect( getData( model ) ).to.equalMarkup( modelList( expected ) );
+		expect( _getModelData( model ) ).to.equalMarkup( modelList( expected ) );
 
 		expect( blocksChangedByCommands.map( block => block.index ) ).to.deep.equal( changedBlocks, 'changed blocks\' indexes' );
 	}

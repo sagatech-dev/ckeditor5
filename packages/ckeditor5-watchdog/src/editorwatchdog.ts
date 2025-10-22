@@ -7,11 +7,11 @@
  * @module watchdog/editorwatchdog
  */
 
-import { throttle, cloneDeepWith, isElement, type DebouncedFunction } from 'es-toolkit/compat';
-import areConnectedThroughProperties from './utils/areconnectedthroughproperties.js';
-import Watchdog, { type WatchdogConfig } from './watchdog.js';
+import { throttle, cloneDeepWith, isElement, type DebouncedFunc } from 'es-toolkit/compat';
+import { areConnectedThroughProperties } from './utils/areconnectedthroughproperties.js';
+import { Watchdog, type WatchdogConfig } from './watchdog.js';
 import type { CKEditorError } from '@ckeditor/ckeditor5-utils';
-import type { Node, Text, Element, Writer } from '@ckeditor/ckeditor5-engine';
+import type { ModelNode, ModelText, ModelElement, ModelWriter } from '@ckeditor/ckeditor5-engine';
 import type { Editor, EditorConfig, Context, EditorReadyEvent } from '@ckeditor/ckeditor5-core';
 import type { RootAttributes } from '@ckeditor/ckeditor5-editor-multi-root';
 
@@ -21,7 +21,7 @@ import type { RootAttributes } from '@ckeditor/ckeditor5-editor-multi-root';
  * See the {@glink features/watchdog Watchdog feature guide} to learn the rationale behind it and
  * how to use it.
  */
-export default class EditorWatchdog<TEditor extends Editor = Editor> extends Watchdog {
+export class EditorWatchdog<TEditor extends Editor = Editor> extends Watchdog {
 	/**
 	 * The current editor instance.
 	 */
@@ -39,7 +39,7 @@ export default class EditorWatchdog<TEditor extends Editor = Editor> extends Wat
 	 * Throttled save method. The `save()` method is called the specified `saveInterval` after `throttledSave()` is called,
 	 * unless a new action happens in the meantime.
 	 */
-	private _throttledSave: DebouncedFunction<() => void>;
+	private _throttledSave: DebouncedFunc<() => void>;
 
 	/**
 	 * The latest saved editor data represented as a root name -> root data object.
@@ -76,7 +76,7 @@ export default class EditorWatchdog<TEditor extends Editor = Editor> extends Wat
 	 *
 	 * @see #setCreator
 	 */
-	declare protected _creator: EditorCreatorFunction<TEditor>;
+	declare protected _creator: EditorWatchdogCreatorFunction<TEditor>;
 
 	/**
 	 * The destruction method.
@@ -131,7 +131,7 @@ export default class EditorWatchdog<TEditor extends Editor = Editor> extends Wat
 	 * watchdog.setCreator( ( element, config ) => ClassicEditor.create( element, config ) );
 	 * ```
 	 */
-	public setCreator( creator: EditorCreatorFunction<TEditor> ): void {
+	public setCreator( creator: EditorWatchdogCreatorFunction<TEditor> ): void {
 		this._creator = creator;
 	}
 
@@ -491,7 +491,7 @@ class EditorWatchdogInitPlugin {
 	/**
 	 * Creates a model node (element or text) based on provided JSON.
 	 */
-	private _createNode( writer: Writer, jsonNode: any ): Text | Element {
+	private _createNode( writer: ModelWriter, jsonNode: any ): ModelText | ModelElement {
 		if ( 'name' in jsonNode ) {
 			// If child has name property, it is an Element.
 			const element = writer.createElement( jsonNode.name, jsonNode.attributes );
@@ -512,11 +512,11 @@ class EditorWatchdogInitPlugin {
 	/**
 	 * Restores the editor by setting the document data, roots attributes and markers.
 	 */
-	private _restoreEditorData( writer: Writer ): void {
+	private _restoreEditorData( writer: ModelWriter ): void {
 		const editor = this.editor!;
 
 		Object.entries( this._data!.roots ).forEach( ( [ rootName, { content, attributes } ] ) => {
-			const parsedNodes: Array<Node | Element> = JSON.parse( content );
+			const parsedNodes: Array<ModelNode | ModelElement> = JSON.parse( content );
 			const parsedAttributes: Array<[ string, unknown ]> = JSON.parse( attributes );
 
 			const rootElement = editor.model.document.getRoot( rootName )!;
@@ -560,33 +560,44 @@ class EditorWatchdogInitPlugin {
 		const parsedCommentThreads: Array<any> = JSON.parse( this._data.commentThreads );
 		const parsedSuggestions: Array<any> = JSON.parse( this._data.suggestions );
 
-		parsedCommentThreads.forEach( commentThreadData => {
-			const channelId = this.editor.config.get( 'collaboration.channelId' )!;
+		if ( this.editor!.plugins.has( 'CommentsRepository' ) ) {
 			const commentsRepository = this.editor!.plugins.get( 'CommentsRepository' ) as any;
 
-			if ( commentsRepository.hasCommentThread( commentThreadData.threadId ) ) {
-				const commentThread = commentsRepository.getCommentThread( commentThreadData.threadId )!;
-
-				commentThread.remove();
+			// First, remove the existing comments that were created by integration plugins during initialization.
+			// These comments may be outdated, and new instances will be created in the next step based on the saved data.
+			for ( const commentThread of commentsRepository.getCommentThreads() ) {
+				// Use the internal API since it removes the comment thread directly and does not trigger events
+				// that could cause side effects, such as removing markers.
+				commentsRepository._removeCommentThread( { threadId: commentThread.id } );
 			}
 
-			commentsRepository.addCommentThread( { channelId, ...commentThreadData } );
-		} );
+			parsedCommentThreads.forEach( commentThreadData => {
+				const channelId = this.editor.config.get( 'collaboration.channelId' )!;
+				const commentsRepository = this.editor!.plugins.get( 'CommentsRepository' ) as any;
 
-		parsedSuggestions.forEach( suggestionData => {
+				commentsRepository.addCommentThread( { channelId, ...commentThreadData } );
+			} );
+		}
+
+		if ( this.editor!.plugins.has( 'TrackChangesEditing' ) ) {
 			const trackChangesEditing = this.editor!.plugins.get( 'TrackChangesEditing' ) as any;
 
-			if ( trackChangesEditing.hasSuggestion( suggestionData.id ) ) {
-				const suggestion = trackChangesEditing.getSuggestion( suggestionData.id );
-
-				suggestion.attributes = suggestionData.attributes;
-			} else {
-				trackChangesEditing.addSuggestionData( suggestionData );
+			// First, remove the existing suggestions that were created by integration plugins during initialization.
+			// These suggestions may be outdated, and new instances will be created in the next step based on the saved data.
+			for ( const suggestion of trackChangesEditing.getSuggestions() ) {
+				trackChangesEditing._removeSuggestion( suggestion );
 			}
-		} );
+
+			parsedSuggestions.forEach( suggestionData => {
+				trackChangesEditing.addSuggestionData( suggestionData );
+			} );
+		}
 	}
 }
 
+/**
+ * @internal
+ */
 export type EditorData = {
 	roots: Record<string, {
 		content: string;
@@ -613,7 +624,7 @@ export type EditorWatchdogRestartEvent = {
 	return: undefined;
 };
 
-export type EditorCreatorFunction<TEditor = Editor> = (
+export type EditorWatchdogCreatorFunction<TEditor = Editor> = (
 	elementOrData: HTMLElement | string | Record<string, string> | Record<string, HTMLElement>,
 	config: EditorConfig
 ) => Promise<TEditor>;

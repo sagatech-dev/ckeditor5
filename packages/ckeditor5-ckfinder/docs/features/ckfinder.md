@@ -13,9 +13,7 @@ badges: [ premium ]
 
 The CKFinder feature lets you insert images and links to files into your content. CKFinder is a powerful file manager with various image editing and image upload options.
 
-<info-box>
-	Unlock this feature with selected CKEditor Plans. [Sign up for a free trial](https://portal.ckeditor.com/checkout?plan=free), or [select the Plan](https://ckeditor.com/pricing/) that provides access to all the premium features you need.
-</info-box>
+{@snippet getting-started/unlock-feature}
 
 ## Demos
 
@@ -62,15 +60,10 @@ You can use this feature in the rich-text editor in two different ways:
 
 ## Installation
 
-<info-box info>
-	⚠️ **New import paths**
-
-	Starting with {@link updating/update-to-42 version 42.0.0}, we changed the format of import paths. This guide uses the new, shorter format. Refer to the {@link getting-started/legacy-getting-started/legacy-imports Packages in the legacy setup} guide if you use an older version of CKEditor&nbsp;5.
-</info-box>
-
 After {@link getting-started/integrations-cdn/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
 
-<code-switcher>
+### From npm
+
 ```js
 import { ClassicEditor, CKFinder, CKFinderUploadAdapter } from 'ckeditor5';
 
@@ -86,7 +79,28 @@ ClassicEditor
 	.then( /* ... */ )
 	.catch( /* ... */ );
 ```
-</code-switcher>
+
+### From CDN
+
+<info-box note>
+	The `ckfinder.js` script exposes a global variable named `window.CKFinder`. Use an alias for the `CKFinder` import to avoid naming conflicts.
+</info-box>
+
+```js
+const { ClassicEditor, CKFinder: CKFinderPlugin, CKFinderUploadAdapter } = CKEDITOR;
+
+ClassicEditor
+	.create( document.querySelector( '#editor' ), {
+		licenseKey: '<YOUR_LICENSE_KEY>',
+		plugins: [ CKFinderPlugin, CKFinderUploadAdapter, /* ... */ ],
+		toolbar: [ 'ckfinder', 'uploadImage', /* ... */ ], // Depending on your preference.
+		ckfinder: {
+			// Configuration.
+		}
+	} )
+	.then( /* ... */ )
+	.catch( /* ... */ );
+```
 
 ## Configuration
 

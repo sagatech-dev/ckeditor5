@@ -3,19 +3,18 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import EmitterMixin from '@ckeditor/ckeditor5-utils/src/emittermixin.js';
-import Model from '../../src/model/model.js';
-import ModelText from '../../src/model/text.js';
-import ModelElement from '../../src/model/element.js';
-import ModelRange from '../../src/model/range.js';
-import ModelPosition from '../../src/model/position.js';
-import ModelSelection from '../../src/model/selection.js';
-import ModelDocumentFragment from '../../src/model/documentfragment.js';
-import Batch from '../../src/model/batch.js';
-import NoOperation from '../../src/model/operation/nooperation.js';
-import { getData, setData, stringify } from '../../src/dev-utils/model.js';
+import { EmitterMixin, CKEditorError } from '@ckeditor/ckeditor5-utils';
+import { Model } from '../../src/model/model.js';
+import { ModelText } from '../../src/model/text.js';
+import { ModelElement } from '../../src/model/element.js';
+import { ModelRange } from '../../src/model/range.js';
+import { ModelPosition } from '../../src/model/position.js';
+import { ModelSelection } from '../../src/model/selection.js';
+import { ModelDocumentFragment } from '../../src/model/documentfragment.js';
+import { Batch } from '../../src/model/batch.js';
+import { NoOperation } from '../../src/model/operation/nooperation.js';
+import { _getModelData, _setModelData, _stringifyModel } from '../../src/dev-utils/model.js';
 import { expectToThrowCKEditorError } from '@ckeditor/ckeditor5-utils/tests/_utils/utils.js';
-import CKEditorError from '@ckeditor/ckeditor5-utils/src/ckeditorerror.js';
 
 describe( 'Model', () => {
 	let model, schema, changes;
@@ -524,36 +523,36 @@ describe( 'Model', () => {
 		it( 'should insert content (item)', () => {
 			schema.register( 'paragraph', { inheritAllFrom: '$block' } );
 
-			setData( model, '<paragraph>fo[]ar</paragraph>' );
+			_setModelData( model, '<paragraph>fo[]ar</paragraph>' );
 
 			model.insertContent( new ModelText( 'ob' ) );
 
-			expect( getData( model ) ).to.equal( '<paragraph>foob[]ar</paragraph>' );
+			expect( _getModelData( model ) ).to.equal( '<paragraph>foob[]ar</paragraph>' );
 		} );
 
 		it( 'should insert content (document fragment)', () => {
 			schema.register( 'paragraph', { inheritAllFrom: '$block' } );
 
-			setData( model, '<paragraph>fo[]ar</paragraph>' );
+			_setModelData( model, '<paragraph>fo[]ar</paragraph>' );
 
 			model.insertContent( new ModelDocumentFragment( [ new ModelText( 'ob' ) ] ) );
 
-			expect( getData( model ) ).to.equal( '<paragraph>foob[]ar</paragraph>' );
+			expect( _getModelData( model ) ).to.equal( '<paragraph>foob[]ar</paragraph>' );
 		} );
 
 		it( 'should use current model selection if no selectable passed', () => {
 			schema.register( 'paragraph', { inheritAllFrom: '$block' } );
 
-			setData( model, '<paragraph>fo[]ar</paragraph>' );
+			_setModelData( model, '<paragraph>fo[]ar</paragraph>' );
 
 			model.insertContent( new ModelText( 'ob' ) );
 
-			expect( getData( model ) ).to.equal( '<paragraph>foob[]ar</paragraph>' );
+			expect( _getModelData( model ) ).to.equal( '<paragraph>foob[]ar</paragraph>' );
 		} );
 
 		it( 'should use parent batch', () => {
 			schema.register( 'paragraph', { inheritAllFrom: '$block' } );
-			setData( model, '<paragraph>[]</paragraph>' );
+			_setModelData( model, '<paragraph>[]</paragraph>' );
 
 			model.change( writer => {
 				model.insertContent( new ModelText( 'abc' ) );
@@ -571,21 +570,21 @@ describe( 'Model', () => {
 
 			it( 'should be able to insert content at custom selection', () => {
 				model.schema.extend( '$text', { allowIn: '$root' } );
-				setData( model, 'a[]bc' );
+				_setModelData( model, 'a[]bc' );
 
 				const selection = model.createSelection( model.createPositionFromPath( doc.getRoot(), [ 2 ] ) );
 
 				model.change( writer => {
 					const affectedRange = model.insertContent( writer.createText( 'x' ), selection );
 
-					expect( getData( model ) ).to.equal( 'a[]bxc' );
-					expect( stringify( root, affectedRange ) ).to.equal( 'ab[x]c' );
+					expect( _getModelData( model ) ).to.equal( 'a[]bxc' );
+					expect( _stringifyModel( root, affectedRange ) ).to.equal( 'ab[x]c' );
 				} );
 			} );
 
 			it( 'should modify passed selection instance', () => {
 				model.schema.extend( '$text', { allowIn: '$root' } );
-				setData( model, 'a[]bc' );
+				_setModelData( model, 'a[]bc' );
 
 				const selection = model.createSelection( model.createPositionFromPath( doc.getRoot(), [ 2 ] ) );
 				const selectionCopy = model.createSelection( model.createPositionFromPath( doc.getRoot(), [ 2 ] ) );
@@ -604,21 +603,21 @@ describe( 'Model', () => {
 
 			it( 'should be able to insert content at custom position', () => {
 				model.schema.extend( '$text', { allowIn: '$root' } );
-				setData( model, 'a[]bc' );
+				_setModelData( model, 'a[]bc' );
 
 				const position = model.createPositionFromPath( doc.getRoot(), [ 2 ] );
 
 				model.change( writer => {
 					const affectedRange = model.insertContent( writer.createText( 'x' ), position );
 
-					expect( getData( model ) ).to.equal( 'a[]bxc' );
-					expect( stringify( root, affectedRange ) ).to.equal( 'ab[x]c' );
+					expect( _getModelData( model ) ).to.equal( 'a[]bxc' );
+					expect( _stringifyModel( root, affectedRange ) ).to.equal( 'ab[x]c' );
 				} );
 			} );
 
 			it( 'should be able to insert content at custom range', () => {
 				model.schema.extend( '$text', { allowIn: '$root' } );
-				setData( model, 'a[]bc' );
+				_setModelData( model, 'a[]bc' );
 
 				const range = model.createRange(
 					model.createPositionFromPath( doc.getRoot(), [ 2 ] ),
@@ -628,39 +627,39 @@ describe( 'Model', () => {
 				model.change( writer => {
 					const affectedRange = model.insertContent( writer.createText( 'x' ), range );
 
-					expect( getData( model ) ).to.equal( 'a[]bx' );
-					expect( stringify( root, affectedRange ) ).to.equal( 'ab[x]' );
+					expect( _getModelData( model ) ).to.equal( 'a[]bx' );
+					expect( _stringifyModel( root, affectedRange ) ).to.equal( 'ab[x]' );
 				} );
 			} );
 
 			it( 'should be able to insert content at model selection if document selection is passed', () => {
 				model.schema.extend( '$text', { allowIn: '$root' } );
-				setData( model, 'a[]bc' );
+				_setModelData( model, 'a[]bc' );
 
 				model.change( writer => {
 					const affectedRange = model.insertContent( writer.createText( 'x' ), model.document.selection );
 
-					expect( getData( model ) ).to.equal( 'ax[]bc' );
-					expect( stringify( root, affectedRange ) ).to.equal( 'a[x]bc' );
+					expect( _getModelData( model ) ).to.equal( 'ax[]bc' );
+					expect( _stringifyModel( root, affectedRange ) ).to.equal( 'a[x]bc' );
 				} );
 			} );
 
 			it( 'should be able to insert content at model selection if none passed', () => {
 				model.schema.extend( '$text', { allowIn: '$root' } );
-				setData( model, 'a[]bc' );
+				_setModelData( model, 'a[]bc' );
 
 				model.change( writer => {
 					const affectedRange = model.insertContent( writer.createText( 'x' ) );
 
-					expect( getData( model ) ).to.equal( 'ax[]bc' );
-					expect( stringify( root, affectedRange ) ).to.equal( 'a[x]bc' );
+					expect( _getModelData( model ) ).to.equal( 'ax[]bc' );
+					expect( _stringifyModel( root, affectedRange ) ).to.equal( 'a[x]bc' );
 				} );
 			} );
 
 			it( 'should be able to insert content at model element (numeric offset)', () => {
 				model.schema.register( 'paragraph', { inheritAllFrom: '$block' } );
 
-				setData( model, '<paragraph>foo[]</paragraph><paragraph>bar</paragraph>' );
+				_setModelData( model, '<paragraph>foo[]</paragraph><paragraph>bar</paragraph>' );
 
 				const element = doc.getRoot().getNodeByPath( [ 1 ] );
 
@@ -669,15 +668,15 @@ describe( 'Model', () => {
 
 					const affectedRange = model.insertContent( text, element, 2 );
 
-					expect( getData( model ) ).to.equal( '<paragraph>foo[]</paragraph><paragraph>baxr</paragraph>' );
-					expect( stringify( root, affectedRange ) ).to.equal( '<paragraph>foo</paragraph><paragraph>ba[x]r</paragraph>' );
+					expect( _getModelData( model ) ).to.equal( '<paragraph>foo[]</paragraph><paragraph>baxr</paragraph>' );
+					expect( _stringifyModel( root, affectedRange ) ).to.equal( '<paragraph>foo</paragraph><paragraph>ba[x]r</paragraph>' );
 				} );
 			} );
 
 			it( 'should be able to insert content at model element (offset="in")', () => {
 				model.schema.register( 'paragraph', { inheritAllFrom: '$block' } );
 
-				setData( model, '<paragraph>foo[]</paragraph><paragraph>bar</paragraph>' );
+				_setModelData( model, '<paragraph>foo[]</paragraph><paragraph>bar</paragraph>' );
 
 				const element = doc.getRoot().getNodeByPath( [ 1 ] );
 
@@ -686,8 +685,8 @@ describe( 'Model', () => {
 
 					const affectedRange = model.insertContent( text, element, 'in' );
 
-					expect( getData( model ) ).to.equal( '<paragraph>foo[]</paragraph><paragraph>x</paragraph>' );
-					expect( stringify( root, affectedRange ) ).to.equal( '<paragraph>foo</paragraph><paragraph>[x]</paragraph>' );
+					expect( _getModelData( model ) ).to.equal( '<paragraph>foo[]</paragraph><paragraph>x</paragraph>' );
+					expect( _stringifyModel( root, affectedRange ) ).to.equal( '<paragraph>foo</paragraph><paragraph>[x]</paragraph>' );
 				} );
 			} );
 
@@ -695,7 +694,7 @@ describe( 'Model', () => {
 				model.schema.register( 'paragraph', { inheritAllFrom: '$block' } );
 				model.schema.register( 'foo', { inheritAllFrom: '$block' } );
 
-				setData( model, '<paragraph>foo[]</paragraph><paragraph>bar</paragraph>' );
+				_setModelData( model, '<paragraph>foo[]</paragraph><paragraph>bar</paragraph>' );
 
 				const element = doc.getRoot().getNodeByPath( [ 1 ] );
 
@@ -704,15 +703,15 @@ describe( 'Model', () => {
 
 					const affectedRange = model.insertContent( insertElement, element, 'on' );
 
-					expect( getData( model ) ).to.equal( '<paragraph>foo[]</paragraph><foo></foo>' );
-					expect( stringify( root, affectedRange ) ).to.equal( '<paragraph>foo</paragraph>[<foo></foo>]' );
+					expect( _getModelData( model ) ).to.equal( '<paragraph>foo[]</paragraph><foo></foo>' );
+					expect( _stringifyModel( root, affectedRange ) ).to.equal( '<paragraph>foo</paragraph>[<foo></foo>]' );
 				} );
 			} );
 
 			it( 'should be able to insert content at model element (offset="end")', () => {
 				model.schema.register( 'paragraph', { inheritAllFrom: '$block' } );
 
-				setData( model, '<paragraph>foo[]</paragraph><paragraph>bar</paragraph>' );
+				_setModelData( model, '<paragraph>foo[]</paragraph><paragraph>bar</paragraph>' );
 
 				const element = doc.getRoot().getNodeByPath( [ 1 ] );
 
@@ -721,15 +720,15 @@ describe( 'Model', () => {
 
 					const affectedRange = model.insertContent( text, element, 'end' );
 
-					expect( getData( model ) ).to.equal( '<paragraph>foo[]</paragraph><paragraph>barx</paragraph>' );
-					expect( stringify( root, affectedRange ) ).to.equal( '<paragraph>foo</paragraph><paragraph>bar[x]</paragraph>' );
+					expect( _getModelData( model ) ).to.equal( '<paragraph>foo[]</paragraph><paragraph>barx</paragraph>' );
+					expect( _stringifyModel( root, affectedRange ) ).to.equal( '<paragraph>foo</paragraph><paragraph>bar[x]</paragraph>' );
 				} );
 			} );
 
 			it( 'should be able to insert content at given root', () => {
 				model.schema.register( 'paragraph', { inheritAllFrom: '$block' } );
 
-				setData( model, '<paragraph>foo[]</paragraph><paragraph>bar</paragraph>' );
+				_setModelData( model, '<paragraph>foo[]</paragraph><paragraph>bar</paragraph>' );
 
 				model.change( writer => {
 					const paragraph = writer.createElement( 'paragraph' );
@@ -737,8 +736,8 @@ describe( 'Model', () => {
 
 					const affectedRange = model.insertContent( paragraph, doc.getRoot() );
 
-					expect( getData( model ) ).to.equal( '<paragraph>[]abc</paragraph>' );
-					expect( stringify( root, affectedRange ) ).to.equal( '[<paragraph>abc</paragraph>]' );
+					expect( _getModelData( model ) ).to.equal( '<paragraph>[]abc</paragraph>' );
+					expect( _stringifyModel( root, affectedRange ) ).to.equal( '[<paragraph>abc</paragraph>]' );
 				} );
 			} );
 		} );
@@ -808,19 +807,19 @@ describe( 'Model', () => {
 		} );
 
 		it( 'should insert inline object at the document selection position', () => {
-			setData( model, '<paragraph>fo[]ar</paragraph>' );
+			_setModelData( model, '<paragraph>fo[]ar</paragraph>' );
 
 			model.insertObject( new ModelElement( 'inlineWidget' ) );
 
-			expect( getData( model ) ).to.equal( '<paragraph>fo<inlineWidget></inlineWidget>[]ar</paragraph>' );
+			expect( _getModelData( model ) ).to.equal( '<paragraph>fo<inlineWidget></inlineWidget>[]ar</paragraph>' );
 		} );
 
 		it( 'should insert block object at the document selection position', () => {
-			setData( model, '<paragraph>fo[]ar</paragraph>' );
+			_setModelData( model, '<paragraph>fo[]ar</paragraph>' );
 
 			model.insertObject( new ModelElement( 'blockWidget' ) );
 
-			expect( getData( model ) ).to.equal(
+			expect( _getModelData( model ) ).to.equal(
 				'<paragraph>fo</paragraph>' +
 				'[<blockWidget></blockWidget>]' +
 				'<paragraph>ar</paragraph>'
@@ -828,7 +827,7 @@ describe( 'Model', () => {
 		} );
 
 		it( 'should use parent batch', () => {
-			setData( model, '<paragraph>[]</paragraph>' );
+			_setModelData( model, '<paragraph>[]</paragraph>' );
 
 			model.change( writer => {
 				model.insertObject( new ModelElement( 'inlineWidget' ) );
@@ -845,20 +844,22 @@ describe( 'Model', () => {
 			} );
 
 			it( 'should be able to insert object at custom selection', () => {
-				setData( model, '<paragraph>a[]bc</paragraph>' );
+				_setModelData( model, '<paragraph>a[]bc</paragraph>' );
 
 				const selection = model.createSelection( model.createPositionFromPath( doc.getRoot(), [ 0, 2 ] ) );
 
 				model.change( writer => {
 					const affectedRange = model.insertObject( writer.createElement( 'inlineWidget' ), selection );
 
-					expect( getData( model ) ).to.equal( '<paragraph>a[]b<inlineWidget></inlineWidget>c</paragraph>' );
-					expect( stringify( root, affectedRange ) ).to.equal( '<paragraph>ab[<inlineWidget></inlineWidget>]c</paragraph>' );
+					expect( _getModelData( model ) ).to.equal( '<paragraph>a[]b<inlineWidget></inlineWidget>c</paragraph>' );
+					expect( _stringifyModel( root, affectedRange ) ).to.equal(
+						'<paragraph>ab[<inlineWidget></inlineWidget>]c</paragraph>'
+					);
 				} );
 			} );
 
 			it( 'should modify passed selection instance', () => {
-				setData( model, '<paragraph>a[]bc</paragraph>' );
+				_setModelData( model, '<paragraph>a[]bc</paragraph>' );
 
 				const selection = model.createSelection( model.createPositionFromPath( doc.getRoot(), [ 0, 2 ] ) );
 				const selectionCopy = model.createSelection( model.createPositionFromPath( doc.getRoot(), [ 0, 2 ] ) );
@@ -876,20 +877,22 @@ describe( 'Model', () => {
 			} );
 
 			it( 'should be able to insert content at custom position', () => {
-				setData( model, '<paragraph>a[]bc</paragraph>' );
+				_setModelData( model, '<paragraph>a[]bc</paragraph>' );
 
 				const position = model.createPositionFromPath( doc.getRoot(), [ 0, 2 ] );
 
 				model.change( writer => {
 					const affectedRange = model.insertObject( writer.createElement( 'inlineWidget' ), position );
 
-					expect( getData( model ) ).to.equal( '<paragraph>a[]b<inlineWidget></inlineWidget>c</paragraph>' );
-					expect( stringify( root, affectedRange ) ).to.equal( '<paragraph>ab[<inlineWidget></inlineWidget>]c</paragraph>' );
+					expect( _getModelData( model ) ).to.equal( '<paragraph>a[]b<inlineWidget></inlineWidget>c</paragraph>' );
+					expect( _stringifyModel( root, affectedRange ) ).to.equal(
+						'<paragraph>ab[<inlineWidget></inlineWidget>]c</paragraph>'
+					);
 				} );
 			} );
 
 			it( 'should be able to insert content at custom range', () => {
-				setData( model, '<paragraph>a[]bc</paragraph>' );
+				_setModelData( model, '<paragraph>a[]bc</paragraph>' );
 
 				const range = model.createRange(
 					model.createPositionFromPath( doc.getRoot(), [ 0, 2 ] ),
@@ -899,37 +902,39 @@ describe( 'Model', () => {
 				model.change( writer => {
 					const affectedRange = model.insertObject( writer.createElement( 'inlineWidget' ), range );
 
-					expect( getData( model ) ).to.equal( '<paragraph>a[]b<inlineWidget></inlineWidget></paragraph>' );
-					expect( stringify( root, affectedRange ) ).to.equal( '<paragraph>ab[<inlineWidget></inlineWidget>]</paragraph>' );
+					expect( _getModelData( model ) ).to.equal( '<paragraph>a[]b<inlineWidget></inlineWidget></paragraph>' );
+					expect( _stringifyModel( root, affectedRange ) ).to.equal( '<paragraph>ab[<inlineWidget></inlineWidget>]</paragraph>' );
 				} );
 			} );
 
 			it( 'should be able to insert content at model selection if document selection is passed', () => {
-				setData( model, '<paragraph>a[]bc</paragraph>' );
+				_setModelData( model, '<paragraph>a[]bc</paragraph>' );
 
 				model.change( writer => {
 					const affectedRange = model.insertObject( writer.createElement( 'inlineWidget' ), model.document.selection );
 
-					expect( getData( model ) ).to.equal( '<paragraph>a<inlineWidget></inlineWidget>[]bc</paragraph>' );
-					expect( stringify( root, affectedRange ) ).to.equal( '<paragraph>a[<inlineWidget></inlineWidget>]bc</paragraph>' );
+					expect( _getModelData( model ) ).to.equal( '<paragraph>a<inlineWidget></inlineWidget>[]bc</paragraph>' );
+					expect( _stringifyModel( root, affectedRange ) ).to.equal(
+						'<paragraph>a[<inlineWidget></inlineWidget>]bc</paragraph>'
+					);
 				} );
 			} );
 
 			it( 'should be able to insert content at model selection if none passed', () => {
-				setData( model, '<paragraph>a[]bc</paragraph>' );
+				_setModelData( model, '<paragraph>a[]bc</paragraph>' );
 
 				model.change( writer => {
 					const affectedRange = model.insertObject( writer.createElement( 'inlineWidget' ) );
 
-					expect( getData( model ) ).to.equal( '<paragraph>a<inlineWidget></inlineWidget>[]bc</paragraph>' );
-					expect( stringify( root, affectedRange ) ).to.equal(
+					expect( _getModelData( model ) ).to.equal( '<paragraph>a<inlineWidget></inlineWidget>[]bc</paragraph>' );
+					expect( _stringifyModel( root, affectedRange ) ).to.equal(
 						'<paragraph>a[<inlineWidget></inlineWidget>]bc</paragraph>'
 					);
 				} );
 			} );
 
 			it( 'should be able to insert content at model element (numeric offset)', () => {
-				setData( model, '<paragraph>foo[]</paragraph><paragraph>bar</paragraph>' );
+				_setModelData( model, '<paragraph>foo[]</paragraph><paragraph>bar</paragraph>' );
 
 				const element = doc.getRoot().getNodeByPath( [ 1 ] );
 
@@ -938,17 +943,17 @@ describe( 'Model', () => {
 
 					const affectedRange = model.insertObject( text, element, 2 );
 
-					expect( getData( model ) ).to.equal(
+					expect( _getModelData( model ) ).to.equal(
 						'<paragraph>foo[]</paragraph><paragraph>ba<inlineWidget></inlineWidget>r</paragraph>'
 					);
-					expect( stringify( root, affectedRange ) ).to.equal(
+					expect( _stringifyModel( root, affectedRange ) ).to.equal(
 						'<paragraph>foo</paragraph><paragraph>ba[<inlineWidget></inlineWidget>]r</paragraph>'
 					);
 				} );
 			} );
 
 			it( 'should be able to insert content at model element (offset="in")', () => {
-				setData( model, '<paragraph>foo[]</paragraph><paragraph>bar</paragraph>' );
+				_setModelData( model, '<paragraph>foo[]</paragraph><paragraph>bar</paragraph>' );
 
 				const element = doc.getRoot().getNodeByPath( [ 1 ] );
 
@@ -957,17 +962,17 @@ describe( 'Model', () => {
 
 					const affectedRange = model.insertObject( text, element, 'in' );
 
-					expect( getData( model ) ).to.equal(
+					expect( _getModelData( model ) ).to.equal(
 						'<paragraph>foo[]</paragraph><paragraph><inlineWidget></inlineWidget></paragraph>'
 					);
-					expect( stringify( root, affectedRange ) ).to.equal(
+					expect( _stringifyModel( root, affectedRange ) ).to.equal(
 						'<paragraph>foo</paragraph><paragraph>[<inlineWidget></inlineWidget>]</paragraph>'
 					);
 				} );
 			} );
 
 			it( 'should be able to insert content at model element (offset="on")', () => {
-				setData( model, '<paragraph>foo[]</paragraph><paragraph>bar</paragraph>' );
+				_setModelData( model, '<paragraph>foo[]</paragraph><paragraph>bar</paragraph>' );
 
 				const element = doc.getRoot().getNodeByPath( [ 1 ] );
 
@@ -976,13 +981,13 @@ describe( 'Model', () => {
 
 					const affectedRange = model.insertObject( insertElement, element, 'on' );
 
-					expect( getData( model ) ).to.equal( '<paragraph>foo[]</paragraph><blockWidget></blockWidget>' );
-					expect( stringify( root, affectedRange ) ).to.equal( '<paragraph>foo</paragraph>[<blockWidget></blockWidget>]' );
+					expect( _getModelData( model ) ).to.equal( '<paragraph>foo[]</paragraph><blockWidget></blockWidget>' );
+					expect( _stringifyModel( root, affectedRange ) ).to.equal( '<paragraph>foo</paragraph>[<blockWidget></blockWidget>]' );
 				} );
 			} );
 
 			it( 'should be able to insert content at model element (offset="end")', () => {
-				setData( model, '<paragraph>foo[]</paragraph><paragraph>bar</paragraph>' );
+				_setModelData( model, '<paragraph>foo[]</paragraph><paragraph>bar</paragraph>' );
 
 				const element = doc.getRoot().getNodeByPath( [ 1 ] );
 
@@ -991,10 +996,10 @@ describe( 'Model', () => {
 
 					const affectedRange = model.insertObject( text, element, 'end' );
 
-					expect( getData( model ) ).to.equal(
+					expect( _getModelData( model ) ).to.equal(
 						'<paragraph>foo[]</paragraph><paragraph>bar<inlineWidget></inlineWidget></paragraph>'
 					);
-					expect( stringify( root, affectedRange ) ).to.equal(
+					expect( _stringifyModel( root, affectedRange ) ).to.equal(
 						'<paragraph>foo</paragraph><paragraph>bar[<inlineWidget></inlineWidget>]</paragraph>'
 					);
 				} );
@@ -1016,17 +1021,17 @@ describe( 'Model', () => {
 		it( 'should delete selected content', () => {
 			schema.register( 'paragraph', { inheritAllFrom: '$block' } );
 
-			setData( model, '<paragraph>fo[ob]ar</paragraph>' );
+			_setModelData( model, '<paragraph>fo[ob]ar</paragraph>' );
 
 			model.deleteContent( model.document.selection );
 
-			expect( getData( model ) ).to.equal( '<paragraph>fo[]ar</paragraph>' );
+			expect( _getModelData( model ) ).to.equal( '<paragraph>fo[]ar</paragraph>' );
 		} );
 
 		it( 'should use parent batch', () => {
 			schema.register( 'paragraph', { inheritAllFrom: '$block' } );
 
-			setData( model, '<paragraph>fo[ob]ar</paragraph>' );
+			_setModelData( model, '<paragraph>fo[ob]ar</paragraph>' );
 
 			model.change( writer => {
 				model.deleteContent( model.document.selection );
@@ -1038,7 +1043,7 @@ describe( 'Model', () => {
 	describe( 'modifySelection()', () => {
 		it( 'should be decorated', () => {
 			schema.register( 'paragraph', { inheritAllFrom: '$block' } );
-			setData( model, '<paragraph>fo[ob]ar</paragraph>' );
+			_setModelData( model, '<paragraph>fo[ob]ar</paragraph>' );
 
 			const spy = sinon.spy();
 
@@ -1052,13 +1057,13 @@ describe( 'Model', () => {
 		it( 'should modify a selection', () => {
 			schema.register( 'paragraph', { inheritAllFrom: '$block' } );
 
-			setData( model, '<paragraph>fo[ob]ar</paragraph>' );
+			_setModelData( model, '<paragraph>fo[ob]ar</paragraph>' );
 
-			expect( getData( model ) ).to.equal( '<paragraph>fo[ob]ar</paragraph>' );
+			expect( _getModelData( model ) ).to.equal( '<paragraph>fo[ob]ar</paragraph>' );
 
 			model.modifySelection( model.document.selection, { direction: 'backward' } );
 
-			expect( getData( model ) ).to.equal( '<paragraph>fo[o]bar</paragraph>' );
+			expect( _getModelData( model ) ).to.equal( '<paragraph>fo[o]bar</paragraph>' );
 		} );
 	} );
 
@@ -1077,17 +1082,17 @@ describe( 'Model', () => {
 		it( 'should return selected content', () => {
 			schema.register( 'paragraph', { inheritAllFrom: '$block' } );
 
-			setData( model, '<paragraph>fo[ob]ar</paragraph>' );
+			_setModelData( model, '<paragraph>fo[ob]ar</paragraph>' );
 
 			const content = model.getSelectedContent( model.document.selection );
 
-			expect( stringify( content ) ).to.equal( 'ob' );
+			expect( _stringifyModel( content ) ).to.equal( 'ob' );
 		} );
 
 		it( 'should use parent batch', () => {
 			schema.register( 'paragraph', { inheritAllFrom: '$block' } );
 
-			setData( model, '<paragraph>fo[ob]ar</paragraph>' );
+			_setModelData( model, '<paragraph>fo[ob]ar</paragraph>' );
 
 			const version = model.document.version;
 			model.getSelectedContent( model.document.selection );
@@ -1115,7 +1120,7 @@ describe( 'Model', () => {
 				inheritAllFrom: '$block'
 			} );
 
-			setData(
+			_setModelData(
 				model,
 
 				'<div>' +
@@ -1384,7 +1389,7 @@ describe( 'Model', () => {
 	describe( 'createPositionAfter()', () => {
 		it( 'should return instance of Position', () => {
 			schema.register( 'paragraph', { inheritAllFrom: '$block' } );
-			setData( model, '<paragraph>fo[]ar</paragraph>' );
+			_setModelData( model, '<paragraph>fo[]ar</paragraph>' );
 
 			expect( model.createPositionAfter( model.document.getRoot().getChild( 0 ) ) ).to.be.instanceof( ModelPosition );
 		} );
@@ -1393,7 +1398,7 @@ describe( 'Model', () => {
 	describe( 'createPositionBefore()', () => {
 		it( 'should return instance of Position', () => {
 			schema.register( 'paragraph', { inheritAllFrom: '$block' } );
-			setData( model, '<paragraph>fo[]ar</paragraph>' );
+			_setModelData( model, '<paragraph>fo[]ar</paragraph>' );
 
 			expect( model.createPositionBefore( model.document.getRoot().getChild( 0 ) ) ).to.be.instanceof( ModelPosition );
 		} );
@@ -1402,7 +1407,7 @@ describe( 'Model', () => {
 	describe( 'createRange()', () => {
 		it( 'should return instance of Range', () => {
 			schema.register( 'paragraph', { inheritAllFrom: '$block' } );
-			setData( model, '<paragraph>fo[]ar</paragraph>' );
+			_setModelData( model, '<paragraph>fo[]ar</paragraph>' );
 
 			expect( model.createRange( model.createPositionAt( model.document.getRoot(), 0 ) ) ).to.be.instanceof( ModelRange );
 		} );
@@ -1411,7 +1416,7 @@ describe( 'Model', () => {
 	describe( 'createRangeIn()', () => {
 		it( 'should return instance of Range', () => {
 			schema.register( 'paragraph', { inheritAllFrom: '$block' } );
-			setData( model, '<paragraph>fo[]ar</paragraph>' );
+			_setModelData( model, '<paragraph>fo[]ar</paragraph>' );
 
 			expect( model.createRangeIn( model.document.getRoot().getChild( 0 ) ) ).to.be.instanceof( ModelRange );
 		} );
@@ -1420,7 +1425,7 @@ describe( 'Model', () => {
 	describe( 'createRangeOn()', () => {
 		it( 'should return instance of Range', () => {
 			schema.register( 'paragraph', { inheritAllFrom: '$block' } );
-			setData( model, '<paragraph>fo[]ar</paragraph>' );
+			_setModelData( model, '<paragraph>fo[]ar</paragraph>' );
 
 			expect( model.createRangeOn( model.document.getRoot().getChild( 0 ) ) ).to.be.instanceof( ModelRange );
 		} );
@@ -1468,7 +1473,7 @@ describe( 'Model', () => {
 		} );
 
 		it( 'should stop listening', () => {
-			const emitter = Object.create( EmitterMixin );
+			const emitter = new ( EmitterMixin() )();
 			const spy = sinon.spy();
 
 			model.listenTo( emitter, 'event', spy );

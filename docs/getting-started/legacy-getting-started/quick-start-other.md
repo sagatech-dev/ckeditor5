@@ -9,7 +9,7 @@ modified_at: 2022-03-15
 # (Legacy) Customized installation
 
 <info-box warning>
-	⚠️  We changed installation methods and this legacy guide is kept for users' convenience. If you want to learn more about these changes, please refer to the {@link updating/nim-migration/customized-builds Migrating from customized builds} guide.
+	We changed installation methods and this legacy guide is kept for users' convenience. If you want to learn more about these changes, please refer to the {@link updating/nim-migration/customized-builds Migrating from customized builds} guide.
 </info-box>
 
 ## Introduction
@@ -354,7 +354,7 @@ Alternatively, you can add it as an [npm script](https://docs.npmjs.com/misc/scr
 And use it with:
 
 ```bash
-yarn run build
+pnpm run build
 ```
 
 npm adds `./node_modules/.bin/` to the `PATH` automatically, so in this case you do not need to install `webpack-cli` globally.

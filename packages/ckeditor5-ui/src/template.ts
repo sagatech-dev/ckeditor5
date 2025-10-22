@@ -7,8 +7,8 @@
  * @module ui/template
  */
 
-import View from './view.js';
-import ViewCollection from './viewcollection.js';
+import { View } from './view.js';
+import { ViewCollection } from './viewcollection.js';
 
 import {
 	CKEditorError,
@@ -63,7 +63,7 @@ const xhtmlNs = 'http://www.w3.org/1999/xhtml';
  * See {@link module:ui/template~TemplateDefinition} to know more about templates and complex
  * template definitions.
  */
-export default class Template extends /* #__PURE__ */ EmitterMixin() {
+export class Template extends /* #__PURE__ */ EmitterMixin() {
 	public ns?: string;
 
 	/**
@@ -641,17 +641,19 @@ export default class Template extends /* #__PURE__ */ EmitterMixin() {
 	 * ```ts
 	 * attributes: {
 	 * 	style: {
-	 * 		color: 'red'
+	 * 		color: 'red',
+	 * 		'--color': 'red'
 	 * 	}
 	 * }
 	 * ```
 	 *
-	 * or values bound to {@link module:ui/model~Model} properties:
+	 * or values bound to {@link module:ui/model~UIModel} properties:
 	 *
 	 * ```ts
 	 * attributes: {
 	 * 	style: {
-	 * 		color: bind.to( ... )
+	 * 		color: bind.to( ... ),
+	 * 		'--color': bind.to( ... )
 	 * 	}
 	 * }
 	 * ```
@@ -681,7 +683,15 @@ export default class Template extends /* #__PURE__ */ EmitterMixin() {
 					data
 				} );
 			}
-
+			// Cases:
+			//
+			//		style: {
+			//			--color: 'red'
+			//		}
+			//
+			else if ( isCssVariable( styleName ) ) {
+				( node as any ).style.setProperty( styleName, styleValue as string );
+			}
 			// Cases:
 			//
 			//		style: {
@@ -859,7 +869,7 @@ export default class Template extends /* #__PURE__ */ EmitterMixin() {
 	}
 }
 
-type AttributeValues = Array<TemplateSimpleValue | TemplateBinding> |
+export type AttributeValues = Array<TemplateSimpleValue | TemplateBinding> |
 	[ NamespacedValue<Array<TemplateSimpleValue | TemplateBinding>> ];
 
 /**
@@ -1067,6 +1077,22 @@ function hasTemplateBinding( schema: any ) {
 }
 
 /**
+ * Checks whether the given name is a valid CSS variable name.
+ *
+ * A valid CSS variable name starts with two dashes (`--`), followed by a letter, underscore (`_`),
+ * or dash (`-`), and can be followed by any combination of letters, digits, underscores, dashes,
+ * or additional dashes.
+ *
+ * @param name The name to validate as a CSS variable.
+ * @returns True if the name is a valid CSS variable, false otherwise.
+ */
+function isCssVariable( name: string ): boolean {
+	const regex = /^--[a-zA-Z_-][\w-]*$/;
+
+	return regex.test( name );
+}
+
+/**
  * Assembles the value using {@link module:ui/template~TemplateValueSchema} and stores it in a form of
  * an Array. Each entry of the Array corresponds to one of {@link module:ui/template~TemplateValueSchema}
  * items.
@@ -1173,11 +1199,19 @@ function getAttributeUpdater( el: Element, attrName: string, ns: string | null )
 function getStyleUpdater( el: any, styleName: string ): Updater {
 	return {
 		set( value ) {
-			el.style[ styleName ] = value;
+			if ( isCssVariable( styleName ) ) {
+				el.style.setProperty( styleName, value );
+			} else {
+				el.style[ styleName ] = value;
+			}
 		},
 
 		remove() {
-			el.style[ styleName ] = null;
+			if ( isCssVariable( styleName ) ) {
+				el.style.removeProperty( styleName );
+			} else {
+				el.style[ styleName ] = null;
+			}
 		}
 	};
 }
@@ -1724,6 +1758,7 @@ export type TemplateSimpleValueSchema = TemplateSimpleValue | AttributeBinding;
  * 		// An object schema, specific for styles.
  * 		style: {
  * 			color: 'red',
+ * 			'--color': 'red',
  * 			backgroundColor: bind.to( 'qux', () => { ... } )
  * 		}
  * 	}
@@ -2012,6 +2047,7 @@ export interface BindChain<TObservable> {
 
 /**
  * The {@link module:ui/template~Template#_renderNode} configuration.
+ * @internal
  */
 export interface RenderData {
 

@@ -10,18 +10,18 @@
 import { Plugin, type Editor } from 'ckeditor5/src/core.js';
 import { logWarning, global } from 'ckeditor5/src/utils.js';
 import {
-	UpcastWriter,
+	ViewUpcastWriter,
 	type DataControllerToModelEvent,
 	type DataControllerToViewEvent,
-	type RootElement
+	type ModelRootElement
 } from 'ckeditor5/src/engine.js';
 
-import HtmlPageDataProcessor from './htmlpagedataprocessor.js';
+import { HtmlPageDataProcessor } from './htmlpagedataprocessor.js';
 
 /**
  * The full page editing feature. It preserves the whole HTML page in the editor data.
  */
-export default class FullPage extends Plugin {
+export class FullPage extends Plugin {
 	/**
 	 * @inheritDoc
 	 */
@@ -31,8 +31,23 @@ export default class FullPage extends Plugin {
 
 	/**
 	 * @inheritDoc
+	 * @internal
+	 */
+	public static get licenseFeatureCode(): string {
+		return 'FPH';
+	}
+
+	/**
+	 * @inheritDoc
 	 */
 	public static override get isOfficialPlugin(): true {
+		return true;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public static override get isPremiumPlugin(): true {
 		return true;
 	}
 
@@ -109,7 +124,7 @@ export default class FullPage extends Plugin {
 				return;
 			}
 
-			const writer = new UpcastWriter( viewFragment.document );
+			const writer = new ViewUpcastWriter( viewFragment.document );
 
 			for ( const name of properties ) {
 				const value = root.getAttribute( name );
@@ -173,7 +188,7 @@ export default class FullPage extends Plugin {
 	 * Extracts `<style>` elements from the full page data and renders them in the main document `<head>`.
 	 * CSS content is sanitized before rendering.
 	 */
-	private _renderStyleElementsInDom( root: RootElement ): void {
+	private _renderStyleElementsInDom( root: ModelRootElement ): void {
 		const editor = this.editor;
 
 		// Get `<style>` elements list from the `<head>` from the full page data.
@@ -203,7 +218,7 @@ export default class FullPage extends Plugin {
 	/**
 	 * Removes existing `<style>` elements injected by the plugin and renders new ones from the full page data.
 	 */
-	private _renderStylesFromHead( root: RootElement ): void {
+	private _renderStylesFromHead( root: ModelRootElement ): void {
 		this._removeStyleElementsFromDom();
 		this._renderStyleElementsInDom( root );
 	}

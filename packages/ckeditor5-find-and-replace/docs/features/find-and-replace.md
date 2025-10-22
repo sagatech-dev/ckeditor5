@@ -1,12 +1,15 @@
 ---
+category: features
 title: Find and replace
 meta-title: Find and replace | CKEditor 5 Documentation
 meta-description: Quickly find and replace text in CKEditor 5 with a powerful, user-friendly interface to streamline content editing and corrections.
-category: features
 modified_at: 2024-01-03
+badges: [ premium ]
 ---
 
 The find and replace feature lets you find and replace any text in your document. This speeds up your work and helps with the consistency of your content.
+
+{@snippet getting-started/unlock-feature}
 
 ## Demo
 
@@ -14,17 +17,11 @@ Use the find and replace toolbar button {@icon @ckeditor/ckeditor5-icons/theme/i
 
 {@snippet features/find-and-replace}
 
-<info-box info>
+<snippet-footer>
 	This demo presents a limited set of features. Visit the {@link examples/builds/full-featured-editor feature-rich editor example} to see more in action.
-</info-box>
+</snippet-footer>
 
 ## Installation
-
-<info-box info>
-	⚠️ **New import paths**
-
-	Starting with {@link updating/update-to-42 version 42.0.0}, we changed the format of import paths. This guide uses the new, shorter format. Refer to the {@link getting-started/legacy-getting-started/legacy-imports Packages in the legacy setup} guide if you use an older version of CKEditor&nbsp;5.
-</info-box>
 
 After {@link getting-started/integrations-cdn/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
 

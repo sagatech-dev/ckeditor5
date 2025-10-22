@@ -4,11 +4,14 @@ order: 50
 modified_at: 2023-05-15
 meta-title: Full page HTML | CKEditor 5 Documentation
 meta-description: Edit full-page HTML documents in CKEditor 5, including HTML, head, and body tags, for complete control over the page structure.
+badges: [ premium ]
 ---
 
 # Full page HTML
 
 Thanks to the full page HTML feature you can use CKEditor&nbsp;5 to edit entire HTML pages (from `<html>` to `</html>`), including the page metadata. While the {@link features/general-html-support General HTML Support} feature focuses on elements inside the content (the document's `<body>`), this feature enables markup mostly invisible to the end user.
+
+{@snippet getting-started/unlock-feature}
 
 ## Demo
 
@@ -17,12 +20,6 @@ Use the {@link features/source-editing-enhanced Enhanced source code editing fea
 {@snippet features/full-page-html}
 
 ## Installation
-
-<info-box info>
-	⚠️ **New import paths**
-
-	Starting with {@link updating/update-to-42 version 42.0.0}, we changed the format of import paths. This guide uses the new, shorter format. Refer to the {@link getting-started/legacy-getting-started/legacy-imports Packages in the legacy setup} guide if you use an older version of CKEditor&nbsp;5.
-</info-box>
 
 After {@link getting-started/integrations-cdn/quick-start installing the editor}, add the feature to your plugin list and toolbar configuration:
 
@@ -49,11 +46,11 @@ ClassicEditor
 
 ### Render styles
 
-By default, the full page HTML feature does not render the CSS from `<style>` that may be located in the `<head>` section edited content. To enable that possibility, set the {@link module:html-support/generalhtmlsupportconfig~FullPageConfig#allowRenderStylesFromHead `config.htmlSupport.fullPage.allowRenderStylesFromHead`} option to `true`.
+By default, the full page HTML feature does not render the CSS from `<style>` that may be located in the `<head>` section edited content. To enable that possibility, set the {@link module:html-support/generalhtmlsupportconfig~GHSFullPageConfig#allowRenderStylesFromHead `config.htmlSupport.fullPage.allowRenderStylesFromHead`} option to `true`.
 
 Plugin extracts `<style>` elements from the edited content moves them to the main document `<head>`, and renders them. When CSS in `<style>` tag is changed using, for example, the {@link features/source-editing-enhanced Enhanced source code editing} feature, previously added `<style>` elements to the main document `<head>` will be replaced by the new ones.
 
-However, by enabling the ability to render CSS from `<style>` elements located in the `<head>` section of the edited content, you expose the users of your system to the **risk of executing malicious code inside the editor**. Therefore, we highly recommend sanitizing your CSS using some library that will strip the malicious code from the styles before rendering them. You can plug in the sanitizer by defining the {@link module:html-support/generalhtmlsupportconfig~FullPageConfig#sanitizeCss `config.htmlSupport.fullPage.sanitizeCss`} option.
+However, by enabling the ability to render CSS from `<style>` elements located in the `<head>` section of the edited content, you expose the users of your system to the **risk of executing malicious code inside the editor**. Therefore, we highly recommend sanitizing your CSS using some library that will strip the malicious code from the styles before rendering them. You can plug in the sanitizer by defining the {@link module:html-support/generalhtmlsupportconfig~GHSFullPageConfig#sanitizeCss `config.htmlSupport.fullPage.sanitizeCss`} option.
 
 ```js
 ClassicEditor
@@ -90,7 +87,7 @@ You can instruct some advanced users to never paste CSS code from untrusted sour
 
 #### Sanitizer
 
-The {@link module:html-support/generalhtmlsupportconfig~FullPageConfig#sanitizeCss `config.htmlSupport.fullPage.sanitizeCss`} option allows plugging an external sanitizer.
+The {@link module:html-support/generalhtmlsupportconfig~GHSFullPageConfig#sanitizeCss `config.htmlSupport.fullPage.sanitizeCss`} option allows plugging an external sanitizer.
 
 #### CSP
 

@@ -17,7 +17,7 @@ import { List } from '@ckeditor/ckeditor5-list';
 import { Paragraph } from '@ckeditor/ckeditor5-paragraph';
 import { Table } from '@ckeditor/ckeditor5-table';
 
-import Bookmark from '../../src/bookmark.js';
+import { Bookmark } from '../../src/bookmark.js';
 
 import { CS_CONFIG } from '@ckeditor/ckeditor5-cloud-services/tests/_utils/cloud-services-config.js';
 
@@ -45,17 +45,11 @@ ClassicEditor
 
 		const iframe = document.querySelector( '#iframe' );
 
-		editor.model.document.on( 'change', () => {
-			iframe.contentWindow.document.open();
-			iframe.contentWindow.document.write( editor.getData() );
-			iframe.contentWindow.document.close();
-		} );
+		iframe.srcdoc = `<!doctype html>${ editor.getData() }`;
 
-		setTimeout( () => {
-			iframe.contentWindow.document.open();
-			iframe.contentWindow.document.write( editor.getData() );
-			iframe.contentWindow.document.close();
-		}, 500 );
+		editor.model.document.on( 'change', () => {
+			iframe.srcdoc = `<!doctype html>${ editor.getData() }`;
+		} );
 	} )
 	.catch( err => {
 		console.error( err.stack );

@@ -13,12 +13,8 @@ import {
 	isListView
 } from '../../../src/list/utils/view.js';
 
-import UpcastWriter from '@ckeditor/ckeditor5-engine/src/view/upcastwriter.js';
-import DowncastWriter from '@ckeditor/ckeditor5-engine/src/view/downcastwriter.js';
-import StylesProcessor from '@ckeditor/ckeditor5-engine/src/view/stylesmap.js';
-import Document from '@ckeditor/ckeditor5-engine/src/view/document.js';
-import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
-import { parse as parseView } from '@ckeditor/ckeditor5-engine/src/dev-utils/view.js';
+import { ViewUpcastWriter, ViewDowncastWriter, StylesProcessor, ViewDocument, _parseView } from '@ckeditor/ckeditor5-engine';
+import { testUtils } from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
 
 describe( 'List - utils - view', () => {
 	let viewUpcastWriter, viewDowncastWriter;
@@ -26,10 +22,10 @@ describe( 'List - utils - view', () => {
 	testUtils.createSinonSandbox();
 
 	beforeEach( () => {
-		const viewDocument = new Document( new StylesProcessor() );
+		const viewDocument = new ViewDocument( new StylesProcessor() );
 
-		viewUpcastWriter = new UpcastWriter( viewDocument );
-		viewDowncastWriter = new DowncastWriter( viewDocument );
+		viewUpcastWriter = new ViewUpcastWriter( viewDocument );
+		viewDowncastWriter = new ViewDowncastWriter( viewDocument );
 	} );
 
 	describe( 'isListView()', () => {
@@ -74,7 +70,7 @@ describe( 'List - utils - view', () => {
 
 	describe( 'getIndent()', () => {
 		it( 'should return 0 for flat list', () => {
-			const viewElement = parseView(
+			const viewElement = _parseView(
 				'<ul>' +
 					'<li>a</li>' +
 					'<li>b</li>' +
@@ -86,7 +82,7 @@ describe( 'List - utils - view', () => {
 		} );
 
 		it( 'should return 1 for first level nested items', () => {
-			const viewElement = parseView(
+			const viewElement = _parseView(
 				'<ul>' +
 					'<li>' +
 						'<ul>' +
@@ -110,7 +106,7 @@ describe( 'List - utils - view', () => {
 		} );
 
 		it( 'should ignore container elements', () => {
-			const viewElement = parseView(
+			const viewElement = _parseView(
 				'<ul>' +
 					'<li>' +
 						'<div>' +
@@ -136,7 +132,7 @@ describe( 'List - utils - view', () => {
 		} );
 
 		it( 'should handle deep nesting', () => {
-			const viewElement = parseView(
+			const viewElement = _parseView(
 				'<ul>' +
 					'<li>' +
 						'<ol>' +
@@ -158,7 +154,7 @@ describe( 'List - utils - view', () => {
 		} );
 
 		it( 'should ignore superfluous OLs', () => {
-			const viewElement = parseView(
+			const viewElement = _parseView(
 				'<ul>' +
 					'<li>' +
 						'<ol>' +
@@ -182,7 +178,7 @@ describe( 'List - utils - view', () => {
 		} );
 
 		it( 'should handle broken structure', () => {
-			const viewElement = parseView(
+			const viewElement = _parseView(
 				'<ul>' +
 					'<li>a</li>' +
 					'<ul>' +
@@ -196,7 +192,7 @@ describe( 'List - utils - view', () => {
 		} );
 
 		it( 'should handle broken deeper structure', () => {
-			const viewElement = parseView(
+			const viewElement = _parseView(
 				'<ul>' +
 					'<li>a</li>' +
 					'<ol>' +

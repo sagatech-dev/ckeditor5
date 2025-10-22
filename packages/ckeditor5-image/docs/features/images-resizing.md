@@ -5,11 +5,14 @@ meta-title: Resizing images | CKEditor 5 Documentation
 meta-description: All about various ways of resizing images to fit the content better.
 order: 50
 modified_at: 2021-06-17
+badges: [ premium ]
 ---
 
 # Resizing images
 
 The image resize feature lets you change the width of images in your content. It is implemented by the {@link module:image/imageresize~ImageResize} plugin.
+
+{@snippet getting-started/unlock-feature}
 
 ## Methods to resize images
 
@@ -319,12 +322,6 @@ Check out the difference in the live demo below:
 When using the {@link features/ckbox CKBox file manager} service, it produces sets of resized, optimized images. The users can invoke these resized versions if needed. To learn more about these capabilities, refer to the {@link features/images-responsive responsive images} guide and the [CKBox conversion](https://ckeditor.com/docs/ckbox/latest/features/images/conversion.html) guide.
 
 ## Installation
-
-<info-box info>
-	⚠️ **New import paths**
-
-	Starting with {@link updating/update-to-42 version 42.0.0}, we changed the format of import paths. This guide uses the new, shorter format. Refer to the {@link getting-started/legacy-getting-started/legacy-imports Packages in the legacy setup} guide if you use an older version of CKEditor&nbsp;5.
-</info-box>
 
 To enable it you need to install the {@link module:image/imageresize~ImageResize} plugin, which contains **all** needed features (`ImageResizeEditing`, `ImageResizeHandles`, `ImageResizeButtons`):
 

@@ -3,15 +3,13 @@
  * For licensing, see LICENSE.md or https://ckeditor.com/legal/ckeditor-licensing-options
  */
 
-import DeleteObserver from '../../src/deleteobserver.js';
-import InsertTextObserver from '../../src/inserttextobserver.js';
+import { DeleteObserver } from '../../src/deleteobserver.js';
+import { InsertTextObserver } from '../../src/inserttextobserver.js';
 
-import View from '@ckeditor/ckeditor5-engine/src/view/view.js';
-import DomEventData from '@ckeditor/ckeditor5-engine/src/view/observer/domeventdata.js';
-import createViewRoot from '@ckeditor/ckeditor5-engine/tests/view/_utils/createroot.js';
-import testUtils from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
-import env from '@ckeditor/ckeditor5-utils/src/env.js';
-import { getCode } from '@ckeditor/ckeditor5-utils/src/keyboard.js';
+import { EditingView, ViewDocumentDomEventData } from '@ckeditor/ckeditor5-engine';
+import { createViewRoot } from '@ckeditor/ckeditor5-engine/tests/view/_utils/createroot.js';
+import { testUtils } from '@ckeditor/ckeditor5-core/tests/_utils/utils.js';
+import { env, getCode } from '@ckeditor/ckeditor5-utils';
 import { fireBeforeInputDomEvent } from '../_utils/utils.js';
 
 describe( 'Bug ckeditor5-typing#11904', () => {
@@ -24,7 +22,7 @@ describe( 'Bug ckeditor5-typing#11904', () => {
 		domRoot = document.createElement( 'div' );
 		document.body.appendChild( domRoot );
 
-		view = new View();
+		view = new EditingView();
 		viewDocument = view.document;
 		createViewRoot( viewDocument );
 		view.attachDomRoot( domRoot );
@@ -42,11 +40,11 @@ describe( 'Bug ckeditor5-typing#11904', () => {
 
 	describe( 'Blink', () => {
 		it( 'should fire `delete` event on `keyup` if no deleting `beforeinput` received (backward deletion)', () => {
-			viewDocument.fire( 'keydown', new DomEventData( viewDocument, getDomEvent(), {
+			viewDocument.fire( 'keydown', new ViewDocumentDomEventData( viewDocument, getDomEvent(), {
 				keyCode: getCode( 'backspace' )
 			} ) );
 
-			viewDocument.fire( 'keyup', new DomEventData( viewDocument, getDomEvent(), {
+			viewDocument.fire( 'keyup', new ViewDocumentDomEventData( viewDocument, getDomEvent(), {
 				keyCode: getCode( 'backspace' )
 			} ) );
 
@@ -55,11 +53,11 @@ describe( 'Bug ckeditor5-typing#11904', () => {
 		} );
 
 		it( 'should fire `delete` event on `keyup` if no deleting `beforeinput` received (forward deletion)', () => {
-			viewDocument.fire( 'keydown', new DomEventData( viewDocument, getDomEvent(), {
+			viewDocument.fire( 'keydown', new ViewDocumentDomEventData( viewDocument, getDomEvent(), {
 				keyCode: getCode( 'delete' )
 			} ) );
 
-			viewDocument.fire( 'keyup', new DomEventData( viewDocument, getDomEvent(), {
+			viewDocument.fire( 'keyup', new ViewDocumentDomEventData( viewDocument, getDomEvent(), {
 				keyCode: getCode( 'delete' )
 			} ) );
 
@@ -68,7 +66,7 @@ describe( 'Bug ckeditor5-typing#11904', () => {
 		} );
 
 		it( 'should not fire additional `delete` event on `keyup` if deleting `beforeinput` received (same direction)', () => {
-			viewDocument.fire( 'keydown', new DomEventData( viewDocument, getDomEvent(), {
+			viewDocument.fire( 'keydown', new ViewDocumentDomEventData( viewDocument, getDomEvent(), {
 				keyCode: getCode( 'backspace' )
 			} ) );
 
@@ -76,7 +74,7 @@ describe( 'Bug ckeditor5-typing#11904', () => {
 				inputType: 'deleteContentBackward'
 			} );
 
-			viewDocument.fire( 'keyup', new DomEventData( viewDocument, getDomEvent(), {
+			viewDocument.fire( 'keyup', new ViewDocumentDomEventData( viewDocument, getDomEvent(), {
 				keyCode: getCode( 'backspace' )
 			} ) );
 
@@ -84,7 +82,7 @@ describe( 'Bug ckeditor5-typing#11904', () => {
 		} );
 
 		it( 'should fire additional `delete` event on `keyup` if deleting `beforeinput` received (opposite direction)', () => {
-			viewDocument.fire( 'keydown', new DomEventData( viewDocument, getDomEvent(), {
+			viewDocument.fire( 'keydown', new ViewDocumentDomEventData( viewDocument, getDomEvent(), {
 				keyCode: getCode( 'backspace' )
 			} ) );
 
@@ -92,7 +90,7 @@ describe( 'Bug ckeditor5-typing#11904', () => {
 				inputType: 'deleteContentForward'
 			} );
 
-			viewDocument.fire( 'keyup', new DomEventData( viewDocument, getDomEvent(), {
+			viewDocument.fire( 'keyup', new ViewDocumentDomEventData( viewDocument, getDomEvent(), {
 				keyCode: getCode( 'backspace' )
 			} ) );
 
@@ -100,7 +98,7 @@ describe( 'Bug ckeditor5-typing#11904', () => {
 		} );
 
 		it( 'should not fire additional `delete` event on `keyup` if delete event was stopped', () => {
-			viewDocument.fire( 'keydown', new DomEventData( viewDocument, getDomEvent(), {
+			viewDocument.fire( 'keydown', new ViewDocumentDomEventData( viewDocument, getDomEvent(), {
 				keyCode: getCode( 'backspace' )
 			} ) );
 
@@ -110,7 +108,7 @@ describe( 'Bug ckeditor5-typing#11904', () => {
 				inputType: 'deleteContentBackward'
 			} );
 
-			viewDocument.fire( 'keyup', new DomEventData( viewDocument, getDomEvent(), {
+			viewDocument.fire( 'keyup', new ViewDocumentDomEventData( viewDocument, getDomEvent(), {
 				keyCode: getCode( 'backspace' )
 			} ) );
 
@@ -121,7 +119,7 @@ describe( 'Bug ckeditor5-typing#11904', () => {
 			const insertTextSpy = testUtils.sinon.spy();
 			viewDocument.on( 'insertText', insertTextSpy );
 
-			viewDocument.fire( 'keydown', new DomEventData( viewDocument, getDomEvent(), {
+			viewDocument.fire( 'keydown', new ViewDocumentDomEventData( viewDocument, getDomEvent(), {
 				keyCode: getCode( 'delete' )
 			} ) );
 
@@ -130,7 +128,7 @@ describe( 'Bug ckeditor5-typing#11904', () => {
 				data: '\x7f'
 			} );
 
-			viewDocument.fire( 'keyup', new DomEventData( viewDocument, getDomEvent(), {
+			viewDocument.fire( 'keyup', new ViewDocumentDomEventData( viewDocument, getDomEvent(), {
 				keyCode: getCode( 'delete' )
 			} ) );
 
@@ -141,7 +139,7 @@ describe( 'Bug ckeditor5-typing#11904', () => {
 			const insertTextSpy = testUtils.sinon.spy();
 			viewDocument.on( 'insertText', insertTextSpy );
 
-			viewDocument.fire( 'keydown', new DomEventData( viewDocument, getDomEvent(), {
+			viewDocument.fire( 'keydown', new ViewDocumentDomEventData( viewDocument, getDomEvent(), {
 				keyCode: getCode( 'delete' )
 			} ) );
 
@@ -150,7 +148,7 @@ describe( 'Bug ckeditor5-typing#11904', () => {
 				data: 'abc'
 			} );
 
-			viewDocument.fire( 'keyup', new DomEventData( viewDocument, getDomEvent(), {
+			viewDocument.fire( 'keyup', new ViewDocumentDomEventData( viewDocument, getDomEvent(), {
 				keyCode: getCode( 'delete' )
 			} ) );
 
@@ -168,11 +166,11 @@ describe( 'Bug ckeditor5-typing#11904', () => {
 		} );
 
 		it( 'should not fire `delete` event on `keyup` if no deleting `beforeinput` received', () => {
-			viewDocument.fire( 'keydown', new DomEventData( viewDocument, getDomEvent(), {
+			viewDocument.fire( 'keydown', new ViewDocumentDomEventData( viewDocument, getDomEvent(), {
 				keyCode: getCode( 'backspace' )
 			} ) );
 
-			viewDocument.fire( 'keyup', new DomEventData( viewDocument, getDomEvent(), {
+			viewDocument.fire( 'keyup', new ViewDocumentDomEventData( viewDocument, getDomEvent(), {
 				keyCode: getCode( 'backspace' )
 			} ) );
 
@@ -183,7 +181,7 @@ describe( 'Bug ckeditor5-typing#11904', () => {
 			const insertTextSpy = testUtils.sinon.spy();
 			viewDocument.on( 'insertText', insertTextSpy );
 
-			viewDocument.fire( 'keydown', new DomEventData( viewDocument, getDomEvent(), {
+			viewDocument.fire( 'keydown', new ViewDocumentDomEventData( viewDocument, getDomEvent(), {
 				keyCode: getCode( 'delete' )
 			} ) );
 
@@ -192,7 +190,7 @@ describe( 'Bug ckeditor5-typing#11904', () => {
 				data: '\x7f'
 			} );
 
-			viewDocument.fire( 'keyup', new DomEventData( viewDocument, getDomEvent(), {
+			viewDocument.fire( 'keyup', new ViewDocumentDomEventData( viewDocument, getDomEvent(), {
 				keyCode: getCode( 'delete' )
 			} ) );
 
